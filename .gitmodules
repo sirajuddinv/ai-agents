@@ -1,0 +1,3 @@
+[submodule "AI-Agent-Rules"]
+	path = AI-Agent-Rules
+	url = https://github.com/Baneeishaque/AI-Agent-Rules.git
