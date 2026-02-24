@@ -7,7 +7,7 @@ category: Eclipse PDE Runtime
 # Eclipse PDE Runtime Troubleshooting Skill
 
 > **Skill ID:** `eclipse_pde_runtime_troubleshooting`
-> **Version:** 1.0.0
+> **Version:** 1.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
 ## Description
@@ -132,6 +132,40 @@ platform.
 7. java.lang.Error: Unresolved compilation problems
 ```
 
+### Variant: VS Code Java Language Server Corruption
+
+A second, distinct failure mode occurs when editing Eclipse PDE
+workspace projects in **VS Code** instead of Eclipse:
+
+1. VS Code's Java Language Server (JLS) compiles `.java` files
+   into `bin/` directories on every save
+2. JLS does NOT understand Eclipse PDE `Require-Bundle` or target
+   platform resolution — it only resolves dependencies via its own
+   classpath heuristics
+3. When JLS cannot resolve a dependency (e.g.,
+   `com.bosch.ara2l.core.loggingframework.ICELogger`), it still
+   writes a `.class` file — but with `Unresolved compilation
+   problem` error stubs baked in
+4. At runtime, the Eclipse PDE launch loads the project from
+   `selected_workspace_bundles`, reads the `bin/` directory, and
+   picks up the VS Code-corrupted `.class` file
+5. → `java.lang.Error: Unresolved compilation problem`
+
+**Key difference from the Eclipse variant:** No project is "broken"
+in Eclipse — the corruption comes purely from VS Code JLS recompiling
+files it shouldn't touch. The `.java` source is correct; only the
+`.class` output is corrupted.
+
+**Diagnostic:** Check `.class` file timestamps — if they're more
+recent than the last Eclipse build (e.g., same day but hours later),
+VS Code JLS likely recompiled them:
+
+```powershell
+Get-ChildItem "<plugin>/bin" -Recurse -Filter "*.class" |
+    Where-Object { $_.LastWriteTime -gt (Get-Date "<last_known_good_time>") } |
+    ForEach-Object { Write-Host "$($_.Name) | $($_.LastWriteTime)" }
+```
+
 ### Why It Wasn't Always Broken
 
 The workspace project was likely:
@@ -140,6 +174,8 @@ The workspace project was likely:
 - Had its target platform changed (missing bundles)
 - Had dependencies updated that broke the build
 - Was opened alongside other projects for the first time
+- **Edited in VS Code** — JLS recompiled `.class` files without PDE
+  classpath resolution (see "VS Code JLS Corruption" variant above)
 
 ---
 
@@ -257,6 +293,42 @@ launch configuration's workspace bundles list.
 **Note:** This is rarely the fix for `Unresolved compilation problems`.
 It's more relevant for `ClassNotFoundException`.
 
+### Option D — Delete Corrupted bin/ (VS Code JLS variant)
+
+**When to use:** The error is caused by VS Code's Java Language Server
+recompiling `.class` files without PDE classpath resolution. The
+`.java` source is correct; only the `bin/` output is corrupted.
+
+**Procedure:**
+
+1. Identify the affected plugin(s) by checking `.class` timestamps:
+
+```powershell
+Get-ChildItem -Recurse -Filter "*.class" |
+    Where-Object { $_.LastWriteTime -gt (Get-Date "<last_eclipse_build>") } |
+    ForEach-Object { $_.FullName -replace '.*\\', '' }
+```
+
+2. Identify which recompiled plugins are in `selected_workspace_bundles`
+   of the `.launch` file (only those affect runtime)
+
+3. Delete the corrupted `bin/` directory:
+
+```powershell
+Remove-Item "<plugin>/bin" -Recurse -Force
+```
+
+4. Relaunch from **Eclipse** — Eclipse PDE will recompile with the
+   correct PDE classpath, producing valid `.class` files
+
+**Why this works:** Deleting `bin/` forces Eclipse's JDT compiler to
+rebuild from source with full PDE bundle resolution. Unlike VS Code
+JLS, Eclipse JDT understands `Require-Bundle` and resolves
+dependencies from both workspace projects and the target platform.
+
+**Important:** Do NOT rebuild from VS Code — it will re-corrupt the
+files. The rebuild MUST happen from Eclipse PDE.
+
 ---
 
 ## Known Instances
@@ -292,6 +364,62 @@ OSGi fell back to the working target platform JAR
 missing from `selected_workspace_bundles` but listed
 `com.bosch.dgs.ice.mcop.core` (which depends on it). The dependency
 was satisfied by the target platform JAR when the project was closed.
+
+### DGS-ICE: ICELogger / com.bosch.dgs.ice.dcg.app (VS Code JLS variant)
+
+**First observed:** 2026-02-24
+
+**Symptom:**
+
+```
+java.lang.Error: Unresolved compilation problem:
+    ICELogger cannot be resolved
+```
+
+Stack trace rooted in `dgs_ice.bsh` → `BuildCodeGeneration.generateCode()`
+→ `Application.start()` at line 1126.
+
+**Root cause:** VS Code's Java Language Server recompiled
+`com.bosch.dgs.ice.dcg.app/bin/` (4 class files: `Application.class`,
+`Activator.class`, `DCGTULConstants.class`, `DCGTULLogger.class`).
+The JLS could not resolve `com.bosch.ara2l.core.loggingframework.ICELogger`
+because `com.bosch.ara2l.core.loggingframework` is a target platform
+bundle — JLS doesn't understand `Require-Bundle` in `MANIFEST.MF`.
+
+**Diagnostic evidence:**
+
+- `Application.java` imports `ICELogger` (line 8) — source is correct
+- `Application.class` timestamp: `19:59:39` (VS Code JLS recompile)
+- Original Eclipse build timestamp: `05:10:23` (morning build)
+- `MANIFEST.MF` does NOT list `com.bosch.ara2l.core.loggingframework`
+  in `Require-Bundle` — the dependency comes transitively via
+  `com.bosch.dgs.ice.swbinterface.dcg`
+- `javap -v Application.class` showed valid `ICELogger` constant pool
+  refs (it resolved partially but with error stubs)
+
+**Fix applied:** Option D — deleted
+`com.bosch.dgs.ice.dcg.app/bin/` entirely. Eclipse PDE recompiles
+with full bundle classpath on next launch.
+
+**Affected launch configs:** All launch configs in
+`com.bosch.dgs.ice.dcg.product/` that list
+`com.bosch.dgs.ice.dcg.app@default:default` in
+`selected_workspace_bundles`.
+
+**How to identify VS Code JLS as the culprit:**
+
+```powershell
+# Find all plugins with class files recompiled after Eclipse's build
+$eclipseBuild = Get-Date "2026-02-24 05:11:00"
+Get-ChildItem -Recurse -Filter "*.class" |
+    Where-Object { $_.LastWriteTime -gt $eclipseBuild } |
+    ForEach-Object {
+        ($_.FullName -split '\\')[0..1] -join '\\'
+    } | Sort-Object -Unique
+```
+
+Then cross-reference with `selected_workspace_bundles` in the
+`.launch` file to find which corrupted plugins affect runtime.
 
 ---
 
@@ -336,7 +464,9 @@ The agent is **BLOCKED** from:
   The dependency exists for a reason. The fix is to provide the
   dependency or close the project, not remove it.
 - **Deleting .class files manually** — JDT manages the `bin/` folder.
-  Use Clean & Rebuild instead.
+  Use Clean & Rebuild instead. **Exception:** Option D (VS Code JLS
+  corruption) — delete the entire `bin/` directory when class files
+  were corrupted by VS Code JLS, then let Eclipse rebuild.
 - **Modifying target platform configurations** — These are shared team
   artifacts. Adding JARs to the target platform requires team
   coordination.
@@ -355,6 +485,9 @@ The agent is **BLOCKED** from:
 | Assuming the `.launch` file is wrong | The `.launch` file is usually correct. The issue is the workspace project shadowing the working JAR. |
 | Searching for the error in recently modified files | This error is caused by workspace configuration, not code changes. Check which projects are open. |
 | Opening a project "just to look at the code" | Opening it triggers JDT compilation. Use `read_file` in VS Code or browse in a file explorer instead. |
+| VS Code JLS recompiled `.class` files in PDE projects | JLS doesn't resolve `Require-Bundle`. Delete corrupted `bin/`, rebuild from Eclipse. See Option D. |
+| Blamed recent code changes for the crash | Check `.class` timestamps — if they're newer than Eclipse's build, VS Code JLS is the culprit, not code changes. |
+| Rebuilt from VS Code after deleting `bin/` | VS Code JLS will re-corrupt the files. Rebuild MUST happen from Eclipse PDE. |
 
 ---
 
@@ -370,3 +503,5 @@ Before reporting the issue as resolved, verify:
   problems` error
 - [ ] Application proceeds past the previously failing phase
 - [ ] No unintended projects were closed
+- [ ] (VS Code variant) Corrupted `bin/` deleted — NOT rebuilt from VS Code
+- [ ] (VS Code variant) `.class` timestamps verified — all from Eclipse build, not VS Code JLS
