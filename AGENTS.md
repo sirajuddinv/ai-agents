@@ -17,6 +17,11 @@
 | Commit Edit | [`.agents/skills/commit_edit/SKILL.md`](.agents/skills/commit_edit/SKILL.md) | User asks to edit, fix, or remove files from an existing commit via interactive rebase |
 | Noise Removal via Commit Edit | [`.agents/skills/noise_removal_via_commit_edit/SKILL.md`](.agents/skills/noise_removal_via_commit_edit/SKILL.md) | User asks to remove IDE artifact noise (m2e `.project`, `.classpath`, `.settings/`) from an existing commit |
 | Eclipse PDE Runtime Troubleshooting | [`.agents/skills/eclipse_pde_runtime_troubleshooting/SKILL.md`](.agents/skills/eclipse_pde_runtime_troubleshooting/SKILL.md) | Runtime crash with `java.lang.Error: Unresolved compilation problems` — workspace project with broken dependencies shadows working target platform JAR |
+| Mode-Driven CLI | [`.agents/skills/mode_driven_cli/SKILL.md`](.agents/skills/mode_driven_cli/SKILL.md) | User asks to unify variable-argument CLI into fixed-position format, or mode-specific argument parsing is scattered across branches |
+| Central Constants | [`.agents/skills/central_constants/SKILL.md`](.agents/skills/central_constants/SKILL.md) | User asks to extract raw strings, or duplicate literals (extensions, status values, tool names) detected across multiple source files |
+| Split User vs Dev Docs | [`.agents/skills/split_user_vs_dev_docs/SKILL.md`](.agents/skills/split_user_vs_dev_docs/SKILL.md) | User asks to clean up README, or `README.md` ships in release but contains build internals, project structure, or internal tool details |
+| Ship Release Notes | [`.agents/skills/ship_release_notes/SKILL.md`](.agents/skills/ship_release_notes/SKILL.md) | User asks to include release notes in distribution, or release notes exist in `releases/` but are not packaged into the release artifact |
+| Generate Release Notes | [`.agents/skills/generate_release_notes/SKILL.md`](.agents/skills/generate_release_notes/SKILL.md) | User asks to create release notes for a new version, or existing notes mix user-facing and developer-only content in one file |
 
 ### DGS-ICE
 
