@@ -24,6 +24,7 @@
 | Ship Release Notes | [`.agents/skills/ship_release_notes/SKILL.md`](.agents/skills/ship_release_notes/SKILL.md) | User asks to include release notes in distribution, or release notes exist in `releases/` but are not packaged into the release artifact |
 | Generate Release Notes | [`.agents/skills/generate_release_notes/SKILL.md`](.agents/skills/generate_release_notes/SKILL.md) | User asks to create release notes for a new version, or existing notes mix user-facing and developer-only content in one file |
 | Maven Build Failure Analysis | [`.agents/skills/maven_build_failure_analysis/SKILL.md`](.agents/skills/maven_build_failure_analysis/SKILL.md) | Maven/Tycho build fails with missing dependencies, unresolvable bundles, or broken transitive chains — error parsing, dependency chain reconstruction, artifact version discovery, multi-level rollback strategies |
+| Local P2 Repository Rollback | [`.agents/skills/local_p2_repository_rollback/SKILL.md`](.agents/skills/local_p2_repository_rollback/SKILL.md) | Broken nightly p2 repository needs rollback using a known-good JAR — create local p2 repo with metadata, update Tycho POMs with `file:${project.basedir}` relative paths, works on both local and CI/CD Jenkins |
 
 ### DGS-ICE
 
