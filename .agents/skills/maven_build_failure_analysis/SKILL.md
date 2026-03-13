@@ -29,6 +29,30 @@ MANIFEST.MF comparisons, version timelines, rollback options with
 trade-off analysis, and diagnostic commands — so the investigation
 is fully reproducible and shareable with other teams.
 
+**Maximum-detail philosophy:** Every investigation document MUST
+contain the absolute maximum level of detail. This means:
+
+- **Full error messages** — paste the exact `[ERROR]` output for
+  EVERY affected module, not just the first one
+- **Full MANIFEST.MF content** — include the complete `Require-Bundle`
+  list (all entries), not just the diff
+- **Line-level references** — every MANIFEST.MF dependency, feature.xml
+  plugin entry, and POM repository declaration must cite the exact
+  file and line number (e.g., `MANIFEST.MF L10`)
+- **Negative results documented** — every search that returns zero
+  results is a critical finding and must be explicitly recorded
+- **Evidence-based disambiguation** — when a bundle name could be
+  confused with a similarly-named artifact, the document must include
+  a dedicated disambiguation section with evidence
+- **Exhaustive version identification** — every local avenue for
+  finding previous versions must be attempted and documented, even
+  when all results are negative
+- **Cross-analysis tables** — rollback options must include side-by-side
+  comparison of ALL candidates, not just the recommended one
+- **Complete diagnostic commands** — every diagnostic step must include
+  ready-to-run commands with actual paths, not just conceptual
+  descriptions
+
 **Scope boundary:** This skill covers general Maven/Tycho build
 failure analysis and repository-based investigation. For
 organization-specific artifact stores (e.g., toolbase directories),
@@ -93,22 +117,38 @@ error into one of the following categories:
 | **Repository Unreachable** | `Could not read p2 repository` / `Connection refused` / `404 Not Found` | p2 repository URL is invalid or down |
 | **Parameter Warning** | `Unknown parameter '<name>'` | Deprecated Maven/Tycho parameter (non-blocking) |
 
-#### 1.1 Error Extraction Template
+#### 1.1 Error Extraction Template — Per-Module Detail
 
-For each distinct error, capture:
+For EVERY affected module (not just the first), capture the full error
+with exact build output. Even when modules share the same root cause,
+each module's error reveals distinct dependency paths:
 
 ```markdown
-### Error N — [Short Description]
+### 1.N `<module-name>` (module M/total)
 
-**Module:** `<module-name>` (step M/N)
-**Packaging:** `<eclipse-plugin|eclipse-feature|jar|...>`
-**Error:**
 \`\`\`
-[paste exact error message]
+[ERROR] Cannot resolve project dependencies:
+[ERROR]   Software being installed: <module-name> <version>
+[ERROR]   Missing requirement: <bundle> <version>
+            requires '<dependency>' but it could not be found
+[ERROR]   Cannot satisfy dependency: <intermediate-bundle> <version>
+            depends on: <dependency>
+[ERROR]   Cannot satisfy dependency: <module-name> <version>
+            depends on: <requirement>
 \`\`\`
-**Category:** [Missing Bundle | Missing Package | Version Conflict | ...]
-**Blocking:** Yes / No (warning only)
 ```
+
+**Why per-module errors matter:** Different modules may declare
+different version constraints (e.g., `bundle-version="3.2.0"` vs
+`(none)`) or reach the broken dependency through different paths
+(Require-Bundle vs feature.xml plugin inclusion). The per-module
+error output reveals these differences.
+
+> ⚠️ **MANDATORY:** Do NOT summarize errors as "3 modules fail with
+> the same error." Paste the EXACT `[ERROR]` output for every module.
+> Maven stops at the first unresolvable module per reactor pass, but
+> EVERY module with the same dependency chain is potentially affected
+> and must be listed.
 
 #### 1.2 Deduplication
 
@@ -176,11 +216,61 @@ grep -rn "<bundle.symbolic.name>" --include="feature.xml" .
 #### 2.4 Dependency Chain Diagram (ASCII)
 
 Document the chain as an ASCII diagram in the investigation document.
-Every level must include:
+Every level MUST include:
 - Bundle symbolic name
-- Version (including qualifier)
+- Version (including qualifier timestamp)
 - Source repository
-- The specific `Require-Bundle` / `Import-Package` declaration
+- The specific `Require-Bundle` / `Import-Package` declaration with
+  **exact file and line number** (e.g., `MANIFEST.MF L10`)
+
+**Reference-quality example:**
+
+```
+Level 0 — WORKSPACE BUNDLES (what we are building)
+┌──────────────────────────────────────────────────┐
+│  com.example.module.config                       │  MANIFEST.MF L10: Require-Bundle: com.example.validation;bundle-version="3.2.0"
+│  com.example.module.feature                      │  feature.xml L99: <plugin id="com.example.framework" .../>
+└──────────────────────────┬───────────────────────┘
+                           │ depends on
+                           ▼
+Level 1 — EXTERNAL BUNDLE (from repo_validation p2 repo)
+┌──────────────────────────────────────────────────┐
+│  com.example.validation                          │  version 3.15.0.202603111556
+│                                                  │  Require-Bundle: com.example.framework 1.0.0
+└──────────────────────────┬───────────────────────┘
+                           │ depends on
+                           ▼
+Level 2 — EXTERNAL BUNDLE (from repo_framework p2 repo)
+┌──────────────────────────────────────────────────┐
+│  com.example.framework                           │  version 1.0.0.202603121421
+│                                                  │  Require-Bundle: com.example.missing.service 0.0.0
+└──────────────────────────┬───────────────────────┘
+                           │ depends on
+                           ▼
+Level 3 — ??? (NOT FOUND)
+┌──────────────────────────────────────────────────┐
+│  com.example.missing.service                     │  ❌ NOT in any configured p2 repository
+│                                                  │  ❌ NOT in this workspace
+│                                                  │  ❌ NOT in target platform
+└──────────────────────────────────────────────────┘
+```
+
+#### 2.5 Complete Affected Bundles Table
+
+List ALL workspace bundles that participate in the dependency chain,
+not just those with explicit errors. Include the exact MANIFEST.MF
+location and version constraint:
+
+| Workspace Bundle | MANIFEST.MF Location | Version Constraint |
+|---|---|---|
+| `com.example.config` | `META-INF/MANIFEST.MF` L10 | `bundle-version="3.2.0"` |
+| `com.example.engine` | `META-INF/MANIFEST.MF` L18 | `bundle-version="3.2.0"` |
+| `com.example.standalone` | `META-INF/MANIFEST.MF` L22 | *(none)* |
+
+> ⚠️ **MANDATORY:** Include EVERY workspace bundle with the dependency,
+> even if Maven didn't reach it during the build. Maven stops at the
+> first unresolvable module — there may be 5–10 more affected modules
+> that were never reported.
 
 ---
 
@@ -240,6 +330,35 @@ Get-ChildItem "$env:USERPROFILE\.m2\repository" -Recurse -Filter "*<artifact-nam
 $jarTool = "path\to\jar.exe"
 & $jarTool tf "<repo-archive>.zip" | Select-String "<artifact-name>"
 ```
+
+#### 3.5 Bundle Identity Disambiguation
+
+When a missing artifact has a name similar to an existing artifact
+(e.g., `com.bosch.emf.validation.service` vs
+`org.eclipse.emf.validation`), the investigation document MUST include
+a **dedicated disambiguation section** with the following:
+
+1. **What it is NOT** — explicitly name the similar artifact and
+   explain why it is different (different prefix, different symbolic
+   name, different provider)
+2. **What it IS** — describe the missing artifact's likely purpose
+   based on its naming convention (e.g., `com.bosch.` prefix =
+   internal bundle, `.service` suffix = OSGi service wrapper)
+3. **Evidence** — list concrete evidence:
+   - Workspace references (`.launch` files, MANIFEST.MF, feature.xml)
+   - What does NOT reference it (no MANIFEST.MF, no feature.xml,
+     no pom.xml in the workspace)
+   - When it was introduced (qualifier timestamp of the bundle
+     that added the dependency)
+   - Full scan results (toolbase, Maven cache, all repos)
+4. **Where it should come from** — candidate repositories with
+   likelihood assessment:
+
+   | Repository | Likely? | Reasoning |
+   |---|---|---|
+   | `repo_a` | **Most likely** | Provides the bundle that requires it |
+   | `repo_b` | Possible | Sometimes used for cross-cutting bundles |
+   | A new/missing repo | Possible | If recently factored out |
 
 ---
 
@@ -334,22 +453,69 @@ Pop-Location
 | `Bundle-RequiredExecutionEnvironment` | Changed JRE requirement |
 | `Bundle-ActivationPolicy` | Changed from `lazy` to eager or vice versa |
 
-#### 5.3 Diff Template
+#### 5.3 Full Content Comparison Template
+
+The comparison MUST include the **complete** MANIFEST.MF key headers
+— not just the changed lines. The reader must be able to see the
+entire dependency list to understand the full context:
 
 ```markdown
-**Old version — X.Y.Z.QUALIFIER (DATE) ✅ WORKS:**
-Require-Bundle:
- - dep.a
- - dep.b
- - dep.c
+**Old version — X.Y.Z.QUALIFIER (FULL DATE) ✅ WORKS:**
 
-**New version — X.Y.Z.QUALIFIER (DATE) ❌ BROKEN:**
-Require-Bundle:
- - dep.a
- - dep.b
- - dep.c
- - dep.d    ← NEW DEPENDENCY (not available)
+\`\`\`
+Bundle-SymbolicName: com.example.framework;singleton:=true
+Bundle-Version: X.Y.Z.QUALIFIER
+Bundle-Activator: com.example.framework.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Example Corp
+Require-Bundle: com.example.core,
+ com.example.core.logging,
+ org.eclipse.emf.mapping,
+ org.eclipse.sphinx.emf.validation,
+ com.example.mdf,
+ com.example.core.util,
+ com.example.core.project.config,
+ com.example.core.project.validation
+\`\`\`
+
+→ **8 dependencies, all resolvable. No `com.example.missing.service`.**
+
+**New version — X.Y.Z.QUALIFIER (FULL DATE) ❌ BROKEN:**
+
+\`\`\`
+Require-Bundle: com.example.core,
+ com.example.core.logging,
+ org.eclipse.emf.mapping,
+ org.eclipse.sphinx.emf.validation,
+ com.example.mdf,
+ com.example.core.util,
+ com.example.core.project.config,
+ com.example.core.project.validation,
+ com.example.missing.service    ← NEW DEPENDENCY (not available anywhere)
+\`\`\`
+
+→ **Added `com.example.missing.service` as a hard `Require-Bundle`
+dependency. This bundle does not exist in any known repository.**
 ```
+
+> ⚠️ **MANDATORY:** Include the FULL `Require-Bundle` list for both
+> old and new versions. A diff-only view hides context — the reader
+> needs to see all 8+ dependencies to understand what was there before
+> and what was added. Also include `Bundle-SymbolicName`,
+> `Bundle-Version`, `Bundle-Vendor`, and
+> `Bundle-RequiredExecutionEnvironment` to confirm bundle identity.
+
+#### 5.4 Multi-Bundle Chain Comparison
+
+When the dependency chain has multiple levels, perform MANIFEST.MF
+comparison for EVERY bundle in the chain, not just the one that
+introduced the breaking change. This confirms whether the intermediate
+bundles also changed:
+
+| Bundle | Old Version | New Version | Changed? | Breaking? |
+|---|---|---|---|---|
+| `com.example.validation` | 3.11.0.QUALIFIER | 3.15.0.QUALIFIER | ✅ Yes — major version bump | ❌ No — still depends on same framework |
+| `com.example.framework` | 1.0.0.QUALIFIER_OLD | 1.0.0.QUALIFIER_NEW | ✅ Yes — same version, new qualifier | ✅ Yes — adds missing.service dep |
 
 ---
 
@@ -377,14 +543,52 @@ The new version [VERSION] [added/changed/removed] a dependency on
 
 #### 6.2 Version Timeline
 
-Document the chronological sequence of events:
+Document the chronological sequence of events for EVERY bundle in
+the dependency chain, not just the one that broke:
 
 ```
-YYYY-MM-DD  artifact.name    version.old     ← known-good
-    ↓ ... (time gap) ...
-YYYY-MM-DD  artifact.name    version.new     ← introduces breaking change
-YYYY-MM-DD  build            FAILS ❌
+YYYY-MM-DD  com.example.validation       3.11.0.QUALIFIER  ← known-good
+YYYY-MM-DD  com.example.framework        1.0.0.QUALIFIER   ← known-good (NO missing.service dep)
+    ↓ ... (N months) ...
+YYYY-MM-DD  com.example.validation       3.15.0.QUALIFIER  ← nightly rebuild
+YYYY-MM-DD  com.example.framework        1.0.0.QUALIFIER   ← nightly rebuild (ADDS missing.service dep)
+YYYY-MM-DD  build                        FAILS ❌
 ```
+
+#### 6.3 Known-Good Ecosystem Table
+
+Document ALL bundles in the dependency chain as found in the known-good
+reference build. This serves as the authoritative "what was working":
+
+| Bundle | Version in Known-Good | Status |
+|---|---|---|
+| `com.example.validation` | 3.11.0.QUALIFIER | ✅ Works |
+| `com.example.framework` | 1.0.0.QUALIFIER | ✅ Works |
+| `org.eclipse.emf.validation` | 1.8.0.QUALIFIER | ✅ Present |
+| `com.example.missing.service` | — | ❌ NOT present |
+
+> The missing bundle was NEVER part of the working ecosystem. This
+> confirms it is a newly introduced dependency, not a regression.
+
+#### 6.4 Exhaustive Version Identification
+
+When the version needed for rollback cannot be immediately determined,
+the investigation MUST exhaust ALL local avenues and document each
+one explicitly:
+
+| Investigation Avenue | What Was Checked | Result | Can Identify Version? |
+|---|---|---|---|
+| Maven local cache | `~\.m2\repository\...` | No artifacts | ❌ No |
+| Parent POM hierarchy | `ecl_int_releng` all versions | Not cached, not downloadable | ❌ No |
+| PDE `.target` files | All workspace `.target` files | 4 historical versions found | ⚠️ Strings known, ZIPs not accessible |
+| Git history | `git log --all -p -- */pom.xml` | Version variables, not resolved values | ⚠️ Variable names known |
+| CI pipeline parameters | `${repository_Version}`, `${base_url}` | Not defined locally | ❌ No |
+| Known-good product | `product/3.17.1` | Bundle version known | ✅ Bundle version, not repo version |
+| Repository manager | Nexus/Artifactory | Not accessible | ❌ No |
+
+> ⚠️ **MANDATORY:** The table must show EVERY avenue investigated,
+> including those that returned negative results. Negative results
+> narrow the rollback options and are essential for the reader.
 
 ---
 
@@ -570,17 +774,40 @@ Exclude a broken module from the build entirely:
 > build. Other modules that depend on it will also fail. Only use
 > when the module is non-essential for the current build goal.
 
-#### 7.7 Rollback Decision Matrix
+#### 7.7 Rollback Cross-Analysis Table
 
-Document a priority table for the specific build failure:
+Before recommending a rollback target, ALL candidates MUST be
+evaluated in a single comparison table:
 
-| Priority | Action | Level | Owner | Risk |
+| Rollback Target | What Changes | Risk | Effort | Verdict |
 |---|---|---|---|---|
-| 🔴 **Immediate** | [First action — e.g., contact team] | — | [Team] | — |
-| 🟠 **Short-term** | [Rollback action] | [Level N] | [Team] | [Risk] |
-| 🟡 **Medium-term** | [Permanent fix] | — | [Team] | [Risk] |
+| **Component A** (p2 repo) | Pins repo to older version | 🟢 Low | 🟡 Medium | ✅ **Recommended** |
+| Bundle B (within Component A) | Same effect — bundle is inside the component | 🟢 Low | ⛔ Not directly rollback-able | Equivalent to Component A rollback |
+| Bundle C (intermediate dep) | Use older version | 🔴 High — may miss needed fixes | 🟡 Medium | ❌ Unnecessary — old version still resolves broken nightly |
 
-#### 7.8 Shared Variable Considerations
+For each **rejected** candidate, include a detailed explanation of
+WHY it was rejected. Example:
+
+> **Why rolling back Bundle C alone does NOT work:**
+> The old `Bundle C` 3.11.0 still declares `Require-Bundle: Bundle B;
+> bundle-version="1.0.0"`. Since the p2 repo serves a single version
+> of Bundle B (the latest nightly), Tycho will still resolve the
+> broken version. The error persists.
+
+This cross-analysis prevents the reader from asking "why didn't you
+just roll back X instead?" — every candidate is pre-evaluated.
+
+#### 7.8 Rollback Decision Matrix (Priority)
+
+After the cross-analysis, document the recommended action priority:
+
+| Priority | Action | Owner |
+|---|---|---|
+| 🔴 **Immediate** | [Contact upstream team — ask about the new dependency] | [Your team → Upstream team] |
+| 🟠 **Short-term** | [Roll back the component if bundle doesn't exist yet] | [Your team (POM change)] |
+| 🟡 **Medium-term** | [Add the missing repo or request inclusion] | [Cross-team coordination] |
+
+#### 7.9 Shared Variable Considerations
 
 When multiple repositories share a version variable (common in Tycho
 builds), evaluate these considerations before rollback:
@@ -611,22 +838,24 @@ in an appropriate location within the project.
 Use underscore naming for the file (per project convention) and a
 name that describes the specific error, not a generic name.
 
-#### 8.2 Document Structure
+#### 8.2 Document Structure — Mandatory Sections
 
-The investigation document must contain these sections:
+The investigation document MUST contain ALL of the following sections.
+Every section MUST be populated with maximum detail. Empty or
+skeleton sections are not acceptable.
 
-| # | Section | Content |
-|---|---|---|
-| 1 | **Error Messages** | Exact error output grouped by module |
-| 2 | **Dependency Chain Analysis** | ASCII diagram + affected bundles table |
-| 3 | **Bundle/Artifact Identity** | What is the missing artifact, what it is NOT, evidence |
-| 4 | **Repository Inventory** | All configured repositories + search results |
-| 5 | **Root Cause** | MANIFEST.MF comparison, version timeline, ecosystem analysis |
-| 6 | **Fix Options** | Rollback analysis + options A/B/C/D with trade-offs |
-| 7 | **Diagnostic Steps** | Reproducible commands for verification |
-| 8 | **Impact Assessment** | Table of all affected modules |
-| 9 | **Related Errors** | Other errors in the same build (related or not) |
-| 10 | **Key File References** | Workspace files + external references with line numbers |
+| # | Section | Content | Detail Level Required |
+|---|---|---|---|
+| 1 | **Error Messages** | Exact `[ERROR]` output for EVERY affected module | Full error output per module (§1.1, §1.2, §1.3...) — not summarized |
+| 2 | **Dependency Chain Analysis** | ASCII box diagram + affected bundles table | Every level must cite MANIFEST.MF/feature.xml lines; table lists ALL 9+ affected bundles, not just the 3 Maven reported |
+| 3 | **Bundle/Artifact Identity** | Disambiguation (what it is NOT), evidence, candidate sources | Subsections: §3.1 What it is NOT, §3.2 Evidence list, §3.3 Where it should come from (table), §3.4 Search results (including negatives), §3.5 What actually exists in each component (plugin list tables) |
+| 4 | **Repository Inventory** | All configured p2/Maven repos with URL patterns | Numbered table of all repos; note which use shared variables |
+| 5 | **Root Cause** | Full MANIFEST.MF content comparison, version timeline, known-good ecosystem, version identification investigation | §5.1 Full MANIFEST.MF old vs new for EVERY chain bundle, §5.2 Version timeline (all chain bundles), §5.3 Known-good ecosystem table, §5.4 Exhaustive version identification (CI params, parent POM, target files, Maven cache, git history) |
+| 6 | **Fix Options** | Rollback cross-analysis + all options A/B/C/D | §6.0 Cross-analysis table of ALL candidates with rejection reasons, §6.1 Each option with procedure/files/verification, §6.2 Priority matrix |
+| 7 | **Diagnostic Steps** | Ready-to-run commands for every investigation step | Every command must include actual paths, actual tool locations, actual bundle names — not placeholders. PowerShell AND bash variants |
+| 8 | **Impact Assessment** | Table of ALL affected modules | Both confirmed (✅ Yes) and likely (⚠️ Likely) with packaging type and build step |
+| 9 | **Related Errors** | Other errors in the same build | Table with: Error / Root Cause / Related to this issue? |
+| 10 | **Key File References** | Workspace files + external references | §10.1 Workspace files with purpose and line numbers, §10.2 External references (toolbase, Maven cache, product builds) with full paths |
 
 #### 8.3 Metadata Table
 
@@ -703,6 +932,20 @@ The agent is **BLOCKED** from:
   delete. The repository exists for a reason.
 - **Running `mvn deploy` during investigation** — Investigation only.
   Never trigger deployment.
+- **Summarizing error messages** — Never write "3 modules fail with
+  the same error." Paste the EXACT `[ERROR]` output for every module.
+- **Providing skeleton/template documentation** — Every section of
+  the investigation document must be fully populated with actual
+  findings. Placeholder text like "[TBD]" or "[to be investigated]"
+  is forbidden.
+- **Showing MANIFEST.MF diffs instead of full content** — Always
+  show the complete `Require-Bundle` list for both old and new
+  versions, not just the changed lines.
+- **Omitting negative search results** — Every search that returns
+  zero results MUST be documented. "Not found" is a critical finding.
+- **Citing files without line numbers** — Every reference to a
+  MANIFEST.MF entry, feature.xml plugin, or POM repository must
+  include the exact line number.
 
 ---
 
@@ -720,6 +963,10 @@ The agent is **BLOCKED** from:
 | Creating the investigation doc in the wrong location | Use the project's existing docs/files module, not the root directory |
 | Investigating only the first error | Maven stops at the first unresolvable module. There may be multiple distinct root causes |
 | Forgetting to update both Tycho POMs | Tycho projects often have a main and standalone aggregator POM — both need the same fix |
+| Wrote "same error as above" instead of pasting full output | Every module's error must be pasted in full — different modules reveal different dependency paths and version constraints |
+| Showed only the MANIFEST.MF diff, not the full content | The reader needs the complete Require-Bundle list to understand the old ecosystem. Show all 8+ entries, not just the added one |
+| Listed only 3 affected modules (what Maven reported) | Maven stops at the first failure. Scan all MANIFEST.MF files — there may be 9+ affected modules |
+| Wrote diagnostic commands with placeholder paths | Every command must use actual paths from the investigation. Replace `<path>` with the real path before documenting |
 
 ---
 
@@ -738,3 +985,11 @@ Before reporting the investigation as complete, verify:
 - [ ] Diagnostic commands provided for each investigation step
 - [ ] Investigation document committed to the project repository
 - [ ] Related (but independent) errors noted separately
+- [ ] Every error message includes full `[ERROR]` output per module
+- [ ] MANIFEST.MF comparisons show full content, not just diffs
+- [ ] All file references include exact line numbers
+- [ ] All negative search results documented explicitly
+- [ ] Rollback cross-analysis covers ALL candidates with rejection reasons
+- [ ] Diagnostic commands use actual paths, not placeholders
+- [ ] Version identification exhausts all local avenues with results table
+- [ ] Bundle identity disambiguation section included (if applicable)
