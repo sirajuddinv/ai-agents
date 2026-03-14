@@ -100,6 +100,41 @@ Ensure build tools have execute permissions:
 chmod +x gradlew      # Gradle wrapper example
 ```
 
+#### 0d — Verify Git LFS State (Conditional)
+
+If the repository contains a `.gitattributes` file with `filter=lfs`
+patterns (e.g., `*.zip`, `*.7z`, `*.doc`), the agent **MUST** verify
+that Git LFS hooks are installed before staging any matching files.
+
+**Detection:**
+
+```powershell
+# Check if .gitattributes has LFS patterns
+Select-String -Path ".gitattributes" -Pattern "filter=lfs" -Quiet
+```
+
+**Bash:**
+
+```bash
+grep -q "filter=lfs" .gitattributes
+```
+
+If LFS patterns exist, ensure LFS is initialized:
+
+```powershell
+git lfs install
+git lfs track          # Verify tracked patterns
+```
+
+> `git lfs install` — configures Git hooks (`pre-push`, `post-checkout`,
+> `post-commit`, `post-merge`) to intercept LFS-tracked files. Without
+> this step, files matching `.gitattributes` LFS patterns will be
+> committed as regular blobs instead of LFS pointers, causing
+> repository bloat and requiring history rewriting to fix.
+
+**When to skip:** If `.gitattributes` does not exist or contains no
+`filter=lfs` patterns, skip this step entirely.
+
 ---
 
 ### Step 1 — Deep Change Analysis
@@ -315,6 +350,23 @@ string joins often fail to register). Preferred workaround:
   works, then use `git checkout -- <file>` to discard whatever noise
   remains unstaged.
 
+**Co-staged files trap (Critical):** When isolating noise into a
+dedicated commit, other files may remain staged from prior staging
+operations. Before committing the noise in isolation, **always**
+verify with `git diff --cached --stat` that **ONLY** the noise
+hunk(s) are staged. If other files appear:
+
+```powershell
+# Unstage specific files while preserving the noise hunk
+git reset HEAD <file1> <file2> ...
+
+# Re-verify — only noise should remain
+git diff --cached --stat
+```
+
+Failing to check this results in unrelated functional changes leaking
+into the noise commit, violating atomicity.
+
 #### 3g — IDE Artifact Bulk Discard
 
 IDE tooling (VS Code Java Language Server, Eclipse, IntelliJ) often
@@ -506,6 +558,19 @@ they support.
   tracked. Personal settings (e.g., `workspace.xml`) MUST remain ignored.
 - **Example:** If adding a new rule file introduces technical terms, the
   cSpell update for those terms MUST be part of the same atomic unit.
+- **`.gitignore` Blast-Radius:** When a tracked directory is renamed,
+  deleted, or migrated to a submodule, `.gitignore` patterns
+  referencing the old directory name become stale. The agent **MUST**
+  scan `.gitignore` for the old directory name and couple the pattern
+  removal or update in the same atomic commit as the directory change.
+  Stale patterns are not harmful to Git but indicate configuration
+  drift and can confuse future contributors.
+- **Submodule Paths:** Directories managed as Git submodules do **not**
+  need `.gitignore` rules in the parent repository. Submodules are
+  separate repositories and manage their own ignore rules internally.
+  When migrating a directly-tracked directory to a submodule, remove
+  the old directory's `.gitignore` patterns entirely — do not convert
+  them to reference the new submodule path.
 
 ---
 

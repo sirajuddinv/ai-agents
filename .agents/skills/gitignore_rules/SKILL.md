@@ -258,6 +258,68 @@ committed, adding it to `.gitignore` will NOT remove it from tracking.
 git rm --cached "path/to/file"
 ```
 
+### Step 7 — Detect Orphaned Patterns
+
+After verifying structural correctness, scan for **orphaned patterns**
+— `.gitignore` rules that reference directories or paths that no longer
+exist in the repository or working tree. These arise from past renames,
+deletions, or migrations (e.g., a directory replaced by a submodule).
+
+#### 7a — Cross-Reference Directory Patterns
+
+For each directory-level pattern in `.gitignore` (e.g., `pevers/*`,
+`old_output/*`), verify the directory exists:
+
+**PowerShell:**
+
+```powershell
+$lines = Get-Content ".gitignore"
+foreach ($line in $lines) {
+    $trimmed = $line.Trim()
+    # Skip comments, blank lines, and negations
+    if ($trimmed -match '^[^!#](.+)/\*?$') {
+        $dir = $trimmed -replace '/\*?$', ''
+        if (-not (Test-Path $dir) -and
+            -not (git ls-files --error-unmatch "$dir/" 2>$null)) {
+            Write-Warning "Orphaned pattern: '$trimmed' - directory '$dir' does not exist"
+        }
+    }
+}
+```
+
+#### 7b — Report Orphaned Patterns
+
+Present findings in a structured table:
+
+| Line | Pattern | Status | Likely Cause |
+|---|---|---|---|
+| 5 | `pevers/*` | Orphaned | Directory renamed or migrated to submodule |
+| 6 | `!pevers/*.zip` | Orphaned (stale negation) | Parent pattern is orphaned |
+
+#### 7c — Submodule Path Check
+
+Directories managed as Git submodules do **not** need `.gitignore`
+rules in the parent repository. If a pattern references a path that
+is a submodule (listed in `.gitmodules`), flag it:
+
+```powershell
+# Check if a directory is a submodule
+git config --file .gitmodules --get-regexp 'submodule\..*\.path' |
+    ForEach-Object { ($_ -split ' ')[1] }
+```
+
+**Rule:** Submodules are separate repositories and manage their own
+`.gitignore` internally. Parent `.gitignore` rules targeting submodule
+paths are stale by definition and should be removed.
+
+#### 7d — Severity
+
+Orphaned patterns are **low severity** — they do not cause functional
+problems. However, they indicate configuration drift from past
+operations and should be cleaned up to maintain `.gitignore` hygiene.
+The agent should **report** orphaned patterns but only **remove** them
+with explicit user confirmation.
+
 ---
 
 ## Scope Coverage
@@ -269,6 +331,8 @@ git rm --cached "path/to/file"
 | Nested negation without intermediate un-ignore | Yes | Add intermediate patterns |
 | Trailing whitespace | Yes | Trim |
 | Already-tracked files still showing | Detected | Manual `git rm --cached` advised |
+| Orphaned patterns (deleted/renamed dirs) | Yes | Reported, removed with user confirmation |
+| Submodule paths in parent `.gitignore` | Yes | Flagged as stale by definition |
 | Redundant patterns | Detected | Reported, not auto-removed |
 
 ---
@@ -302,3 +366,5 @@ The agent is **BLOCKED** from:
 | Pattern fails on some systems | Trailing whitespace in `.gitignore` line | Trim trailing whitespace |
 | `*.log` ignores too much | Overly broad glob in root `.gitignore` | Move pattern to a subdirectory `.gitignore` or use path-qualified pattern |
 | Double-star confusion | `**/dir` vs `dir/` vs `dir/**` have different semantics | `**/dir` matches at any depth; `dir/**` matches contents at any depth inside `dir` |
+| Orphaned patterns after rename/migration | Directory was renamed or replaced by a submodule, but `.gitignore` still references the old name | Cross-reference directory patterns against `Test-Path` and `.gitmodules`; remove stale entries |
+| Submodule path has parent `.gitignore` rules | Directory migrated to submodule, old ignore patterns left behind | Submodules manage their own `.gitignore`; remove parent rules for submodule paths |
