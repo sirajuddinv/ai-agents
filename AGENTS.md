@@ -27,6 +27,7 @@
 | Local P2 Repository Rollback | [`.agents/skills/local_p2_repository_rollback/SKILL.md`](.agents/skills/local_p2_repository_rollback/SKILL.md) | Broken nightly p2 repository needs rollback using a known-good JAR — create local p2 repo with metadata, update Tycho POMs with `file:${project.basedir}` relative paths, works on both local and CI/CD Jenkins |
 | Eclipse Target Platform Migration | [`.agents/skills/eclipse_target_platform_migration/SKILL.md`](.agents/skills/eclipse_target_platform_migration/SKILL.md) | Eclipse/Tycho build fails after target platform version upgrade — obsolete bundle removal from `feature.xml`/`MANIFEST.MF`, split-package conflict resolution (JPMS vs OSGi), blast-radius analysis across all three layers |
 | Archive & Folder Deduplication Audit | [`.agents/skills/archive_folder_dedup/SKILL.md`](.agents/skills/archive_folder_dedup/SKILL.md) | User asks to deduplicate folders vs archives (zip/7z), detect renamed archive duplicates, or audit trash directories against a clean source |
+| Reference Workspace Comparison | [`.agents/skills/reference_workspace_comparison/SKILL.md`](.agents/skills/reference_workspace_comparison/SKILL.md) | User asks to validate a migration fix against known-good reference workspaces, or compare build metadata (feature.xml, MANIFEST.MF) across non-Git workspace snapshots |
 
 ### DGS-ICE
 
