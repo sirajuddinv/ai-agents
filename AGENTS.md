@@ -28,6 +28,8 @@
 | Eclipse Target Platform Migration | [`.agents/skills/eclipse_target_platform_migration/SKILL.md`](.agents/skills/eclipse_target_platform_migration/SKILL.md) | Eclipse/Tycho build fails after target platform version upgrade — obsolete bundle removal from `feature.xml`/`MANIFEST.MF`, split-package conflict resolution (JPMS vs OSGi), blast-radius analysis across all three layers |
 | Archive & Folder Deduplication Audit | [`.agents/skills/archive_folder_dedup/SKILL.md`](.agents/skills/archive_folder_dedup/SKILL.md) | User asks to deduplicate folders vs archives (zip/7z), detect renamed archive duplicates, or audit trash directories against a clean source |
 | Reference Workspace Comparison | [`.agents/skills/reference_workspace_comparison/SKILL.md`](.agents/skills/reference_workspace_comparison/SKILL.md) | User asks to validate a migration fix against known-good reference workspaces, or compare build metadata (feature.xml, MANIFEST.MF) across non-Git workspace snapshots |
+| Bug Scanner Analysis | [`.agents/skills/bug_scanner_analysis/SKILL.md`](.agents/skills/bug_scanner_analysis/SKILL.md) | User asks to run, interpret, or cross-validate an existing bug scanner tool against a codebase or build artifact |
+| Bug Scanner Development | [`.agents/skills/bug_scanner_development/SKILL.md`](.agents/skills/bug_scanner_development/SKILL.md) | User asks to instrument source code with diagnostic logging at a known-fix guard point to detect affected inputs — defect archaeology, fix-point identification, inline scanner implementation |
 
 ### DGS-ICE
 
