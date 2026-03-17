@@ -463,6 +463,77 @@ When distributing the archive, document:
 
 ---
 
+## Step 7 — Re-Packaging After Code Changes
+
+When the scanner instrumentation is modified after the initial
+packaging (e.g., updated log tags, refactored code, additional scan
+points), the product must be re-packaged from scratch. **Never
+re-patch an already-patched product** — always start from a clean
+base product copy.
+
+### 7.1 Back Up the Previous Package
+
+Before overwriting, preserve the previous packaged product for
+comparison:
+
+```powershell
+$timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
+$backupName = "backup_<product_name>_scanner_product_$timestamp"
+
+# Back up the product folder
+Rename-Item -Path $dest -NewName $backupName
+
+# Back up the archive
+if (Test-Path $zipFile) {
+    Rename-Item -Path $zipFile -NewName "$backupName.zip"
+}
+```
+
+### 7.2 Compile and Verify the Updated Scanner
+
+In the IDE:
+
+1. Modify the scanner source file(s) as needed
+2. Build the project — verify **zero** compilation errors
+3. Confirm the updated class timestamp and size:
+
+```powershell
+$classFile = "<WORKSPACE>/bin/<class/path/ClassName.class>"
+"Size:     $((Get-Item $classFile).Length) bytes"
+"Modified: $((Get-Item $classFile).LastWriteTime)"
+```
+
+The class size may differ from the previous version — this is
+expected when code changes are made.
+
+### 7.3 Re-Execute the Packaging Pipeline
+
+Repeat Steps 2 through 5 using the newly compiled class:
+
+| Step | Action | Key Difference from Initial Run |
+|---|---|---|
+| Step 2 | Fresh copy from product install directory | Do NOT re-use the backup |
+| Step 3 | Patch JAR with the newly compiled class | Class size may differ |
+| Step 4 | Archive the patched product | New archive replaces old |
+| Step 5 | Run standalone and verify scanner output | Compare with previous results |
+
+### 7.4 Cross-Validate Against Previous Results
+
+Compare the new run's output with the previous run:
+
+| Metric | Previous | New | Expected |
+|---|---|---|---|
+| Scanner hit count | N | N | Same (unless scan points changed) |
+| Detected entities | List | List | Same (unless scan points changed) |
+| Log tag | Old tag | New tag | Different if tag was updated |
+| Class file size | Old bytes | New bytes | May differ due to code changes |
+
+If the hit count or entity list differs unexpectedly, the code
+change may have inadvertently altered the scanner logic. Review the
+source diff before accepting the new results.
+
+---
+
 ## Common Pitfalls
 
 | Pitfall | Solution |
@@ -475,6 +546,8 @@ When distributing the archive, document:
 | Previous OSGi configuration cached | Delete `$env:USERPROFILE\<product>_config` before each standalone run. Stale configuration from previous IDE or standalone runs can cause bundle resolution failures |
 | Patch verification skipped | **Always** verify the class size inside the patched JAR matches the compiled class. Silent `jar uf` failures are a known issue |
 | Archived wrong directory | Verify the archive contains the launcher executable and the patched JAR by inspecting entries before distribution |
+| Re-patched an already-patched product | Always start from a clean base product copy when re-packaging. Re-patching a previously patched JAR can leave stale entries or corrupt the archive |
+| Forgot to back up before re-packaging | Always rename (not delete) the previous product folder and archive before re-packaging. Enables comparison and rollback |
 
 ---
 
@@ -494,3 +567,6 @@ Before distributing the archive:
 - [ ] Scanner entries match IDE-based results (same count, same entities)
 - [ ] Runtime requirements documented (Java version, JVM args)
 - [ ] Distribution documentation prepared
+- [ ] Previous product backed up before re-packaging (Step 7)
+- [ ] Re-packaging used fresh base copy, not previous patched product (Step 7)
+- [ ] Re-packaged scanner hits match previous run count (Step 7)
