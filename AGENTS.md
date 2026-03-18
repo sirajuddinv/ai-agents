@@ -30,7 +30,7 @@
 | Reference Workspace Comparison | [`.agents/skills/reference_workspace_comparison/SKILL.md`](.agents/skills/reference_workspace_comparison/SKILL.md) | User asks to validate a migration fix against known-good reference workspaces, or compare build metadata (feature.xml, MANIFEST.MF) across non-Git workspace snapshots |
 | Bug Scanner Analysis | [`.agents/skills/bug_scanner_analysis/SKILL.md`](.agents/skills/bug_scanner_analysis/SKILL.md) | User asks to run, interpret, or cross-validate an existing bug scanner tool against a codebase or build artifact |
 | Bug Scanner Development | [`.agents/skills/bug_scanner_development/SKILL.md`](.agents/skills/bug_scanner_development/SKILL.md) | User asks to instrument source code with diagnostic logging at a known-fix guard point to detect affected inputs — defect archaeology, fix-point identification, inline scanner implementation |
-| Scanner Product Packaging | [`.agents/skills/scanner_product_packaging/SKILL.md`](.agents/skills/scanner_product_packaging/SKILL.md) | User asks to package an instrumented product as a standalone distributable — version discovery, JAR patching, archive creation, standalone runtime verification |
+| Scanner Product Packaging | [`.agents/skills/scanner_product_packaging/SKILL.md`](.agents/skills/scanner_product_packaging/SKILL.md) | User asks to package an instrumented product as a standalone distributable — version discovery, JAR patching, archive creation, standalone runtime verification, or wrap a scanner product with an automation script for turnkey distribution |
 
 ### DGS-ICE
 

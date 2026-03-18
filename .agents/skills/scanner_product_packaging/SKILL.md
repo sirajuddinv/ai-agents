@@ -3,15 +3,15 @@ title: Scanner Product Packaging
 description: General methodology for packaging an instrumented product as a
     standalone distributable — covering version discovery via VCS tags, base
     product copying, JAR/archive patching with instrumented classes, patch
-    verification, archive creation, standalone runtime validation, and
-    runtime compatibility assessment.
+    verification, archive creation, standalone runtime validation,
+    runtime compatibility assessment, and wrapper script distribution.
 category: Quality Assurance & Defect Detection
 -->
 
 # Scanner Product Packaging Skill
 
 > **Skill ID:** `scanner_product_packaging`
-> **Version:** 1.0.0
+> **Version:** 1.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
 ## Description
@@ -534,6 +534,82 @@ source diff before accepting the new results.
 
 ---
 
+## Step 8 — Wrapper Script Distribution
+
+After the scanner product is packaged (Steps 1–6), wrap it in a
+self-contained distributable with an automation script that handles
+version detection, classification, execution, and result extraction.
+
+### 8.1 Distribution Layout Pattern
+
+```
+<scanner_name>/
+    <entry_script>               Entry point script (e.g., scan.ps1)
+    README.txt                   Minimal usage instructions
+    config/
+        <config_file>            Version lists & scanner settings (YAML)
+    product/                     Scanner product from Steps 1–6
+        eclipse/
+        docs/
+        ...
+```
+
+All paths are auto-discovered relative to the entry script. The user
+provides only the input path (e.g., PVER path).
+
+### 8.2 Entry Script Responsibilities
+
+The wrapper script automates the full scan lifecycle:
+
+| Responsibility | Implementation |
+|---|---|
+| Config loading | Lightweight parser (no external modules) |
+| Input version detection | Product-specific metadata parsing |
+| Version classification | Exact lists → range fallback → heuristic |
+| Runtime detection | Auto-detect Java / runtime from env vars & config |
+| Scanner execution | Invoke the packaged product's launcher |
+| Result extraction | Stream through output logs for scanner tag |
+| Exit code mapping | Semantic codes: 0=clean, 1=issues, 2=error, 3=unknown |
+
+### 8.3 Config File Pattern
+
+Use a simple YAML (or similar) config with:
+
+- **Scanner settings**: tag pattern, log file paths, plugin names
+- **Affected versions**: explicit list of known-affected versions
+- **Fixed versions**: explicit list of known-fixed versions
+- **Pre-defect versions**: versions before the defect was introduced
+- **Affected range**: numeric range with exceptions and additions
+- **Runtime search paths**: ordered list of directories to search for
+  the required runtime (Java JDK, etc.)
+
+### 8.4 Packaging the Distribution
+
+```powershell
+$ts = Get-Date -Format 'yyyyMMdd_HHmmss'
+Compress-Archive -Path '<scanner_name>\*' `
+    -DestinationPath "<scanner_name>_$ts.zip" -Force
+```
+
+Timestamp the archive to enable version tracking. Recipients unzip
+and run the entry script — no installation or configuration required.
+
+### 8.5 Concrete Example
+
+The `chain_task_copy_scanner` skill (Mode D) implements this pattern:
+
+| Element | Concrete Implementation |
+|---|---|
+| Entry script | `scan.ps1` (PowerShell 5.1+, ~1100 lines) |
+| Config | `config/scanner_config.yaml` (custom YAML parser) |
+| Product | `product/` (ICE scanner product from Mode C) |
+| Input detection | `tool_details.json` → `toolName: "dgs_ice"` → `toolVersion` |
+| Runtime | Java 11 (auto-detected via env vars and config paths) |
+| Scanner tag | `CHAIN-TASK-COPY-BUG-SCANNER` |
+| Report | Structured text report in PVER's log directory |
+
+---
+
 ## Common Pitfalls
 
 | Pitfall | Solution |
@@ -570,3 +646,8 @@ Before distributing the archive:
 - [ ] Previous product backed up before re-packaging (Step 7)
 - [ ] Re-packaging used fresh base copy, not previous patched product (Step 7)
 - [ ] Re-packaged scanner hits match previous run count (Step 7)
+- [ ] Wrapper script has zero parse errors (Step 8)
+- [ ] Config file has correct version lists for the target defect (Step 8)
+- [ ] Distribution ZIP is self-contained and timestamped (Step 8)
+- [ ] README.txt documents minimal invocation and prerequisites (Step 8)
+- [ ] Entry script auto-detects runtime without user configuration (Step 8)
