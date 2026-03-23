@@ -100,6 +100,7 @@ Anti Gravity includes several proprietary layers missing from standard VS Code:
 - `antigravity-dev-containers`: Google-specific container orchestration.
 - `antigravity-remote-openssh`: Hardened remote protocol.
 - `antigravity-remote-wsl`: Optimized WSL bridge.
+- `chrome-devtools-mcp`: A specialized bridge allowing the AI to 'look' at the Chrome DevTools of the page it is debugging.
 
 - **Baseline Assessment**:
     - Anti Gravity is currently ~3-4 months behind the standard stable release cycle.
@@ -133,7 +134,7 @@ Anti Gravity includes several proprietary layers missing from standard VS Code:
 - **Stay on Anti Gravity If**:
     - **Optimized Orchestration**: Deep-tuned for Gemini 3 Ultra/Pro/Flash models.
     - You require **Deep-tuned Proprietary Google Optimizations** for Gemini 3 models.
-    - **Proprietary Tools**: `antigravity-browser-launcher` & `antigravity-code-executor` extensions.
+    - **Proprietary Tools**: `antigravity-browser-launcher`, `antigravity-code-executor`, & `chrome-devtools-mcp` extensions.
     - You depend on **container-standardized execution** via these proprietary layers.
     - You benefit from **Proprietary LLM-level context caching** (Lower latency for large context)
       not natively available in vanilla VS Code.
