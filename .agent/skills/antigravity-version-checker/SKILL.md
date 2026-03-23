@@ -136,6 +136,8 @@ Anti Gravity includes several proprietary layers missing from standard VS Code:
     - You require **Deep-tuned Proprietary Google Optimizations** for Gemini 3 models.
     - **Proprietary Tools**: `antigravity-browser-launcher`, `antigravity-code-executor`, & `chrome-devtools-mcp` extensions.
     - You depend on **container-standardized execution** via these proprietary layers.
+    - **Custom Prompt Basics**: Highly tuned 'System Instructions' baked in (Elite Google SWE behavior).
+    - **Simplified "Vibe Coding" Workflow**: Focused on **Autonomous Execution**. More willing to "take the wheel"—running commands, creating files, and verifying them—without constant "Accept/Reject" prompts.
     - You benefit from **Proprietary LLM-level context caching** (Lower latency for large context)
       not natively available in vanilla VS Code.
 
