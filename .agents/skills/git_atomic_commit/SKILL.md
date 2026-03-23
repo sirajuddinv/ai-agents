@@ -88,11 +88,47 @@ If authentication is missing, guide the user through login.
 Determine the correct repository from the user's request and file paths.
 
 - **Nested repositories:** If changes are in a sub-directory that is its
-  own Git project, `cd` into it before executing any `git` commands.
+  own Git project, use `git -C` to execute git commands in that repository.
 - **Ambiguity:** If multiple repositories exist in the workspace and the
   target is unclear, ask the user for clarification.
 
-#### 0c — Verify Build Tool Permissions
+#### 0c — Working Directory Persistence (Critical)
+
+When working with git commands, use `git -C <path>` for reliable directory targeting:
+
+```bash
+# Recommended: git -C with absolute path
+git -C /path/to/repo status
+git -C /path/to/repo diff HEAD
+
+# Why this matters: Shell `cd` commands do not persist across tool invocations
+# in stateless execution environments. Using git -C ensures consistent behavior
+# across all command chains and multi-step workflows.
+
+# Pattern for multi-repo work:
+git -C /repo1 status
+git -C /repo2 status
+git -C /repo1 add file.txt
+```
+
+**When `cd` alone is insufficient:**
+- In tools/environments where `cd` doesn't persist state across invocations
+- When working with multiple repositories in sequence
+- For clarity in tool-generated scripts and audit trails
+
+**Legacy pattern (avoid):**
+```bash
+# ❌ May not reliably persist across invocations
+cd /path/to/repo && git status
+```
+
+**Preferred pattern:**
+```bash
+# ✅ Reliable and explicit
+git -C /path/to/repo status
+```
+
+#### 0d — Verify Build Tool Permissions
 
 Ensure build tools have execute permissions:
 
