@@ -24,12 +24,6 @@
 | Python Script Generation | [`.agent/skills/python-script-generation/SKILL.md`](.agent/skills/python-script-generation/SKILL.md) | Standards for generating "Ultra-Lean Industrial" Python scripts |
 | System-Wide Tool Management | [`.agent/skills/system-wide-tool-management/SKILL.md`](.agent/skills/system-wide-tool-management/SKILL.md) | Protocol for detecting and installing system-wide CLI tools |
 
-### DGS-ICE
-
-| Skill | Path | When to use |
-|---|---|---|
-| DAMOS Validation Implementation | [`.agents/skills/dgs_ice/damos_validation/SKILL.md`](.agents/skills/dgs_ice/damos_validation/SKILL.md) | User asks to analyze gen_cdata.log DAM-E errors, implement ICEDAMOS constraints, or port DAMOS C++ checks to Java/ICE |
-
 ## Conventions
 
 - Underscore naming for author-chosen files and directories
