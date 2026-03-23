@@ -111,21 +111,21 @@ Anti Gravity includes several proprietary layers missing from standard VS Code:
 
 | Target Version | Key Features Missing in AGY | Impact on Agentic Workflows |
 | :--- | :--- | :--- |
-| **1.111** | Recursive Instructions, `/troubleshoot` | Deep sub-directory instruction parsing, `/troubleshoot`, and logging. |
-| **1.110** | **Agentic Browser (Integrated)** | Native ability for agents to drive browsers (DOM/Screenshots) for testing/verification. |
-| **1.110** | **Agent Plugins**, **Session Memory** | Prepackaged skills/tools installable via marketplace; agent state persistence. |
-| **1.109** | **Agent Skills (GA)**, **Multi-Agent Hub**, **MCP Apps** | Coordination, standardized skill loading, and interactive Multi-Agent Hub visualizations (MCP). |
+| **1.111** | Recursive Instructions, `/troubleshoot` | Deep sub-directory instruction parsing, `/troubleshoot` log injection, **Background Agents** (long-running refactors), and **Agent Hooks** (Security Hooks). |
+| **1.110** | **Agentic Browser (Integrated)** | Native ability for agents to drive browsers (DOM/Screenshots) for finding documentation or **testing local applications directly in sandbox**. |
+| **1.110** | **Agent Plugins**, **Session Memory** | Prepackaged skills/tools installable via marketplace; **Session Persistence** (memory across restarts). |
+| **1.109** | **Agent Skills (GA)**, **Multi-Agent Hub**, **MCP Apps** | Coordination, standardized skill loading, interactive visualizations (MCP), and **Native MCP Server Hosting** (connect search engines, DBs). |
 | **1.109** | **Claude Agent Support** | Preview support for Claude models in Copilot Chat. |
 | **1.108** | **Experimental Agent Skills** | Standardized structured instruction loading. |
 | **1.108** | Terminal Auto-Approve, Terminal IntelliSense | IntelliSense rework and faster execution flow (no confirmation). |
 
 - **Detailed "Missing Commits" Highlights**:
     - **1.111 (Insiders)**: Recursive `*.instructions.md` search; MCP file downloads; Agent-scoped chat hooks;
-      `/troubleshoot` command for log injection; Folder/Repo isolation in CLI sessions.
-    - **1.110 (February 2026)**: **Agentic Browser Tools** (DOM interaction, screenshots, console logs);
-      **Agent Plugins** (installable skill bundles); **Session Memory** (persisting plans); Chat Session Forking.
+      `/troubleshoot` command for log injection; Folder/Repo isolation in CLI sessions; **Background Agents** (long-running refactors); **Shared Memory** (CLI/Editor/Browser sync).
+    - **1.110 (February 2026)**: **Agentic Browser Tools** (DOM interaction, screenshots, console logs, **testing local app**);
+      **Agent Plugins** (installable skill bundles); **Session Memory** (**persistence across restarts**); Chat Session Forking; **Agent Hooks** (intercept actions).
     - **1.109 (January 2026)**: **Multi-Agent Hub** (simultaneous agents); **Claude Agent Support** (Anthropic integration);
-      **Agent Skills Generally Available**; Subagents in Parallel; MCP Apps (rich viz).
+      **Agent Skills Generally Available**; Subagents in Parallel; MCP Apps (rich viz); **Native MCP hosting** (search engines, databases).
     - **1.108 (December 2025)**: **Agent Skills (Initial release)**; Terminal Auto-Approve Commands;
       Chat Picker based on Agent Sessions; Terminal IntelliSense rework; Breakpoint tree view.
 
