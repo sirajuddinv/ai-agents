@@ -24,6 +24,7 @@
 | Python Script Generation | [`.agent/skills/python-script-generation/SKILL.md`](.agent/skills/python-script-generation/SKILL.md) | Standards for generating "Ultra-Lean Industrial" Python scripts |
 | System-Wide Tool Management | [`.agent/skills/system-wide-tool-management/SKILL.md`](.agent/skills/system-wide-tool-management/SKILL.md) | Protocol for detecting and installing system-wide CLI tools |
 | Redaction & Portability | [`.agents/skills/redaction_portability/SKILL.md`](.agents/skills/redaction_portability/SKILL.md) | Protocol for addressing, redacting, and relativizing sensitive/absolute information in artifacts |
+| Markdown Generation | [`.agents/skills/markdown_generation/SKILL.md`](.agents/skills/markdown_generation/SKILL.md) | Industrial protocol for generating lint-compliant, high-fidelity markdown documentation |
 
 ## Conventions
 
