@@ -27,6 +27,7 @@
 | Markdown Generation | [`.agents/skills/markdown_generation/SKILL.md`](.agents/skills/markdown_generation/SKILL.md) | Industrial protocol for generating lint-compliant, high-fidelity markdown documentation |
 | Skill Factory | [`.agents/skills/skill_factory/SKILL.md`](.agents/skills/skill_factory/SKILL.md) | Industrial protocol for automated creation of "Skill-First" AI Agent skills with high fidelity |
 | MCP Server Management | [`.agents/skills/mcp-management/SKILL.md`](.agents/skills/mcp-management/SKILL.md) | Industrial protocol for adding, configuring, and verifying MCP servers |
+| GitHub Secrets Bulk Set | [`.agents/skills/github_secrets/SKILL.md`](.agents/skills/github_secrets/SKILL.md) | Industrial protocol for setting GitHub repository (or environment) secrets in bulk from a local .env-style secrets file using the `gh` CLI |
 
 ## Conventions
 
