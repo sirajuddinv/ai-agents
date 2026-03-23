@@ -21,6 +21,7 @@
 | Folder Comparison | [`.agent/skills/folder-comparison/SKILL.md`](.agent/skills/folder-comparison/SKILL.md) | Compare directories for content-level consistency |
 | Harper Linting Suppression | [`.agent/skills/harper-linting-suppression/SKILL.md`](.agent/skills/harper-linting-suppression/SKILL.md) | Protocol for addressing Harper linter false positives |
 | Mise Tool Management | [`.agent/skills/mise-tool-management/SKILL.md`](.agent/skills/mise-tool-management/SKILL.md) | Protocols for mise configuration trust and tool version selection |
+| Python Script Generation | [`.agent/skills/python-script-generation/SKILL.md`](.agent/skills/python-script-generation/SKILL.md) | Standards for generating "Ultra-Lean Industrial" Python scripts |
 
 ### DGS-ICE
 
