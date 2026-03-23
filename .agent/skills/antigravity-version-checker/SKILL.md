@@ -148,6 +148,8 @@ Anti Gravity includes several proprietary layers missing from standard VS Code:
     - You utilize **Agent Plugins** (1.110) for specialized domain-specific agentic skills.
     - You require **native Multi-Agent Hub coordination (1.109)** for simultaneous tool usage.
     - You need the **Recursive Instructions (1.111)** for deep folder audits.
+    - You want the absolute latest Platform APIs and official UI changes.
+    - **Note**: You will need to install a separate extension (like GitHub Copilot or a generic Gemini extension) to replace the AI.
 
 ## 5. Open Source Landscape Comparison
 
