@@ -1,7 +1,7 @@
 ---
 name: Code Explanation
 description: Standards for deep-dive, pedagogical code documentation including adjacent markdown files and various folder patterns.
-category: Documentation
+category: Documentation-Standards
 ---
 
 # Code Explanation Skill
