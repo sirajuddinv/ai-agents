@@ -1,10 +1,10 @@
-<!--
-title: Git Rebase Standardization
+---
+name: Git Rebase Standardization
 description: Hierarchical multi-branch rebasing with dependency mapping,
     Commit Action Mapping (CAM), dig-down fidelity, and
     operational guardrails.
 category: Git & Repository Management
--->
+---
 
 # Git Rebase Standardization Skill
 

@@ -1,10 +1,10 @@
-<!--
-title: Git Commit Edit
+---
+name: Git Commit Edit
 description: Edit existing commits in-place via interactive rebase —
     remove files, add files, amend content, or fix mixed concerns
     without full history reconstruction.
 category: Git & Repository Management
--->
+---
 
 # Git Commit Edit Skill
 

@@ -1,8 +1,8 @@
-<!--
-title: Text to Markdown Conversion
+---
+name: Text to Markdown Conversion
 description: Convert structured plain-text data (delimiter-separated status trackers, lists, tables) into well-formatted Markdown with emoji status indicators, proper tables, and file renaming.
 category: Data Formatting & Presentation
--->
+---
 
 # Text to Markdown Conversion Skill
 

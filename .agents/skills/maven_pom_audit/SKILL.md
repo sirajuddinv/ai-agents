@@ -1,8 +1,8 @@
-<!--
-title: Maven POM Audit
+---
+name: Maven POM Audit
 description: Section-by-section audit of Maven pom.xml files — catching invalid URLs, wrong identities, missing metadata, and enforcing placeholder conventions.
 category: Build & Dependency Management
--->
+---
 
 # Maven POM Audit Skill
 

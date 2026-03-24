@@ -1,8 +1,8 @@
-<!--
-title: Underscore Naming Convention
+---
+name: Underscore Naming Convention
 description: Enforce underscore_based naming for all project files, directories, and identifiers — with industry-standard exemptions.
 category: Naming & Conventions
--->
+---
 
 # Underscore Naming Convention Skill
 

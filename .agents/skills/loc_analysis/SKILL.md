@@ -1,8 +1,8 @@
-<!--
-title: LOC Analysis
+---
+name: LOC Analysis
 description: Calculate lines of code added, deleted, and modified — comparing two codebases or analyzing git history within a scoped feature.
 category: Metrics & Reporting
--->
+---
 
 # LOC Analysis Skill
 

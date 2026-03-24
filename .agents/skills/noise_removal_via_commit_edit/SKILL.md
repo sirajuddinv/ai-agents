@@ -1,10 +1,10 @@
-<!--
-title: IDE Noise Removal via Commit Edit
+---
+name: IDE Noise Removal via Commit Edit
 description: Detect and remove IDE artifact noise (m2e, JDT LS,
     filteredResources) from existing commits using the commit_edit
     skill, with mandatory user confirmation.
 category: Git & Repository Management
--->
+---
 
 # IDE Noise Removal via Commit Edit Skill
 

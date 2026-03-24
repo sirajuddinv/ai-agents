@@ -1,10 +1,10 @@
-<!--
-title: Git History Refinement
+---
+name: Git History Refinement
 description: Refine or reconstruct existing commit history using backup
     branches, atomic extraction, tree parity verification,
     and safe remote push reconciliation.
 category: Git & Repository Management
--->
+---
 
 # Git History Refinement Skill
 

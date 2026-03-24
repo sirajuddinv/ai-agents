@@ -1,10 +1,10 @@
-<!--
-title: Git Atomic Commit Construction
+---
+name: Git Atomic Commit Construction
 description: Analyze, group, and arrange working-tree changes into logical,
     independent atomic commits — with hunk-based staging, formatting
     isolation, and mandatory user authorization.
 category: Git & Repository Management
--->
+---
 
 # Git Atomic Commit Construction Skill
 

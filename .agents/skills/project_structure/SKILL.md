@@ -1,8 +1,8 @@
-<!--
-title: Project Structure & Documentation
+---
+name: Project Structure & Documentation
 description: Industrial-standard project folder structure, root hygiene, README conventions, and documentation placement rules.
 category: Project Organization
--->
+---
 
 # Project Structure & Documentation Skill
 

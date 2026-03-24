@@ -1,8 +1,8 @@
-<!--
-title: Gitignore Rules
+---
+name: Gitignore Rules
 description: Audit .gitignore files for common pitfalls — especially directory-ignore patterns that silently break negation rules — and apply verified fixes.
 category: Git & Version Control
--->
+---
 
 # Gitignore Rules Skill
 

@@ -1,8 +1,8 @@
-<!--
-title: Deleted Files Audit
+---
+name: Deleted Files Audit
 description: Systematic audit of deleted files in a Git repository — categorizing deletions, scanning for stale references, checking IDE configs, and reporting a safety verdict.
 category: Code Hygiene & Maintenance
--->
+---
 
 # Deleted Files Audit Skill
 
