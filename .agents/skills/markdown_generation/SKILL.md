@@ -39,12 +39,13 @@ Every generated file MUST adhere to these absolute constraints:
 
 Before finalizing ANY markdown file, the agent MUST:
 
-1. **Sync Check**: Ensure `.vscode/settings.json` contains `"markdownlint.configFile": ".markdownlint.jsonc"` to
+1. **Config Initialization**: If the project lacks a `.markdownlint.jsonc` file, the agent MUST initialize it using rules from the reference config (`../../../.markdownlint.jsonc` relative to this skill file), specifically incorporating the `MD013` 120-character line length exception.
+2. **Sync Check**: Ensure `.vscode/settings.json` contains `"markdownlint.configFile": ".markdownlint.jsonc"` to
    synchronize the IDE extension with the project's Industrial standard.
-2. **Auto-Fix**: Run `markdownlint-cli2 --fix <file_path>` from the project root.
-3. **Audit Check**: Run `markdownlint-cli2 <file_path>`.
-4. **Manual Correction**: Fix any remaining semantic or structural errors (e.g., heading increments).
-5. **Fidelity Verification**: Ensure the "Fidelity Mandate" (no loss of user technical specifics) is upheld during
+3. **Auto-Fix**: Run `markdownlint-cli2 --fix <file_path>` from the project root.
+4. **Audit Check**: Run `markdownlint-cli2 <file_path>`.
+5. **Manual Correction**: Fix any remaining semantic or structural errors (e.g., heading increments).
+6. **Fidelity Verification**: Ensure the "Fidelity Mandate" (no loss of user technical specifics) is upheld during
    formatting.
 
 ***

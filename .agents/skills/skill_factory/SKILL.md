@@ -54,9 +54,12 @@ The `SKILL.md` MUST include:
 
 Every skill generated via the Factory MUST automatically undergo the final verification:
 
-- **Redaction**: Run the **Redaction & Portability** protocol on the newly created files.
-    1. **Relative Links**: Internal references/paths MUST be relative.
-    2. **Redaction**: Biological/System path prefixes MUST be replaced with `[REDACTED]`.
+- **Portability, Redaction & PII Audit**: Every file MUST be neutral and portable.
+    1. **Link Relativization**: All `file:///` absolute paths MUST be replaced with relative paths to the permanent
+       `docs/` directory of the skill.
+    2. **Redaction & Normalization**: PII, account names, and biological path prefixes MUST be replaced with standard
+       placeholders as defined in **[Section 4.2.9 of the Generation Rules](../../../ai-agent-rules/markdown-generation-rules.md#429-redaction--pii-neutralization)**.
+    3. **Directory Depth Audit**: Verify the correct directory depth (e.g., `../../../` from a 3-level deep skill).
 - **Contextual Hosting**: Documentation (logs, artifacts) MUST reside in the component's `docs/` folder.
 - **Fidelity Check**: Verify that no technical details from the source conversation were summarized or lost.
 - **Markdown Audit**: Run the **Markdown Generation** protocol to ensure 100% lint compliance.

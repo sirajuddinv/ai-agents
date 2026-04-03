@@ -88,27 +88,27 @@ If authentication is missing, guide the user through login.
 Determine the correct repository from the user's request and file paths.
 
 - **Nested repositories:** If changes are in a sub-directory that is its
-  own Git project, use `git -C` to execute git commands in that repository.
+  own Git project, use `PAGER=cat git -C` to execute `PAGER=cat git` commands in that repository.
 - **Ambiguity:** If multiple repositories exist in the workspace and the
   target is unclear, ask the user for clarification.
 
 #### 0c — Working Directory Persistence (Critical)
 
-When working with git commands, use `git -C <path>` for reliable directory targeting:
+When working with `PAGER=cat git` commands, use `PAGER=cat git -C <path>` for reliable directory targeting:
 
 ```bash
-# Recommended: git -C with absolute path
-git -C /path/to/repo status
-git -C /path/to/repo diff HEAD
+# Recommended: PAGER=cat git -C with absolute path
+PAGER=cat git -C /path/to/repo status
+PAGER=cat git -C /path/to/repo diff HEAD
 
 # Why this matters: Shell `cd` commands do not persist across tool invocations
-# in stateless execution environments. Using git -C ensures consistent behavior
+# in stateless execution environments. Using PAGER=cat git -C ensures consistent behavior
 # across all command chains and multi-step workflows.
 
 # Pattern for multi-repo work:
-git -C /repo1 status
-git -C /repo2 status
-git -C /repo1 add file.txt
+PAGER=cat git -C /repo1 status
+PAGER=cat git -C /repo2 status
+PAGER=cat git -C /repo1 add file.txt
 ```
 
 **When `cd` alone is insufficient:**
@@ -119,13 +119,13 @@ git -C /repo1 add file.txt
 **Legacy pattern (avoid):**
 ```bash
 # ❌ May not reliably persist across invocations
-cd /path/to/repo && git status
+cd /path/to/repo && PAGER=cat git status
 ```
 
 **Preferred pattern:**
 ```bash
 # ✅ Reliable and explicit
-git -C /path/to/repo status
+PAGER=cat git -C /path/to/repo status
 ```
 
 #### 0d — Verify Build Tool Permissions
@@ -148,7 +148,7 @@ anything.
 Use `git status` to discover staged, unstaged, and untracked changes:
 
 ```powershell
-git status
+PAGER=cat git status
 ```
 
 **Complete Scope (Critical):** The analysis MUST cover ALL three change
@@ -170,7 +170,7 @@ authoritative list of tracked files — not `Get-ChildItem` or `find`,
 which include git-ignored content:
 
 ```powershell
-git ls-files
+PAGER=cat git ls-files
 ```
 
 #### 1c — Read `.gitignore` for Tracked vs Ignored
@@ -258,7 +258,7 @@ staging, the preview **MUST** include the specific git hunks:
   ```
 - **Hunks/Preview**:
   ```diff
-  [Show actual hunks for this commit]
+  [Show actual hunks for this commit using PAGER=cat git diff]
   ```
 
 ### Commit 2: [type](scope): [title]
@@ -290,7 +290,7 @@ partition changes.
 #### 3a — Command
 
 ```bash
-git add -p <file>
+PAGER=cat git add -p <file>
 ```
 
 #### 3b — Hunk-by-Hunk Evaluation
@@ -311,7 +311,7 @@ logical chunk.
 After staging each chunk, verify strictly atomic contents:
 
 ```bash
-git diff --cached
+PAGER=cat git diff --cached
 ```
 
 #### 3e — Discard Rejected Noise
@@ -320,7 +320,7 @@ After accepting the desired hunks and rejecting noise, discard the
 rejected changes from the working tree if they are unintentional:
 
 ```bash
-git checkout -- <file>
+PAGER=cat git checkout -- <file>
 ```
 
 #### 3f — Mixed-Concern Noise Handling Workflow
@@ -331,24 +331,24 @@ follow this workflow:
 
 1. **Attempt to fix the noise in the editor** — remove the spurious
    whitespace or extra blank lines directly. This may resolve it.
-2. **Re-check the diff** — run `git diff <file>`. If the noise persists
+2. **Re-check the diff** — run `PAGER=cat git diff <file>`. If the noise persists
    (e.g., invisible character differences that the editor cannot show),
    fall back to hunk-based staging.
-3. **Stage only functional hunks** — run `git add -p <file>`, accepting
+3. **Stage only functional hunks** — run `PAGER=cat git add -p <file>`, accepting
    (`y`) only the hunks that belong to the current atomic goal and
    rejecting (`n`) the noise hunks.
-4. **Discard the remaining noise** — run `git checkout -- <file>` to
+4. **Discard the remaining noise** — run `PAGER=cat git checkout -- <file>` to
    revert the rejected noise from the working tree. This preserves the
    staged functional changes.
-5. **Verify staged state is clean** — run `git diff --cached <file>` to
-   confirm only functional changes are staged, then run `git diff` to
+5. **Verify staged state is clean** — run `PAGER=cat git diff --cached <file>` to
+   confirm only functional changes are staged, then run `PAGER=cat git status` to
    confirm no unstaged changes remain.
 
 **PowerShell caveat:** Piping input to `git add -p` is unreliable in
 PowerShell (standard pipe methods like `echo`, `Write-Output`, and
 string joins often fail to register). Preferred workaround:
 - Accept the functional hunks manually or in a sequence where piping
-  works, then use `git checkout -- <file>` to discard whatever noise
+  works, then use `PAGER=cat git checkout -- <file>` to discard whatever noise
   remains unstaged.
 
 #### 3g — IDE Artifact Bulk Discard
@@ -362,7 +362,7 @@ setup. The agent **MUST NOT** assume these are discardable.
 
 **Detection pattern:**
 
-- `git diff --stat` shows a large number of identical-looking changes
+- `PAGER=cat git diff --stat` shows a large number of identical-looking changes
   (e.g., 50+ `.project` files each with exactly +11 lines)
 - The diff content is the same boilerplate repeated per file
 - The change was not initiated by the developer
@@ -389,20 +389,20 @@ JDT Language Server).
 
 ```powershell
 # List tracked files under .settings/
-git ls-files .settings/
+PAGER=cat git ls-files .settings/
 
 # List untracked files under .settings/
-git ls-files --others --exclude-standard .settings/
+PAGER=cat git ls-files --others --exclude-standard .settings/
 
 # For modified tracked files, show what changed
-git diff --stat HEAD -- .settings/
+PAGER=cat git diff --stat HEAD -- .settings/
 ```
 
 **⚠️ Never bulk-delete a directory that contains tracked files.**
 Using `Remove-Item ".settings" -Recurse -Force` when the directory
 contains tracked files will cause those files to appear as deleted
-in `git status`, requiring immediate restoration via
-`git checkout -- <file>`. Instead, remove only the specific
+in `PAGER=cat git status`, requiring immediate restoration via
+`PAGER=cat git checkout -- <file>`. Instead, remove only the specific
 untracked files.
 
 **JDT Language Server + m2e Auto-Injection:**
@@ -452,7 +452,7 @@ changes to IDE metadata files — the project may rely on them.
    **Proposed discard steps:**
    ```powershell
    # 1. Revert modified tracked file
-   git checkout -- .project
+   PAGER=cat git checkout -- .project
 
    # 2. Remove specific untracked files (NOT the whole directory)
    Remove-Item ".settings/org.eclipse.m2e.core.prefs" -Force
@@ -460,7 +460,7 @@ changes to IDE metadata files — the project may rely on them.
    Remove-Item ".gitignore" -Force
 
    # 3. Verify
-   git status --short
+   PAGER=cat git status --short
    ```
 
    **⚠️ Warning:** `.settings/org.eclipse.jdt.core.prefs` is tracked
@@ -483,13 +483,13 @@ changes to IDE metadata files — the project may rely on them.
 
 3. **Post-discard verification:**
    ```powershell
-   git status --short
-   git diff --stat HEAD
+   PAGER=cat git status --short
+   PAGER=cat git diff --stat HEAD
    ```
    If any tracked file appears as deleted (accidentally removed),
    restore it immediately:
    ```powershell
-   git checkout -- <accidentally-deleted-file>
+   PAGER=cat git checkout -- <accidentally-deleted-file>
    ```
 
 **Prevention:** Add IDE artifact patterns to `.gitignore` if the
@@ -606,14 +606,14 @@ Execute commits one-by-one according to the approved arrangement.
 #### 9b — Recovery
 
 If a mistake is made during staging:
-- **Unstage:** `git reset <file>`
-- **Selective discard:** `git checkout -p`
+- **Unstage:** `PAGER=cat git reset <file>`
+- **Selective discard:** `PAGER=cat git checkout -p`
 - **WARNING:** Never use `git reset --hard` for synchronization.
-  Always prefer `git pull`.
+  Always prefer `PAGER=cat git pull`.
 
 #### 9c — Pull Before Push
 
-Always `git pull` (or `git pull --rebase` upon explicit approval) before
+Always `PAGER=cat git pull` (or `PAGER=cat git pull --rebase` upon explicit approval) before
 pushing to incorporate latest remote changes.
 
 #### 9d — Opaque Content Analysis
@@ -633,16 +633,16 @@ changes), delegate to the
 If rebase fails due to unstaged changes:
 
 ```bash
-git stash push -m "Descriptive message"
-git pull --rebase origin <branch>
-git stash pop
+PAGER=cat git stash push -m "Descriptive message"
+PAGER=cat git pull --rebase origin <branch>
+PAGER=cat git stash pop
 ```
 
 If `git stash pop` creates conflicts, resolve manually, then:
 
 ```bash
-git add <resolved-files>
-git stash drop
+PAGER=cat git add <resolved-files>
+PAGER=cat git stash drop
 ```
 
 #### 9g — Corrupted Rebase State Recovery
@@ -660,17 +660,17 @@ Get-ChildItem ".git/rebase-merge"       # Empty = corrupted state
 
 **Resolution:**
 
-1. **Verify staged changes are intact** — run `git diff --cached` to
+1. **Verify staged changes are intact** — run `PAGER=cat git diff --cached` to
    confirm your staged work is preserved.
 2. **Remove the corrupted directory:**
    ```powershell
    Remove-Item ".git/rebase-merge" -Recurse -Force
    ```
-3. **Verify clean state** — run `git status` to confirm the rebase
+3. **Verify clean state** — run `PAGER=cat git status` to confirm the rebase
    state indicator is gone.
 4. **Commit directly** — since the rebase state is cleared, use a
-   normal `git commit` with the planned message instead of
-   `git rebase --continue`.
+   normal `PAGER=cat git commit` with the planned message instead of
+   `PAGER=cat git rebase --continue`.
 
 ---
 
@@ -733,10 +733,10 @@ Files managed by CI/CD automation MUST be excluded from manual edits.
 - When verifying link updates, use `--exclude` flags:
 
 ```bash
-grep -r "old-name.md" . --exclude-dir=.git --exclude=README.md
+PAGER=cat git grep -r "old-name.md" . --exclude-dir=.git --exclude=README.md
 ```
 
-- Before committing, verify no CI/CD managed files are staged unless
+- Before committing, run `PAGER=cat git diff --cached` and verify no CI/CD managed files are staged unless
   the commit explicitly targets the source logic that generates them.
 
 ---
@@ -783,13 +783,13 @@ After commits are complete, follow the push protocol:
 - **Explicit Request Required:** Do NOT execute `git push` unless the
   user explicitly requests it.
 - **Offer, Don't Execute:** After commits, OFFER to push. Wait for
-  explicit "yes" or "push" command.
-- **Status Check:** Always run `git status` before push.
+  explicit "yes" or "PAGER=cat git push" command.
+- **Status Check:** Always run `PAGER=cat git status` before push.
 - **Discover Default Branch:** Do NOT assume the default branch name.
   Discover it programmatically:
 
 ```bash
-git branch -r
+PAGER=cat git branch -r
 ```
 
 ---
