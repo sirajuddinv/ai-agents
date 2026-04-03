@@ -36,6 +36,7 @@
 | Git Submodule Removal | [`.agents/skills/git_submodule_removal/SKILL.md`](.agents/skills/git_submodule_removal/SKILL.md) | Industrial protocol for the atomic and complete removal of Git submodules, purging all tracking and meta-data |
 | Git Submodule Addition | [`.agent/skills/git_submodule_addition/SKILL.md`](.agent/skills/git_submodule_addition/SKILL.md) | Automate adding Git submodules with standardized naming and initialization |
 | Re-add Git Submodule | [`.agents/skills/readd_git_submodule/SKILL.md`](.agents/skills/readd_git_submodule/SKILL.md) | Industrial protocol for removing and re-adding Git submodules to standardize paths or repair configurations |
+| Git Submodule Fork Sync | [`.agents/skills/git_submodule_fork_sync/SKILL.md`](.agents/skills/git_submodule_fork_sync/SKILL.md) | Automates the realignment of `.gitmodules` to track internal submodule forks while securing origin upstreams |
 
 ## Conventions
 
