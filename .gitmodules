@@ -109,3 +109,6 @@
 [submodule "jmagar_claude-homelab"]
 	path = jmagar_claude-homelab
 	url = https://github.com/jmagar/claude-homelab.git
+[submodule "kukapay_crypto-skills"]
+	path = kukapay_crypto-skills
+	url = https://github.com/kukapay/crypto-skills.git
