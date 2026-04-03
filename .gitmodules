@@ -196,3 +196,6 @@
 [submodule "techgangboss_agentstore"]
 	path = techgangboss_agentstore
 	url = https://github.com/techgangboss/agentstore.git
+[submodule "the-rabak_compound-engineering-plugin"]
+	path = the-rabak_compound-engineering-plugin
+	url = https://github.com/The-Rabak/compound-engineering-plugin.git
