@@ -175,3 +175,6 @@
 [submodule "sanjay3290_ai-skills"]
 	path = sanjay3290_ai-skills
 	url = https://github.com/sanjay3290/ai-skills.git
+[submodule "sanyuan0704_sanyuan-skills"]
+	path = sanyuan0704_sanyuan-skills
+	url = https://github.com/sanyuan0704/sanyuan-skills.git
