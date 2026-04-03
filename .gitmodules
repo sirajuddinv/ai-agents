@@ -103,3 +103,6 @@
 [submodule "ibelick_ui-skills"]
 	path = ibelick_ui-skills
 	url = https://github.com/ibelick/ui-skills.git
+[submodule "jakedahn_pomodoro"]
+	path = jakedahn_pomodoro
+	url = https://github.com/jakedahn/pomodoro.git
