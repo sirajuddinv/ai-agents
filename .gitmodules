@@ -91,3 +91,6 @@
 [submodule "h-h-e_media-center"]
 	path = h-h-e_media-center
 	url = https://github.com/H-H-E/media-center.git
+[submodule "hacklyc_myagents_skills"]
+	path = hacklyc_myagents_skills
+	url = https://github.com/hAcKlyc/MyAgents_skills.git
