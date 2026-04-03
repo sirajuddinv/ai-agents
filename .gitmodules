@@ -148,3 +148,6 @@
 [submodule "obra_superpowers"]
 	path = obra_superpowers
 	url = https://github.com/obra/superpowers.git
+[submodule "omidzamani_dspy-skills"]
+	path = omidzamani_dspy-skills
+	url = https://github.com/OmidZamani/dspy-skills.git
