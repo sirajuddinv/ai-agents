@@ -73,3 +73,6 @@
 [submodule "fractalmind-ai_agent-manager-skill"]
 	path = fractalmind-ai_agent-manager-skill
 	url = https://github.com/fractalmind-ai/agent-manager-skill.git
+[submodule "frmoretto_stream-coding"]
+	path = frmoretto_stream-coding
+	url = https://github.com/frmoretto/stream-coding.git
