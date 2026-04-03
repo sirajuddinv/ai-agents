@@ -187,3 +187,6 @@
 [submodule "sickn33_antigravity-awesome-skills"]
 	path = sickn33_antigravity-awesome-skills
 	url = https://github.com/sickn33/antigravity-awesome-skills.git
+[submodule "supabase_agent-skills"]
+	path = supabase_agent-skills
+	url = https://github.com/supabase/agent-skills.git
