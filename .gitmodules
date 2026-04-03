@@ -178,3 +178,6 @@
 [submodule "sanyuan0704_sanyuan-skills"]
 	path = sanyuan0704_sanyuan-skills
 	url = https://github.com/sanyuan0704/sanyuan-skills.git
+[submodule "sawyerhood_dev-browser"]
+	path = sawyerhood_dev-browser
+	url = https://github.com/SawyerHood/dev-browser.git
