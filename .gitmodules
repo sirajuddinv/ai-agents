@@ -208,3 +208,6 @@
 [submodule "vercel-labs_skills"]
 	path = vercel-labs_skills
 	url = https://github.com/vercel-labs/skills.git
+[submodule "wshobson_agents"]
+	path = wshobson_agents
+	url = https://github.com/wshobson/agents.git
