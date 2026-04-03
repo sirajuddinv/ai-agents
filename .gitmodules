@@ -79,3 +79,6 @@
 [submodule "github_awesome-copilot"]
 	path = github_awesome-copilot
 	url = https://github.com/github/awesome-copilot.git
+[submodule "gmickel_sheets-cli"]
+	path = gmickel_sheets-cli
+	url = https://github.com/gmickel/sheets-cli.git
