@@ -145,3 +145,6 @@
 [submodule "nikitadmitryuk_telegram-media-server"]
 	path = nikitadmitryuk_telegram-media-server
 	url = https://github.com/NikitaDmitryuk/telegram-media-server.git
+[submodule "obra_superpowers"]
+	path = obra_superpowers
+	url = https://github.com/obra/superpowers.git
