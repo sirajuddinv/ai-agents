@@ -82,3 +82,6 @@
 [submodule "gmickel_sheets-cli"]
 	path = gmickel_sheets-cli
 	url = https://github.com/gmickel/sheets-cli.git
+[submodule "gotalab_skillport"]
+	path = gotalab_skillport
+	url = https://github.com/gotalab/skillport.git
