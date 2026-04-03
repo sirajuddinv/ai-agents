@@ -127,3 +127,6 @@
 [submodule "microsoft_github-copilot-for-azure"]
 	path = microsoft_github-copilot-for-azure
 	url = https://github.com/microsoft/GitHub-Copilot-for-Azure.git
+[submodule "microsoft_skills"]
+	path = microsoft_skills
+	url = https://github.com/microsoft/skills.git
