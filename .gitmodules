@@ -181,3 +181,6 @@
 [submodule "sawyerhood_dev-browser"]
 	path = sawyerhood_dev-browser
 	url = https://github.com/SawyerHood/dev-browser.git
+[submodule "shepsci_kaggle-skill"]
+	path = shepsci_kaggle-skill
+	url = https://github.com/shepsci/kaggle-skill.git
