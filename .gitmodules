@@ -139,3 +139,6 @@
 [submodule "mrgoonie_claudekit-skills"]
 	path = mrgoonie_claudekit-skills
 	url = https://github.com/mrgoonie/claudekit-skills.git
+[submodule "muratcankoylan_agent-skills-for-context-engineering"]
+	path = muratcankoylan_agent-skills-for-context-engineering
+	url = https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering.git
