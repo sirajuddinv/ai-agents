@@ -169,3 +169,6 @@
 [submodule "rmyndharis_antigravity-skills"]
 	path = rmyndharis_antigravity-skills
 	url = https://github.com/rmyndharis/antigravity-skills.git
+[submodule "sammcgrail_seb"]
+	path = sammcgrail_seb
+	url = https://github.com/sammcgrail/seb.git
