@@ -160,3 +160,6 @@
 [submodule "product_on_purpose_pm-skills"]
 	path = product_on_purpose_pm-skills
 	url = https://github.com/product-on-purpose/pm-skills.git
+[submodule "redis_agent-skills"]
+	path = redis_agent-skills
+	url = https://github.com/redis/agent-skills.git
