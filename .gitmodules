@@ -157,3 +157,6 @@
 [submodule "openclaw_openclaw"]
 	path = openclaw_openclaw
 	url = https://github.com/openclaw/openclaw.git
+[submodule "product_on_purpose_pm-skills"]
+	path = product_on_purpose_pm-skills
+	url = https://github.com/product-on-purpose/pm-skills.git
