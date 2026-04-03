@@ -55,3 +55,6 @@
 [submodule "browser-use_browser-use"]
 	path = browser-use_browser-use
 	url = https://github.com/browser-use/browser-use.git
+[submodule "ckanner_agent-skills"]
+	path = ckanner_agent-skills
+	url = https://github.com/ckanner/agent-skills.git
