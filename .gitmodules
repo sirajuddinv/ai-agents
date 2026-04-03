@@ -136,3 +136,6 @@
 [submodule "moizibnyousaf_ai-agent-skills"]
 	path = moizibnyousaf_ai-agent-skills
 	url = https://github.com/MoizIbnYousaf/Ai-Agent-Skills.git
+[submodule "mrgoonie_claudekit-skills"]
+	path = mrgoonie_claudekit-skills
+	url = https://github.com/mrgoonie/claudekit-skills.git
