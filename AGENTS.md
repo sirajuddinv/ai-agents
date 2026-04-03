@@ -3,7 +3,7 @@
 ## Skills
 
 | Skill | Path | When to use |
-|---|---|---|
+| :--- | :--- | :--- |
 | Underscore Naming Convention | [`.agents/skills/underscore_naming/SKILL.md`](.agents/skills/underscore_naming/SKILL.md) | User asks to enforce underscore naming, or files/dirs with hyphens are detected |
 | Maven POM Audit | [`.agents/skills/maven_pom_audit/SKILL.md`](.agents/skills/maven_pom_audit/SKILL.md) | User asks to audit pom.xml, or invalid URLs/developer identity detected |
 | Project Structure & Documentation | [`.agents/skills/project_structure/SKILL.md`](.agents/skills/project_structure/SKILL.md) | User asks to organize project, fix folder structure, or create README/AGENTS.md |
@@ -14,6 +14,7 @@
 | Git Atomic Commit | [`.agents/skills/git_atomic_commit/SKILL.md`](.agents/skills/git_atomic_commit/SKILL.md) | User asks to commit changes, arrange commits, or stage and commit — working-tree changes need atomic grouping |
 | Git History Refinement | [`.agents/skills/git_history_refinement/SKILL.md`](.agents/skills/git_history_refinement/SKILL.md) | User asks to refine, split, or reconstruct existing commit history |
 | Git Rebase | [`.agents/skills/git_rebase/SKILL.md`](.agents/skills/git_rebase/SKILL.md) | User asks to rebase branches, manage multi-branch chains, or deduplicate cross-branch commits |
+| Git Repository Status | [`.agents/skills/git_repository_status/SKILL.md`](.agents/skills/git_repository_status/SKILL.md) | Industrial protocol for auditing branch divergence, staged/unstaged changes, and repository history |
 | Commit Edit | [`.agents/skills/commit_edit/SKILL.md`](.agents/skills/commit_edit/SKILL.md) | User asks to edit, fix, or remove files from an existing commit via interactive rebase |
 | Noise Removal via Commit Edit | [`.agents/skills/noise_removal_via_commit_edit/SKILL.md`](.agents/skills/noise_removal_via_commit_edit/SKILL.md) | User asks to remove IDE artifact noise (m2e `.project`, `.classpath`, `.settings/`) from an existing commit |
 | Anti Gravity Version Checker | [`.agent/skills/antigravity-version-checker/SKILL.md`](.agent/skills/antigravity-version-checker/SKILL.md) | Audit Anti Gravity vs VS Code versions and feature parity |
@@ -26,11 +27,13 @@
 | Redaction & Portability | [`.agents/skills/redaction_portability/SKILL.md`](.agents/skills/redaction_portability/SKILL.md) | Protocol for addressing, redacting, and relativizing sensitive/absolute information in artifacts |
 | Markdown Generation | [`.agents/skills/markdown_generation/SKILL.md`](.agents/skills/markdown_generation/SKILL.md) | Industrial protocol for generating lint-compliant, high-fidelity markdown documentation |
 | Skill Factory | [`.agents/skills/skill_factory/SKILL.md`](.agents/skills/skill_factory/SKILL.md) | Industrial protocol for automated creation of "Skill-First" AI Agent skills with high fidelity |
+
 | MCP Server Management | [`.agents/skills/mcp-management/SKILL.md`](.agents/skills/mcp-management/SKILL.md) | Industrial protocol for adding, configuring, and verifying MCP servers |
 | GitHub Secrets Bulk Set | [`.agents/skills/github_secrets/SKILL.md`](.agents/skills/github_secrets/SKILL.md) | Industrial protocol for setting GitHub repository (or environment) secrets in bulk from a local .env-style secrets file using the `gh` CLI |
 | JSON Deep Sort | [`.agents/skills/json-deep-sort/SKILL.md`](.agents/skills/json-deep-sort/SKILL.md) | Alphabetically sorts primitive JSON arrays and recursively applies sort_keys=True for unified dictionary ordering safely natively |
 | VS Code Extension Link Portability | [`.agents/skills/vscode_extension_portability/SKILL.md`](.agents/skills/vscode_extension_portability/SKILL.md) | Refactor non-portable extension-linked paths in settings.json to permanent, portable links using tilde |
 | VS Code Settings Promotion | [`.agents/skills/vscode_settings_promotion/SKILL.md`](.agents/skills/vscode_settings_promotion/SKILL.md) | Automate migration of profile-specific settings to global scope with universal enforcement |
+
 
 ## Conventions
 
