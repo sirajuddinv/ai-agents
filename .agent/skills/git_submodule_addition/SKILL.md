@@ -1,6 +1,7 @@
 ---
 name: git_submodule_addition
-description: Industrial protocol for adding Git submodules with automated naming conventions and branch tracking initialization. Use when the user provides a repository URL and asks to "add as a submodule".
+description: Industrial protocol for adding Git submodules with automated naming conventions and branch tracking
+initialization. Use when the user provides a repository URL and asks to "add as a submodule".
 category: Git & Repository Management
 ---
 
@@ -50,10 +51,37 @@ The agent MUST automatically map the repository URL to a standardized, underscor
 
 When a repository URL is provided, follow these steps exactly:
 
-### 3.1 Initial Addition
+### 3.1 Duplicate Check Protocol
 
 > [!IMPORTANT]
-> **Industrial Mandate**: Submodules MUST be added and initialized **one by one**. Do NOT chain multiple additions in a single command. This ensures atomic failure detection and prevents configuration corruption.
+> **Industrial Mandate**: Before attempting any addition, the agent MUST check if
+> the repository URL or intended directory path already exists as a tracked submodule.
+> Duplicates are FORBIDDEN.
+
+1. **Check URL**:
+
+    ```bash
+    PAGER=cat git config --file .gitmodules --get-regexp url | grep "<URL>"
+    ```
+
+    - If the URL already exists (e.g. under a different name), **HALT**. Inform the user
+      that the submodule is a duplicate, report the existing path, and optionally propose
+      the `readd_git_submodule` skill to standardize its path.
+
+2. **Check Path**:
+
+    ```bash
+    PAGER=cat git config --file .gitmodules --get-regexp path | grep "<OWNER_REPO_PATH>"
+    ```
+
+    - If the path already exists, **HALT**.
+
+### 3.2 Initial Addition
+
+> [!IMPORTANT]
+> **Industrial Mandate**: Submodules MUST be added and initialized **one by one**. Do NOT
+> chain multiple additions in a single command. This ensures atomic failure detection and
+> prevents configuration corruption.
 
 ```bash
 # Add the submodule at the derived path
@@ -65,23 +93,24 @@ git submodule add <URL> <OWNER_REPO_PATH>
     - `<URL>`: The source repository.
     - `<OWNER_REPO_PATH>`: The target directory (e.g., `owner_repo`).
 
-### 3.2 Initialization & Synchronization
+### 3.3 Initialization & Synchronization
 
 ```bash
 # Initialize the submodule and fetch data
-git submodule update --init --recursive
+PAGER=cat git submodule update --init --recursive
 ```
 
 - **Pedagogical Breakdown**:
     - `--init`: Initializes the submodule in `.git/config` if not already present.
     - `--recursive`: Ensures nested submodules (if any) are also handled.
 
-### 3.3 Branch Tracking Enforcement (Critical)
+### 3.4 Branch Tracking Enforcement (Critical)
 
 Per `git-submodule-rules.md`, the agent MUST NOT leave the submodule in a "detached HEAD" state.
 
 1. **Enter the Submodule**: `cd <OWNER_REPO_PATH>`
-2. **Identify Default Branch**: Run `git remote show origin | grep "HEAD branch" | cut -d ":" -f 2 | xargs` or assume `main`/`master` based on inspection.
+2. **Identify Default Branch**: Run `git remote show origin | grep "HEAD branch" | cut -d ":" -f 2 | xargs` or assume
+`main`/`master` based on inspection.
 3. **Checkout Branch**:
 
     ```bash
@@ -102,26 +131,9 @@ Per `git-submodule-rules.md`, the agent MUST NOT leave the submodule in a "detac
 
 ***
 
-## 5. Migration & Standardization Protocol
-
-When standardizing an existing submodule to the current naming convention, the agent MUST perform the following steps **atomically for each submodule**:
-
-1. **Identify URL**: Retrieve the repository URL from `.gitmodules`.
-2. **Pure Removal**:
-    ```bash
-    git rm <OLD_PATH>
-    git config --remove-section submodule.<OLD_PATH>
-    rm -rf .git/modules/<OLD_PATH>
-    ```
-3. **Re-Addition**:
-    - Derive `<NEW_PATH>` per Section 2.
-    - `git submodule add <URL> <NEW_PATH>`
-4. **Synchronization**: `git submodule update --init --recursive <NEW_PATH>`
-
-***
-
 ## 6. Traceability & Related Protocols
 
 - **Parent Rules**: `ai-agent-rules/git-submodule-rules.md`
-- **Naming Standard**: `ai-agent-rules/underscore-naming-rules.md` (if applicable) or `Underscore Naming Convention` skill.
+- **Naming Standard**: `ai-agent-rules/underscore-naming-rules.md` (if applicable) or `Underscore Naming Convention`
+skill.
 - **Session Log**: Document the addition in `docs/conversations/` if requested.
