@@ -37,3 +37,6 @@
 [submodule "obra_the-elements-of-style"]
 	path = obra_the-elements-of-style
 	url = https://github.com/Baneeishaque/the-elements-of-style.git
+[submodule "rickygao_specrate"]
+	path = rickygao_specrate
+	url = https://github.com/Baneeishaque/specrate.git
