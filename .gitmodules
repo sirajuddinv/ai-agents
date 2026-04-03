@@ -193,3 +193,6 @@
 [submodule "tavily-ai_skills"]
 	path = tavily-ai_skills
 	url = https://github.com/tavily-ai/skills.git
+[submodule "techgangboss_agentstore"]
+	path = techgangboss_agentstore
+	url = https://github.com/techgangboss/agentstore.git
