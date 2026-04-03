@@ -94,3 +94,6 @@
 [submodule "hacklyc_myagents_skills"]
 	path = hacklyc_myagents_skills
 	url = https://github.com/hAcKlyc/MyAgents_skills.git
+[submodule "heyvincent-ai_agent-skills"]
+	path = heyvincent-ai_agent-skills
+	url = https://github.com/HeyVincent-ai/agent-skills.git
