@@ -33,6 +33,7 @@
 | JSON Deep Sort | [`.agents/skills/json-deep-sort/SKILL.md`](.agents/skills/json-deep-sort/SKILL.md) | Alphabetically sorts primitive JSON arrays and recursively applies sort_keys=True for unified dictionary ordering safely natively |
 | VS Code Extension Link Portability | [`.agents/skills/vscode_extension_portability/SKILL.md`](.agents/skills/vscode_extension_portability/SKILL.md) | Refactor non-portable extension-linked paths in settings.json to permanent, portable links using tilde |
 | VS Code Settings Promotion | [`.agents/skills/vscode_settings_promotion/SKILL.md`](.agents/skills/vscode_settings_promotion/SKILL.md) | Automate migration of profile-specific settings to global scope with universal enforcement |
+| Git Submodule Addition | [`.agent/skills/git_submodule_addition/SKILL.md`](.agent/skills/git_submodule_addition/SKILL.md) | Automate adding Git submodules with standardized naming and initialization |
 
 
 ## Conventions
