@@ -28,3 +28,6 @@
 [submodule "huanyu16_agent-skills"]
 	path = huanyu16_agent-skills
 	url = https://github.com/Baneeishaque/agent-skills.git
+[submodule "knot0-com_vibe-testing"]
+	path = knot0-com_vibe-testing
+	url = https://github.com/Baneeishaque/vibe-testing.git
