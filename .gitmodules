@@ -100,3 +100,6 @@
 [submodule "huggingface_skills"]
 	path = huggingface_skills
 	url = https://github.com/huggingface/skills.git
+[submodule "ibelick_ui-skills"]
+	path = ibelick_ui-skills
+	url = https://github.com/ibelick/ui-skills.git
