@@ -121,3 +121,6 @@
 [submodule "mattpocock_skills"]
 	path = mattpocock_skills
 	url = https://github.com/mattpocock/skills.git
+[submodule "mhattingpete_claude-skills-marketplace"]
+	path = mhattingpete_claude-skills-marketplace
+	url = https://github.com/mhattingpete/claude-skills-marketplace.git
