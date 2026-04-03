@@ -115,3 +115,6 @@
 [submodule "lackeyjb_playwright-skill"]
 	path = lackeyjb_playwright-skill
 	url = https://github.com/lackeyjb/playwright-skill.git
+[submodule "ljt-520_openclaw-backup"]
+	path = ljt-520_openclaw-backup
+	url = https://github.com/LJT-520/openClaw-backup.git
