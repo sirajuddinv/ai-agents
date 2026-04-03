@@ -154,3 +154,6 @@
 [submodule "openai_skills"]
 	path = openai_skills
 	url = https://github.com/openai/skills.git
+[submodule "openclaw_openclaw"]
+	path = openclaw_openclaw
+	url = https://github.com/openclaw/openclaw.git
