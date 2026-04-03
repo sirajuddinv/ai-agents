@@ -163,3 +163,6 @@
 [submodule "redis_agent-skills"]
 	path = redis_agent-skills
 	url = https://github.com/redis/agent-skills.git
+[submodule "riothegreat_ai_agentfund-skill"]
+	path = riothegreat_ai_agentfund-skill
+	url = https://github.com/RioTheGreat-ai/agentfund-skill.git
