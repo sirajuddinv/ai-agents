@@ -211,3 +211,6 @@
 [submodule "wshobson_agents"]
 	path = wshobson_agents
 	url = https://github.com/wshobson/agents.git
+[submodule "zxkane_aws-skills"]
+	path = zxkane_aws-skills
+	url = https://github.com/zxkane/aws-skills.git
