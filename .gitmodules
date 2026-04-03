@@ -85,3 +85,6 @@
 [submodule "gotalab_skillport"]
 	path = gotalab_skillport
 	url = https://github.com/gotalab/skillport.git
+[submodule "gudastudio_skills"]
+	path = gudastudio_skills
+	url = https://github.com/GuDaStudio/skills.git
