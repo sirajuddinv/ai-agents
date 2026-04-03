@@ -13,3 +13,6 @@
 [submodule "cloudflare_skills"]
 	path = cloudflare_skills
 	url = https://github.com/Baneeishaque/skills.git
+[submodule "composiohq_awesome-claude-skills"]
+	path = composiohq_awesome-claude-skills
+	url = https://github.com/Baneeishaque/awesome-claude-skills.git
