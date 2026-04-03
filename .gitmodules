@@ -118,3 +118,6 @@
 [submodule "ljt-520_openclaw-backup"]
 	path = ljt-520_openclaw-backup
 	url = https://github.com/LJT-520/openClaw-backup.git
+[submodule "mattpocock_skills"]
+	path = mattpocock_skills
+	url = https://github.com/mattpocock/skills.git
