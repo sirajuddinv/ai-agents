@@ -124,3 +124,6 @@
 [submodule "mhattingpete_claude-skills-marketplace"]
 	path = mhattingpete_claude-skills-marketplace
 	url = https://github.com/mhattingpete/claude-skills-marketplace.git
+[submodule "microsoft_github-copilot-for-azure"]
+	path = microsoft_github-copilot-for-azure
+	url = https://github.com/microsoft/GitHub-Copilot-for-Azure.git
