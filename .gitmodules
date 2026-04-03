@@ -190,3 +190,6 @@
 [submodule "supabase_agent-skills"]
 	path = supabase_agent-skills
 	url = https://github.com/supabase/agent-skills.git
+[submodule "tavily-ai_skills"]
+	path = tavily-ai_skills
+	url = https://github.com/tavily-ai/skills.git
