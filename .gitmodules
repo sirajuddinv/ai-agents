@@ -199,3 +199,6 @@
 [submodule "the-rabak_compound-engineering-plugin"]
 	path = the-rabak_compound-engineering-plugin
 	url = https://github.com/The-Rabak/compound-engineering-plugin.git
+[submodule "vercel-labs_agent-browser"]
+	path = vercel-labs_agent-browser
+	url = https://github.com/vercel-labs/agent-browser.git
