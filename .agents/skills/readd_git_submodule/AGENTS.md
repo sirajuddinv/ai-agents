@@ -5,12 +5,13 @@
 
 ## Passive Context
 
-This skill provides the mandatory protocol for migrating or repairing Git submodules. It enforces a "pure removal" phase before any re-addition to prevent configuration drift and stale metadata corruption.
+This skill provides the mandatory protocol for migrating or repairing Git submodules. It enforces a "pure removal"
+phase before any re-addition to prevent configuration drift and stale metadata corruption.
 
 ## Usage Scenarios
 
 | Trigger | Action |
-|---|---|
+| :--- | :--- |
 | "Standardize submodule paths" | Apply Section 3 (Migration) one-by-one |
 | "Repair broken submodule" | Apply Section 3 to clear and re-initialize |
 | "Rename submodule directory" | Follow the Extraction -> Removal -> Re-addition sequence |
