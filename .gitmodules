@@ -142,3 +142,6 @@
 [submodule "muratcankoylan_agent-skills-for-context-engineering"]
 	path = muratcankoylan_agent-skills-for-context-engineering
 	url = https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering.git
+[submodule "nikitadmitryuk_telegram-media-server"]
+	path = nikitadmitryuk_telegram-media-server
+	url = https://github.com/NikitaDmitryuk/telegram-media-server.git
