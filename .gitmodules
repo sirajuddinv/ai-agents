@@ -1,3 +1,6 @@
 [submodule "ai-agent-rules"]
 	path = ai-agent-rules
 	url = https://github.com/Baneeishaque/ai-agent-rules.git
+[submodule "caopulan_notification-skill"]
+	path = caopulan_notification-skill
+	url = https://github.com/Baneeishaque/Notification-Skill.git
