@@ -202,3 +202,6 @@
 [submodule "vercel-labs_agent-browser"]
 	path = vercel-labs_agent-browser
 	url = https://github.com/vercel-labs/agent-browser.git
+[submodule "vercel-labs_agent-skills"]
+	path = vercel-labs_agent-skills
+	url = https://github.com/vercel-labs/agent-skills.git
