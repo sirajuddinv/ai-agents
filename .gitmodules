@@ -61,3 +61,6 @@
 [submodule "coffeefuelbump_csv-data-summarizer-claude-skill"]
 	path = coffeefuelbump_csv-data-summarizer-claude-skill
 	url = https://github.com/coffeefuelbump/csv-data-summarizer-claude-skill.git
+[submodule "conorluddy_ios-simulator-skill"]
+	path = conorluddy_ios-simulator-skill
+	url = https://github.com/conorluddy/ios-simulator-skill.git
