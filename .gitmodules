@@ -34,3 +34,6 @@
 [submodule "makenotion_claude-code-notion-plugin"]
 	path = makenotion_claude-code-notion-plugin
 	url = https://github.com/Baneeishaque/claude-code-notion-plugin.git
+[submodule "obra_the-elements-of-style"]
+	path = obra_the-elements-of-style
+	url = https://github.com/Baneeishaque/the-elements-of-style.git
