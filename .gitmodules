@@ -16,3 +16,6 @@
 [submodule "composiohq_awesome-claude-skills"]
 	path = composiohq_awesome-claude-skills
 	url = https://github.com/Baneeishaque/awesome-claude-skills.git
+[submodule "dotnet_skills"]
+	path = dotnet_skills
+	url = https://github.com/dotnet/skills.git
