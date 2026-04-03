@@ -184,3 +184,6 @@
 [submodule "shepsci_kaggle-skill"]
 	path = shepsci_kaggle-skill
 	url = https://github.com/shepsci/kaggle-skill.git
+[submodule "sickn33_antigravity-awesome-skills"]
+	path = sickn33_antigravity-awesome-skills
+	url = https://github.com/sickn33/antigravity-awesome-skills.git
