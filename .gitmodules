@@ -166,3 +166,6 @@
 [submodule "riothegreat_ai_agentfund-skill"]
 	path = riothegreat_ai_agentfund-skill
 	url = https://github.com/RioTheGreat-ai/agentfund-skill.git
+[submodule "rmyndharis_antigravity-skills"]
+	path = rmyndharis_antigravity-skills
+	url = https://github.com/rmyndharis/antigravity-skills.git
