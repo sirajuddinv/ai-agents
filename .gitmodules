@@ -172,3 +172,6 @@
 [submodule "sammcgrail_seb"]
 	path = sammcgrail_seb
 	url = https://github.com/sammcgrail/seb.git
+[submodule "sanjay3290_ai-skills"]
+	path = sanjay3290_ai-skills
+	url = https://github.com/sanjay3290/ai-skills.git
