@@ -58,3 +58,6 @@
 [submodule "ckanner_agent-skills"]
 	path = ckanner_agent-skills
 	url = https://github.com/ckanner/agent-skills.git
+[submodule "coffeefuelbump_csv-data-summarizer-claude-skill"]
+	path = coffeefuelbump_csv-data-summarizer-claude-skill
+	url = https://github.com/coffeefuelbump/csv-data-summarizer-claude-skill.git
