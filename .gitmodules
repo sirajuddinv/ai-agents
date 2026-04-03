@@ -151,3 +151,6 @@
 [submodule "omidzamani_dspy-skills"]
 	path = omidzamani_dspy-skills
 	url = https://github.com/OmidZamani/dspy-skills.git
+[submodule "openai_skills"]
+	path = openai_skills
+	url = https://github.com/openai/skills.git
