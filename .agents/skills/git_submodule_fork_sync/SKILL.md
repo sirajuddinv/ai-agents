@@ -4,11 +4,16 @@ description: Automates the realignment of .gitmodules to track internal submodul
 category: Git & Repository Management
 ---
 
-# Git Submodule Fork Synchronization Skill (v1)
+# Git Submodule Fork Synchronization Skill (v1.1)
 
 This skill tracks and remedies discrepancies where a localized submodule has been forked by the user. It asserts that
 the fork becomes the true tracked dependency inside `.gitmodules`, while enforcing that the original repository is
 locked in as the `upstream` remote natively to support downstream rebasing.
+
+> [!IMPORTANT]
+> **Atomic History Mandate**: Per repository standards, submodule synchronization adjustments MUST be woven back into the
+> original initialization commits (`chore(submodules): add <name>`) rather than appended as a monolithic fix at the end
+> of the history tree.
 
 ***
 
@@ -31,36 +36,47 @@ Before execution, the agent MUST verify:
 The logic to traverse the submodules, analyze the internal `.git/config` against `.gitmodules`, and inject the
 `upstream` remotes is maintained via a standalone payload.
 
-### 2.1 Script Execution
-
-> [!IMPORTANT]
-> The agent MUST NOT use generic Bash loops for this logic to adhere to the Script SSOT Mandate. Instead, invoke the
-> centralized discrepancy parser.
+### 2.1 Analysis
 
 ```bash
-# Execute the discrepancy synchronization payload from the root workspace
-python3 .agents/skills/git_submodule_fork_sync/scripts/sync.py
+# Analyze discrepancies
+python3 .agents/skills/git_submodule_fork_sync/scripts/sync.py analyze
+```
+
+### 2.2 Atomic History Integration
+
+#### Strategry A: Fixup & Autosquash (Recommended for 1-2 changes)
+
+1. Identify the origin commit SHA for the submodule.
+2. Update `.gitmodules` URL manually or via script.
+3. Stage changes: `git add .gitmodules`
+4. Commit as fixup: `git commit --fixup <SHA>`
+5. Execute rebase: `GIT_SEQUENCE_EDITOR=true PAGER=cat git rebase -i --autosquash <BASE>`
+
+#### Strategy B: Total Reconstruction (Required for large or linear chains)
+
+If the rebase triggers massive conflicts (common in linear `.gitmodules` stacks), the agent MUST reconstruct the
+history stack to guarantee atomicity.
+
+```bash
+# Execute total reconstruction from a clean base SHA
+python3 .agents/skills/git_submodule_fork_sync/scripts/sync.py rebuild --base <BASE_SHA>
 ```
 
 - **Pedagogical Breakdown**:
-    - The script identifies any submodule where the globally-registered `url=` inside `.gitmodules` inherently
-      diverges from the initialized submodule's internal `origin`.
-    - It overwrites `.gitmodules` to track the fork.
-    - It extracts the replaced tracking URL and checks the isolated `.git/config` within the submodule context.
-      "If not already there", it adds `git remote add upstream <original>`.
+    - The `rebuild` command resets the branch to the base.
+    - It then programmatically redraws every submodule initialization commit.
+    - It natively handles both the fork `url=` tracking and the `upstream` remote injection.
+    - Feature commits MUST be cherry-picked onto the newly perfected baseline once reconstruction is complete.
 
 ***
 
-## 3. Verification & Commit
+## 3. Verification & Finalization
 
-1. **Verify Lineage**: Run `PAGER=cat git diff --cached` or `PAGER=cat git status` to strictly verify that
-`.gitmodules` reflects exclusively the precise URL swap and nothing else.
-2. **Propose Atomic Commit**:
-    - Execute the atomic `fix` commit confirming the realignment to strictly obey the rules.
-    - **Required Form**:
-      `fix(submodules): synchronize .gitmodules with internal fork URLs`
-    - **Body Element**: Add detailed reasoning verifying exactly how many instances were adjusted alongside the
-      addition of `upstream` safety parameters.
+1. **Verify Lineage**: Run `PAGER=cat git log --oneline` to ensure the history stack is a clean vertical line of
+   `chore(submodules): add` commits.
+2. **Verify Remotes**: Use `git -C <path> remote -v` on a fork submodule to confirm both `origin` (fork) and
+   `upstream` (author) are correctly established.
 
 ***
 

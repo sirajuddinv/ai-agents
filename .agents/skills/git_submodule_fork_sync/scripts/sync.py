@@ -1,117 +1,126 @@
 #!/usr/bin/env python3
 import os
 import subprocess
+import json
 import sys
+import argparse
 
-def get_gitmodules_urls():
-    if not os.path.exists(".gitmodules"): return {}
-    urls = {}
-    current_sub = None
+# Industrial Submodule Fork Sync Orchestrator (v1.1)
+
+def run(cmd, shell=False, check=True):
+    print(f"Executing: {cmd}")
+    return subprocess.run(cmd, shell=shell, check=check, text=True, capture_output=True)
+
+def get_gitmodules_mapping():
+    if not os.path.exists(".gitmodules"): return []
+    subs = {}
+    current = None
     with open(".gitmodules", "r") as f:
         for line in f:
             line = line.strip()
             if line.startswith("[submodule"):
-                current_sub = line.split("\"")[1]
-            elif line.startswith("url =") and current_sub:
-                urls[current_sub] = line.split("=", 1)[1].strip()
-    return urls
-
-def get_origin_commit_for_submodule(sub):
-    res = subprocess.run(["git", "log", "--reverse", "--format=%H", "-S", sub, "--", ".gitmodules"], capture_output=True, text=True)
-    if res.returncode == 0 and res.stdout.strip():
-        return res.stdout.strip().split("\n")[0][:7] # Use short SHA for reliability in sequences
-    return None
-
-def sequence_editor_mode(filepath):
-    # This mode is called by git rebase to rewrite the git-rebase-todo file
-    mapping_str = os.environ.get("SYNC_MAPPINGS", "")
-    if not mapping_str: return
+                current = line.split("\"")[1]
+                subs[current] = {}
+            elif current and "=" in line:
+                parts = line.split("=", 1)
+                if len(parts) == 2:
+                    subs[current][parts[0].strip()] = parts[1].strip()
     
-    # parse mappings: "sha1:sub1:url1,sha2:sub2:url2"
-    mappings = {}
-    for entry in mapping_str.split(","):
-        if ":" in entry:
-            sha, sub, url = entry.split(":", 2)
-            mappings[sha] = (sub, url)
+    results = []
+    for name, data in subs.items():
+        path = data.get("path")
+        if path:
+            # Current origin
+            origin = None
+            if os.path.exists(os.path.join(path, ".git")):
+                res = subprocess.run(["git", "-C", path, "remote", "get-url", "origin"], capture_output=True, text=True)
+                if res.returncode == 0: origin = res.stdout.strip()
             
-    with open(filepath, "r") as f:
-        lines = f.readlines()
+            # Historical original URL
+            orig_url = None
+            try:
+                res = subprocess.run(["git", "log", "--reverse", "--format=%H", "-S", name, "--", ".gitmodules"], capture_output=True, text=True)
+                if res.returncode == 0 and res.stdout.strip():
+                    sha = res.stdout.strip().split("\n")[0]
+                    res_content = subprocess.run(["git", "show", f"{sha}:.gitmodules"], capture_output=True, text=True)
+                    import re
+                    pattern = re.compile(rf"\[submodule \"{name}\"\]\s+path = .*?\s+url = (.*?)\s", re.DOTALL)
+                    match = pattern.search(res_content.stdout)
+                    if match: orig_url = match.group(1).strip()
+            except: pass
+            
+            results.append({
+                "name": name,
+                "path": path,
+                "current_origin": origin,
+                "original_url": orig_url,
+                "is_fork": (origin and orig_url and "Baneeishaque" in origin and "Baneeishaque" not in orig_url)
+            })
+    return results
+
+def cmd_analyze(args):
+    mapping = get_gitmodules_mapping()
+    discrepancies = [s for s in mapping if s["is_fork"]]
+    if not discrepancies:
+        print("No fork discrepancies detected.")
+        return
+    print(f"Detected {len(discrepancies)} forked submodules requiring alignment:")
+    for d in discrepancies:
+        print(f" - {d['name']}: {d['original_url']} -> {d['current_origin']}")
+
+def cmd_rebuild(args):
+    """Executes the Total History Reconstruction Strategy."""
+    mapping = get_gitmodules_mapping()
+    if not args.base:
+        print("Error: --base SHA required for reconstruction.")
+        sys.exit(1)
         
-    out_lines = []
-    for line in lines:
-        out_lines.append(line)
-        if line.startswith("pick "):
-            sha = line.split(" ")[1][:7]
-            # If this SHA needs an update, inject an exec line right after the pick
-            for mapped_sha, (sub, url) in mappings.items():
-                if sha.startswith(mapped_sha) or mapped_sha.startswith(sha):
-                    exec_cmd = f"exec git config --file .gitmodules submodule.{sub}.url {url} && git add .gitmodules && git commit --amend --no-edit\n"
-                    out_lines.append(exec_cmd)
-                    
-    with open(filepath, "w") as f:
-        f.writelines(out_lines)
+    print(f"WARNING: This will reset HEAD to {args.base} and rebuild {len(mapping)} commits.")
+    if not args.force:
+        confirm = input("Are you sure? (y/N): ")
+        if confirm.lower() != "y": return
+
+    # 1. Reset
+    run(["git", "reset", "--hard", args.base])
+    run("rm -rf .git/modules/*", shell=True)
+    
+    # 2. Purge paths
+    for sub in mapping:
+        if os.path.exists(sub["path"]):
+            import shutil
+            shutil.rmtree(sub["path"])
+            
+    # 3. rebuild loop
+    if not os.path.exists(".gitmodules"):
+        with open(".gitmodules", "w") as f: f.write("")
+        run(["git", "add", ".gitmodules"])
+
+    for sub in mapping:
+        url = sub["current_origin"] if sub["is_fork"] else sub["original_url"]
+        run(["git", "submodule", "add", url, sub["path"]])
+        if sub["is_fork"]:
+            run(["git", "-C", sub["path"], "remote", "add", "upstream", sub["original_url"]])
+        run(["git", "commit", "-m", f"chore(submodules): add {sub['name']}"])
+
+    print("\nReconstruction successful. Feature commits must now be cherry-picked on top.")
 
 def main():
-    if len(sys.argv) == 2 and sys.argv[1].endswith("git-rebase-todo"):
-        sequence_editor_mode(sys.argv[1])
-        return
-
-    reg_urls = get_gitmodules_urls()
-    if not reg_urls:
-         print("No submodules found in .gitmodules.")
-         return
-
-    discrepancies = []
-    for sub, reg_url in reg_urls.items():
-        if os.path.exists(os.path.join(sub, ".git")):
-            res = subprocess.run(["git", "-C", sub, "remote", "get-url", "origin"], capture_output=True, text=True)
-            if res.returncode == 0:
-                actual_url = res.stdout.strip()
-                if actual_url != reg_url:
-                    discrepancies.append((sub, reg_url, actual_url))
-
-    if not discrepancies:
-        print("All submodule URLs in .gitmodules perfectly match their internal origin remotes.")
-        return
-
-    print(f"Found {len(discrepancies)} URL discrepancies. Constructing dynamic rebase sequence...\n")
-
-    mappings = []
-    for sub, original_url, actual_url in discrepancies:
-        sha = get_origin_commit_for_submodule(sub)
-        if sha:
-            mappings.append(f"{sha}:{sub}:{actual_url}")
-            
-            # Secure upstream remote immediately
-            chk = subprocess.run(["git", "-C", sub, "remote", "get-url", "upstream"], capture_output=True)
-            if chk.returncode != 0:
-                subprocess.run(["git", "-C", sub, "remote", "add", "upstream", original_url])
-        else:
-            print(f"  -> WARNING: Could not find origin commit for {sub}")
-
-    if not mappings:
-        print("No origin commits found. Aborting.")
-        return
-        
-    mapping_str = ",".join(mappings)
+    parser = argparse.ArgumentParser(description="Git Submodule Fork Sync Orchestrator")
+    subparsers = parser.add_subparsers()
     
-    # Establish environment for rebase
-    env = os.environ.copy()
-    env["SYNC_MAPPINGS"] = mapping_str
-    # We call ourselves dynamically as the sequence editor!
-    script_path = os.path.abspath(__file__)
-    env["GIT_SEQUENCE_EDITOR"] = f"python3 {script_path}"
-    env["PAGER"] = "cat"
+    p_analyze = subparsers.add_parser("analyze")
+    p_analyze.set_defaults(func=cmd_analyze)
     
-    # Trigger rebase
-    print("Executing automated inline history rewriting (exec-squash)...")
-    base_commit = subprocess.run(["git", "merge-base", "HEAD", "origin/main"], capture_output=True, text=True).stdout.strip()
-    res = subprocess.run(["git", "rebase", "-i", base_commit], env=env)
+    p_rebuild = subparsers.add_parser("rebuild")
+    p_rebuild.add_argument("--base", required=True, help="Base commit SHA to rebuild from")
+    p_rebuild.add_argument("--force", action="store_true", help="Skip confirmation")
+    p_rebuild.set_defaults(func=cmd_rebuild)
     
-    if res.returncode == 0:
-        print("\n[!] Synchronization complete. Historical submodules successfully aligned.")
+    args = parser.parse_args()
+    if hasattr(args, "func"):
+        args.func(args)
     else:
-        print("\n[!] Rebase encountered an anomaly. Please resolve via git status.")
+        parser.print_help()
 
 if __name__ == "__main__":
     main()
