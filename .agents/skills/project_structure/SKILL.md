@@ -54,13 +54,11 @@ Do NOT apply when:
 
 List every file and directory in the project root and classify each one:
 
+#### 1a — Discover Root Contents
+
 ```powershell
 Get-ChildItem -Path . -Force | Select-Object Name, Mode |
     Sort-Object Mode, Name
-```
-
-```bash
-ls -1aF | sort
 ```
 
 Classify each item against the **Root File Classification Table** (below).
@@ -143,7 +141,7 @@ not in the project. To share them in VCS:
 
 **Ordering:** Move deepest paths first to avoid parent-path invalidation.
 
-**After each move**, search for and update all references:
+#### Audit References After Relocation
 
 ```powershell
 Get-ChildItem -Recurse -File |

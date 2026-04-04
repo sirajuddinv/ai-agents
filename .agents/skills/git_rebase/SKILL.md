@@ -87,7 +87,7 @@ graph LR
 
 Do NOT assume the default branch name. Discover it programmatically:
 
-```bash
+```powershell
 git branch -r
 ```
 
@@ -146,19 +146,19 @@ Create a backup branch before any destructive operation (per the
 [`git_history_refinement`](../git_history_refinement/SKILL.md) backup
 protocol):
 
-```bash
+```powershell
 git branch backup/pre-rebase-<n>
 ```
 
 #### 5b — Rebase Command
 
-```bash
+```powershell
 git rebase --onto <newbase> <upstream> <branch>
 ```
 
 For interactive rebase with CAM actions:
 
-```bash
+```powershell
 git rebase -i <base-commit>
 ```
 
@@ -188,13 +188,13 @@ If a reword accidentally applies to the wrong branch (detected via
 After every successfully completed branch rebase:
 
 1. **Garbage Collection:**
-   ```bash
+   ```powershell
    git gc --prune=now
    ```
 2. **Tag Cleanup:** Delete temporary backup tags created for the
    operation
 3. **Graph Verification:**
-   ```bash
+   ```powershell
    git log --oneline --graph -n 5
    ```
 
@@ -203,7 +203,7 @@ After every successfully completed branch rebase:
 Compare the final rebased state against the backup to ensure no content
 was lost:
 
-```bash
+```powershell
 git diff HEAD <backup-branch>
 ```
 
