@@ -17,6 +17,7 @@
 | Git Repository Status | [`.agents/skills/git_repository_status/SKILL.md`](.agents/skills/git_repository_status/SKILL.md) | Industrial protocol for auditing branch divergence, staged/unstaged changes, and repository history |
 | Commit Edit | [`.agents/skills/commit_edit/SKILL.md`](.agents/skills/commit_edit/SKILL.md) | User asks to edit, fix, or remove files from an existing commit via interactive rebase |
 | Git Commit Details Audit | [`.agents/skills/git_commit_details_audit/SKILL.md`](.agents/skills/git_commit_details_audit/SKILL.md) | Industrial protocol for retrieving and analyzing high-fidelity commit metadata, hunks, and pedagogical explanations |
+| Git Commit Comparison Audit | [`.agents/skills/git_commit_comparison_audit/SKILL.md`](.agents/skills/git_commit_comparison_audit/SKILL.md) | User asks to compare two commits, or submodule pointer mismatches are detected |
 | Noise Removal via Commit Edit | [`.agents/skills/noise_removal_via_commit_edit/SKILL.md`](.agents/skills/noise_removal_via_commit_edit/SKILL.md) | User asks to remove IDE artifact noise (m2e `.project`, `.classpath`, `.settings/`) from an existing commit |
 | Anti Gravity Version Checker | [`.agent/skills/antigravity-version-checker/SKILL.md`](.agent/skills/antigravity-version-checker/SKILL.md) | Audit Anti Gravity vs VS Code versions and feature parity |
 | Code Explanation | [`.agent/skills/code-explanation/SKILL.md`](.agent/skills/code-explanation/SKILL.md) | Deep-dive, pedagogical code documentation standards |
