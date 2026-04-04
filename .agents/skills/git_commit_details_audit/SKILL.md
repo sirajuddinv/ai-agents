@@ -36,6 +36,12 @@ python3 .agents/skills/git_commit_details_audit/scripts/audit.py <COMMIT_SHA>
 - `audit.py`: The specialized engine that iterates through the main repository and all submodules to resolve the SHA.
 - `<COMMIT_SHA>`: The 40-character (full) or unique short SHA of the commit to be audited.
 
+#### Output Features:
+- **Metadata**: Author, Date, and Pedagogical Commit Message.
+- **Advanced Reference Tracking**: Tabular identification of all branches (local/remote) and tags containing the SHA, along with their current Tips and Divergence Status.
+- **Changed Files Inventory**: High-level modification status codes.
+- **Hunk Exposure**: Full diff analysis with "Why vs. What" narrative context.
+
 ### 2.2 Manual Fallback (Hunk Isolation)
 
 If the audit engine is unavailable, the agent MUST use the following high-fidelity Git commands:
