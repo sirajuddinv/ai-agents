@@ -1,7 +1,6 @@
 ---
 name: git_submodule_removal
-description: Industrial protocol for the atomic and complete removal of Git submodules, purging all tracking and
-meta-data.
+description: Industrial protocol for the atomic and complete removal of Git submodules, purging all tracking and meta-data.
 category: Git & Repository Management
 ---
 

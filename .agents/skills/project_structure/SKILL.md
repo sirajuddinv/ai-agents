@@ -1,5 +1,5 @@
 ---
-name: Project Structure & Documentation
+name: Project Structure and Documentation
 description: Industrial-standard project folder structure, root hygiene, README conventions, and documentation placement rules.
 category: Project Organization
 ---

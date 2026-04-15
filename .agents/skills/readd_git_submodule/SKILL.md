@@ -1,7 +1,6 @@
 ---
 name: readd_git_submodule
-description: Industrial protocol for removing and re-adding Git submodules to standardize paths or repair
-configurations.
+description: Industrial protocol for removing and re-adding Git submodules to standardize paths or repair configurations.
 category: Git & Repository Management
 ---
 
