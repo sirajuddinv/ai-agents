@@ -58,9 +58,17 @@ The agent MUST perform the following steps **atomically** to ensure zero error p
 > the same path or URL is later re-added.
 
 ```bash
-# Force remove the submodule from the working tree and .gitmodules
+# Remove the submodule from the working tree and index
 PAGER=cat git rm -f <PATH>
+```
 
+If the above fails (directory not in index), remove manually:
+
+```bash
+rm -rf <PATH>
+```
+
+```bash
 # Clean up the cached configuration from .git/config
 PAGER=cat git config --remove-section submodule.<PATH>
 
