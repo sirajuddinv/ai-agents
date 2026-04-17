@@ -1,0 +1,26 @@
+{
+    // Custom Rule: markdownlint-rule-relative-links
+    // Validates relative file paths in links exist in the file system.
+    "customRules": ["markdownlint-rule-relative-links"],
+
+    // Custom rule config - nested under main config object
+    "config": {
+        "MD033": {
+            "allowed_elements": ["div", "span", "details", "summary", "img", "br"]
+        },
+        "MD013": {
+            "line_length": 120,
+            "code_blocks": false,
+            "tables": false
+        },
+        "MD007": {
+            "indent": 4
+        },
+        "MD046": {
+            "style": "fenced"
+        },
+        "relative-links": {
+            "root_path": "."
+        }
+    }
+}
