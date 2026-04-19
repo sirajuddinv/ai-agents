@@ -128,6 +128,10 @@ The agent **MUST** create a backup branch before performing any destructive inte
    ```powershell
    git branch backup/pre-edit-<n>
    ```
+3. **Remote Backup (Recommended):** Push the backup branch to the remote repository for industrial-grade redundancy:
+   ```powershell
+   git push origin backup/pre-edit-<n>
+   ```
 
 #### 0f — Present the Edit Plan
 
@@ -276,6 +280,13 @@ To correct the author name or email without altering the commit message or file 
 git commit --amend --author="New Name <new.email@example.com>" --no-edit
 ```
 
+#### 3f — Drop a Commit
+
+To remove a commit entirely from the history during an interactive rebase:
+
+1. **Mark for Drop:** In the rebase todo list, change `pick` to `drop` (or simply delete the line) for the target commit hash.
+2. **Complete Rebase:** Run `git rebase --continue`. Git will skip the marked commit and replay all subsequent commits on top of its parent.
+
 ---
 
 ### Step 4 — Amend the Commit
@@ -410,46 +421,74 @@ If the branch was previously pushed, a force push is required. Before any destru
 
 ```powershell
 git branch backup/pre-force-push-<n> origin/<branch>
+# Push to remote for maximum security
+git push origin backup/pre-force-push-<n>
 ```
 
-Then inform the user of the required push action:
+The agent **MUST** inform the user of the required push action by offering the specific command:
 
-```
+```bash
+# For diverged branches (history rewrite)
 ⚠️ Branch has diverged from origin/<branch>.
-Force push required: git push --force-with-lease origin <branch>
-```
+Offer: git push --force-with-lease origin <branch>
 
-Or for a simple push:
-```
+# For simple additions
 Branch is ahead of origin/<branch>.
-Push required: git push origin <branch>
+Offer: git push origin <branch>
 ```
 
-The agent **MUST** explicitly ask the user: *"Shall I push these changes to the remote repository?"*
+The agent **MUST** explicitly ask: *"Shall I push these changes to the remote repository using the offered command?"*
 
-**The agent MUST NOT push (whether simple or force) without the user explicitly saying so.**
+> [!CRITICAL]
+> The agent is **PROHIBITED** from executing any `git push` command (simple or force) without explicit, separate user authorization, even if the rebase was successful.
 
 ---
 
-### Step 8 — Finalization & Backup Cleanup
+Once the rebase and any necessary pushes are complete, the agent **MUST** verify the final history and explicitly offer to clean up backup branches.
 
-Once the rebase and any necessary force-pushes are complete, the agent **MUST** verify the new history with the user and explicitly request authorization to clean up backups.
-
-1. **Present the final refined history:**
+1. **Present the final history:**
    ```powershell
    git log --oneline -10
    ```
-2. **Explicitly ask:** *"Is everything OK? Shall I clean up the backup branches?"*
-3. **ONLY** if the user explicitly confirms (e.g., "yes", "cleanup backup"), delete the backup branches:
-   ```powershell
-   git branch -D backup/pre-edit-<n>
-   git branch -D backup/pre-force-push-<n>
-   # If remote backup was pushed:
-   git push origin --delete backup/pre-force-push-<n>
+2. **Offer the cleanup command:**
+   *"History is verified. Shall I clean up the local and remote backup branches using the following command?"*
+   ```bash
+   git branch -D backup/pre-edit-<n> backup/pre-force-push-<n>
+   git push origin --delete backup/pre-edit-<n> backup/pre-force-push-<n>
    ```
 
 > [!CRITICAL]
-> The agent is **PROHIBITED** from deleting backup branches automatically. It **MUST** remain a separate, explicit user authorization step.
+> The agent is **PROHIBITED** from deleting backup branches (local or remote) automatically. It **MUST** remain a separate, explicit user authorization step.
+
+---
+
+### Step 9 — Multi-Branch Coordination (Conditional)
+
+If the edited commit was part of a shared base branch (e.g., `master`), all dependent branches must be rebased to avoid duplicate commits and divergence.
+
+1. **Identify dependent branches:** Use `git branch -a --contains <old-head-hash>` to find branches tracking the old history.
+2. **Offer synchronization:** For each dependent branch, offer the `rebase --onto` command:
+   ```bash
+   git rebase --onto <new-base-branch> <old-base-hash> <dependent-branch>
+   ```
+3. **Cleanup Authorization:** After synchronization and pushing are complete, explicitly ask to delete any temporary local branches created for the rebase:
+   *"Synchronization complete. Shall I delete the temporary local branches?"*
+   ```bash
+   git branch -D <temp-branch-1> <temp-branch-2>
+   ```
+
+> [!IMPORTANT]
+> Always return to the primary working branch (`master` or the feature branch) after multi-branch coordination.
+
+---
+
+### Step 10 — Linearizing History (Optional)
+
+To convert a branching history into a single line tree (linearizing PR merges):
+
+1. **Start Rebase:** Run `git rebase -i <base-commit>`. Do **NOT** use the `--rebase-merges` flag.
+2. **Review Todo:** Git will automatically propose a linear list of commits, flattening all branches into the main line.
+3. **Complete Rebase:** Run `git rebase --continue`. Note that "Merge pull request" commits will be discarded in favor of a linear sequence.
 
 ---
 
@@ -463,6 +502,8 @@ Once the rebase and any necessary force-pushes are complete, the agent **MUST** 
 | Binary removal | `git rm --cached` and amend |
 | Author correction | Edit and amend with `--author="..." --no-edit` |
 | Message-only edit | `git commit --amend -m` |
+| Drop a commit | Mark as `drop` in rebase todo list |
+| Linearize history | `git rebase -i` (omit `--rebase-merges`) |
 | Descendant preservation | Automatic replay via `git rebase --continue` |
 
 ---
