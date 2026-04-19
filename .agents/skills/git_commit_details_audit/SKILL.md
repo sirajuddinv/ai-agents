@@ -44,20 +44,17 @@ python3 .agents/skills/git_commit_details_audit/scripts/audit.py <COMMIT_SHA>
 
 ### 2.2 Manual Fallback (Hunk Isolation)
 
-If the audit engine is unavailable, the agent MUST use the following high-fidelity Git commands:
+If the audit engine is unavailable, the agent MUST orchestrate the **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** primitive. 
+
+1. Execute the `git_commit_metadata_extraction` primitive on the `<COMMIT_SHA>` to obtain the zero-omission metadata and exact file classifications.
+2. After retrieving the core metadata, extract the full diff hunks for analysis:
 
 ```bash
-# 1. Retrieve metadata and changed files list
-PAGER=cat git show --name-status --format="Repository: [Repo Name]%nCommit SHA: %H%nCommit Message: %B%nAuthor: %an <%ae>%nDate: %aD" <COMMIT_SHA>
-
-# 2. Extract full diff hunks
+# Extract full diff hunks
 PAGER=cat git show -p <COMMIT_SHA>
 ```
 
-#### Detailed Command Explanation:
-- `show --name-status`: Lists modified files with status codes (`M`odified, `A`dded, `D`eleted).
-- `--format="..."`: Enforces the laboratory-standard metadata template.
-- `-p`: Generates the patch (diff) hunks for textual analysis.
+*Do not attempt to write custom bash commands to extract metadata; rely entirely on the primitive to ensure fidelity.*
 
 ***
 
@@ -79,6 +76,7 @@ Every audit report presented to the user MUST follow the **"Why vs. What"** stan
 
 - **Session Log**: Results from this skill should be linked to the relevant industrial walkthrough in `docs/walkthroughs/`.
 - **Rules Mapping**: All audit findings MUST comply with the **[Git Operation Rules](../../../ai-agent-rules/git-operation-rules.md)**.
+- **Related Skills**: Uses **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** as its fallback primitive.
 
 ***
 
