@@ -59,8 +59,8 @@ GIT_PAGER=cat git -C <parent-repo-path> ls-tree HEAD <submodule-name>
 160000 commit <submodule-sha>    <submodule-name>
 ```
 
-#### 1b — Accept an Explicit SHA Override
-If the caller provides an explicit target SHA, use that SHA directly and skip Step 1a.
+#### 1c — Determine the Chronological Range
+If syncing from a previous pointer, the caller MUST provide the previous SHA to ensure the `Changes (<submodule-name>):` section includes the chronological list of all commits in the range (older to newer).
 
 ---
 
@@ -87,11 +87,16 @@ Execute the **[Git Commit Metadata Extraction](../git_commit_metadata_extraction
 
 Take the generic structured record produced by the extraction primitive in Step 3 and apply the submodule-specific formatting.
 
-1. Replace the generic `Commit:` headers with `Submodule commit:` (or `Submodule: <submodule-name> -> <submodule-sha>` for the first line).
-2. Append the registration URL block at the end.
+1. Use the `Changes (<submodule-name>):` header for the chronological log.
+2. Use the `Metadata (<submodule-name>):` header for the structured fields.
+3. Append the registration URL block at the end.
 
 **Required Format:**
 ```
+Changes (<submodule-name>):
+- <chronological-commit-list-older-to-newer>
+
+Metadata (<submodule-name>):
 Submodule: <submodule-name> -> <submodule-sha>
 Submodule commit parent: <parent-sha>
   (merge: <parent1> <parent2>  ← only if merge commit)
