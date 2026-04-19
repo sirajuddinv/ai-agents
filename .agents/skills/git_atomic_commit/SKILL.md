@@ -851,6 +851,15 @@ The agent is **BLOCKED** from:
   Never `Remove-Item` a directory that contains tracked files; remove
   only specific untracked files to avoid accidental deletions
 
+## Related Skills
+
+- **[Git Submodule Commit Details](../git_submodule_commit_details/SKILL.md)**
+  — MANDATORY for extracting metadata during parent-repo sync commits (Step 6).
+- **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)**
+  — The foundational primitive for all high-fidelity extraction.
+- **[Git History Refinement](../git_history_refinement/SKILL.md)**
+  — For splitting or refining non-atomic existing commits.
+
 ## Common Pitfalls
 
 | Pitfall | Solution |
@@ -868,6 +877,7 @@ The agent is **BLOCKED** from:
 | Corrupted rebase state (`rebase-merge` dir empty) | Remove empty `.git/rebase-merge` directory to clear the broken state |
 | Commit message body just rephrases the title | Body must add WHY, not repeat WHAT |
 | Submodule pointer updated without verifying remote | Always verify the referenced commit exists in the remote submodule repo |
+| Submodule sync commit follows legacy formatting | Always use 'Changes' and 'Metadata' headers and include chronological logs |
 | IDE auto-modified 50+ `.project` / `.classpath` files with boilerplate | Present suspected noise to user with sample diff and proposed discard command; never auto-discard — project may intentionally track IDE metadata |
 | Bulk-deleted `.settings/` directory and a tracked file disappeared | Use `git ls-files .settings/` to identify tracked files first; remove only specific untracked files, never the whole directory |
 | Assumed Maven nature/builder in `.project` came from `vscjava.vscode-maven` | The `.project` modifications come from **JDT Language Server** (embedded m2e), not the Maven UI extension; attribute correctly when presenting to user |
