@@ -42,7 +42,11 @@ The `SKILL.md` MUST include:
 1. **YAML Frontmatter**: name, description, category.
 2. **Environment & Dependencies**: Mandated verification logic (`which`, version checks).
 3. **Operational Logic**: The EXACT steps provided by the user (**Zero Omission**).
-4. **Traceability Section**: Links to permanent conversation logs using the **Redaction & Portability** protocol.
+4. **SSOT Compliance**: The skill MUST NOT duplicate technical standards
+   defined in the central rule repository. Instead, it MUST link to the
+   authoritative rule files using relative links (e.g., to the atomic
+   commit rules or commit message rules).
+5. **Traceability Section**: Links to permanent conversation logs using the **Redaction & Portability** protocol.
 
 ### 2.3 Registration
 
