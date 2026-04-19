@@ -83,54 +83,27 @@ git checkout temp-reword
 git ls-tree HEAD <submodule-name>
 ```
 
-Output format: `160000 commit <submodule-sha>	<submodule-name>`
+Output format: `160000 commit <submodule-sha>    <submodule-name>`
 
-#### 3b — Extract Submodule Commit Details
+#### 3b–3e — Extract Full Commit Metadata
 
-Navigate to submodule and get complete metadata:
+**Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md).**
 
-```bash
-GIT_PAGER=cat git -C <submodule-path> log --format=format:"%P%n%an <%ae>%n%ad%n%cn <%ce>%n%cd%n%B" <submodule-sha> -1
-```
+Pass the `<submodule-path>` and `<submodule-sha>` from Step 3a as inputs.
+The skill returns the complete structured record:
 
-**Pedagogical Breakdown:**
-- `%P`: Parent commit(s) — critical for merge commits
-- `%an <%ae>`: Author name and email
-- `%ad`: Author date/time
-- `%cn <%ce>`: Committer name and email
-- `%cd`: Committer date/time
-- `%B`: Full commit message body
+- Parent SHA(s) with merge detection
+- Full commit message body (zero omission)
+- File changes with add/modify/delete classification
+- Author name, email, timestamp
+- Committer name, email, timestamp
+- Registration URL from `.gitmodules`
 
-#### 3c — Get File Changes
-
-```bash
-GIT_PAGER=cat git -C <submodule-path> diff-tree --no-commit-id -r --numstat <submodule-sha>
-```
-
-**Pedagogical Breakdown:**
-- `--numstat`: Shows `<additions>\t<deletions>\t<file>` format
-
-#### 3d — Determine Change Type (Added/Modified)
-
-For each file from step 3c, check if it existed in parent:
-
-```bash
-GIT_PAGER=cat git -C <submodule-path> ls-tree -r <parent-sha> | grep <filename>
-```
-
-- If file exists in parent → **modified**
-- If file does not exist → **added**
-- If in parent but not in current → **deleted**
-
-#### 3e — Handle Merge Commits
-
-For merge commits (multiple parents), calculate changes between parents:
-
-```bash
-GIT_PAGER=cat git -C <submodule-path> diff <parent1> <parent2> --stat
-```
+Use the structured record verbatim when composing the commit message in
+Step 4.
 
 ---
+
 
 ### Step 4 — Compose Commit Message
 
@@ -251,6 +224,7 @@ The agent **IS BLOCKED** from:
 
 ## Related Skills
 
-- [`git_submodule_addition`](git_submodule_addition/SKILL.md) — For adding new submodules
-- [`git_history_refinement`](git_history_refinement/SKILL.md) — For complex history reconstruction
-- [`git_submodule_pointer_repair`](git_submodule_pointer_repair/SKILL.md) — For fixing detached HEAD in submodules
+- [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md) — Extraction primitive delegated by Steps 3b–3e
+- [`git_submodule_addition`](../../../.agent/skills/git_submodule_addition/SKILL.md) — For adding new submodules
+- [`git_history_refinement`](../git_history_refinement/SKILL.md) — For complex history reconstruction
+- [`git_submodule_pointer_repair`](../git_submodule_pointer_repair/SKILL.md) — For fixing detached HEAD in submodules

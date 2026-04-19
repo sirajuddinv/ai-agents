@@ -555,12 +555,50 @@ descriptive and clear.
   relevant main-repo configuration changes.
 - **Descriptive Titles:** Main repo sync commits MUST NOT use generic
   titles like `sync submodule`. They MUST summarize the modular
-  improvements (e.g., `docs: sync rules submodule and update markdown
-  generation standards`).
+  improvements contained in the submodule advance.
 - **Dangling Pointer Check:** Before pushing, verify the referenced
   submodule commit exists in the remote submodule repository.
 - **Canonical Ancestry:** Ensure the new submodule pointer is a
   descendant of the previous pointer if linear history is expected.
+
+#### 6a — Compose Submodule Sync Commit Messages
+
+To satisfy the **Descriptive Titles** mandate, the agent MUST extract
+complete metadata from the new submodule commit before writing the
+parent-repo commit message.
+
+**Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md).**
+
+Inputs to the skill:
+
+- `<submodule-path>`: the path of the submodule within the parent repo
+- `<submodule-sha>`: the new SHA the pointer is being advanced to
+
+The skill returns the full structured record. Use it verbatim in the
+commit message body following this format:
+
+```
+chore(submodules): sync <submodule-name> pointer
+
+Submodule: <submodule-name> -> <new-sha>
+Submodule commit parent: <parent-sha>
+Submodule commit msg: <title>
+
+<body-if-multiline>
+
+Submodule commit changes:
+  <filepath> | <lines> insertions(<classification>)
+  ...
+Submodule commit author: <name> <email>
+Submodule commit author time: <date>
+Submodule commit committer: <name> <email>
+Submodule commit committer time: <date>
+
+Register <submodule-name> submodule pointing to <url>
+```
+
+Each submodule advance MUST be its own atomic commit — never batch
+multiple submodule pointer updates into one commit.
 
 ---
 
