@@ -136,6 +136,14 @@ Ensure build tools have execute permissions:
 chmod +x gradlew      # Gradle wrapper example
 ```
 
+#### 0e — Active Branch Verification (Critical)
+
+The agent MUST ensure the repository is not in a "detached HEAD" state before committing.
+
+1. **Check Current Branch**: Run `git branch --show-current`.
+2. **Handle Detached HEAD**: If the output is empty (detached HEAD), the agent MUST identify and checkout the appropriate branch (usually the default branch, e.g., `main`) before proceeding.
+3. **Upstream Alignment**: Run `git pull` to synchronize with the remote and avoid push-time conflicts.
+
 ---
 
 ### Step 1 — Deep Change Analysis
@@ -547,58 +555,15 @@ they support.
 
 ### Step 6 — Submodule Synchronization
 
-When managing submodules, the main repository's history must remain
-descriptive and clear.
+The agent MUST ensure submodule synchronization follows the industrial standards defined in the project rules.
 
-- **Synchronized Commits:** Every functional update in a submodule
-  requiring a pointer update in the main repo MUST be coupled with its
-  relevant main-repo configuration changes.
-- **Descriptive Titles:** Main repo sync commits MUST NOT use generic
-  titles like `sync submodule`. They MUST summarize the modular
-  improvements contained in the submodule advance.
-- **Dangling Pointer Check:** Before pushing, verify the referenced
-  submodule commit exists in the remote submodule repository.
-- **Canonical Ancestry:** Ensure the new submodule pointer is a
-  descendant of the previous pointer if linear history is expected.
-
-#### 6a — Compose Submodule Sync Commit Messages
-
-To satisfy the **Descriptive Titles** mandate, the agent MUST extract
-complete metadata from the new submodule commit before writing the
-parent-repo commit message.
-
-**Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md).**
-
-Inputs to the skill:
-
-- `<submodule-path>`: the path of the submodule within the parent repo
-- `<submodule-sha>`: the new SHA the pointer is being advanced to
-
-The skill returns the full structured record. Use it verbatim in the
-commit message body following this format:
-
-```
-chore(submodules): sync <submodule-name> pointer
-
-Submodule: <submodule-name> -> <new-sha>
-Submodule commit parent: <parent-sha>
-Submodule commit msg: <title>
-
-<body-if-multiline>
-
-Submodule commit changes:
-  <filepath> | <lines> insertions(<classification>)
-  ...
-Submodule commit author: <name> <email>
-Submodule commit author time: <date>
-Submodule commit committer: <name> <email>
-Submodule commit committer time: <date>
-
-Register <submodule-name> submodule pointing to <url>
-```
-
-Each submodule advance MUST be its own atomic commit — never batch
-multiple submodule pointer updates into one commit.
+1. **Protocol Compliance**: Follow the synchronization steps and logical grouping requirements in [**Phase 6** of the atomic commit rules](../../../ai-agent-rules/git-atomic-commit-construction-rules.md#6-phase-6-submodule-synchronization-protocol).
+2. **Metadata Extraction**:
+   - **Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md)** to retrieve the structured record for the submodule advance.
+3. **Commit Message Construction**:
+   - Construct the commit message according to the standards in [**Section 5** of the commit message rules](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository).
+   - Each submodule advance MUST be its own atomic commit — never batch multiple submodule pointer updates into one commit.
+4. **Submodule History Integrity**: Before updating a submodule pointer in the parent repository, the changes *within* the submodule MUST be committed according to these exact atomic construction rules. A "dirty" or uncommitted submodule state is prohibited during a parent-repo sync.
 
 ---
 
