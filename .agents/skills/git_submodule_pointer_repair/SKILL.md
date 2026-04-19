@@ -69,7 +69,125 @@ python3 .agents/skills/git_submodule_pointer_repair/scripts/repair.py --parent <
 
 ***
 
-## 5. Traceability & Related Conversations
+## 5. Mass Pointer Reconciliation (Full History Rewrite Recovery)
+
+Use this protocol when the **entire submodule history has been rewritten** (e.g., linearized, rebased, pruned), making **every historical pointer** in the parent repository invalid.
+
+### 5.1 Scope Assessment
+
+```bash
+# List ALL parent commits touching the submodule pointer, oldest → newest
+git log --reverse --format="%H | %as | %s" -- <submodule-path>
+```
+
+Save this list. Each entry has an invalid pointer that needs a verified replacement.
+
+### 5.2 Build the Verified Mapping
+
+For each invalid pointer SHA, find its counterpart in the refined submodule history using **high-fidelity metadata extraction** (per the `git_commit_metadata_extraction` skill):
+
+**Match criteria (ALL must agree):**
+- `%an <%ae>` — Author name and email
+- `%ad` — Author date (exact timestamp)
+- `%cn <%ce>` — Committer name and email
+- `%cd` — Committer date (exact timestamp)
+- `%s` — Commit subject line
+- `diff-tree --numstat` file list (sorted, space-separated)
+
+**Indexing the new history for fast lookups:**
+
+```bash
+git -C <submodule-path> log --format="%H|%an <%ae>|%ad|%cn <%ce>|%cd|%s" <new-branch> > new_index.txt
+```
+
+**For each old pointer:**
+
+```bash
+old_title=$(git -C <submodule-path> log -1 --format=%s <old-sha>)
+old_date=$(git -C <submodule-path> log -1 --format=%ad <old-sha>)
+# Match by date + title
+new_sha=$(grep -F "|$old_date|$old_title" new_index.txt | cut -d'|' -f1 | head -n 1)
+```
+
+**If old SHA not in local store — fetch from remote:**
+
+```bash
+git -C <submodule-path> fetch origin <old-sha>
+```
+
+**Output:** A clean `old_sha new_sha` mapping file, one pair per line.
+
+### 5.3 Verify the Mapping (Extensive Check)
+
+Generate a Markdown verification report comparing all metadata fields side-by-side:
+
+```bash
+while read -r line; do
+    suite_sha=$(echo "$line" | cut -d'|' -f1 | xargs)
+    sub_sha=$(echo "$line" | cut -d'|' -f2 | xargs)
+    old_info=$(git -C <submodule-path> log -1 --format="%an <%ae>|%ad|%s" "$sub_sha")
+    o_files=$(git -C <submodule-path> diff-tree --no-commit-id -r --numstat "$sub_sha" | awk '{print $3}' | sort | tr '\n' ' ' | xargs)
+    match_line=$(grep -F "|$o_adate|$o_title" new_index.txt | head -n 1)
+    # Compare: author, date, files — emit ✅ or ❌ per field
+done < mapping.txt | tee verification_report.md
+```
+
+All mappings MUST show ✅ for Author, Author Date, Committer, Committer Date, Commit Message, and Files before proceeding.
+
+### 5.4 Backup Before Rewrite
+
+```bash
+# Create a timestamped local + remote backup branch
+git branch backup/pre-submodule-repair-$(date +%Y%m%d%H%M)
+git push origin backup/pre-submodule-repair-<timestamp>
+```
+
+### 5.5 Rewrite via git-filter-repo Python API
+
+> **Why `git-filter-repo` not `git replace`?** The old pointer SHAs are unreachable (not present as valid objects in the parent's object store), so `git replace` fails with "null type" errors. The `commit_callback` approach via the Python API rewrites tree entries directly.
+
+The automation engine for this mass repair is located at:
+[scripts/mass_repair.py](./scripts/mass_repair.py)
+
+```bash
+cd <parent-repo-path> && python3 scripts/mass_repair.py
+```
+
+> **Critical:** Run from inside the parent repository directory. The script must be separate from the submodule path.
+
+> **Note on `commit_callback` signature:** When using `--partial`, git-filter-repo passes two arguments: `(commit, metadata)`. Using only `(commit)` will raise a `TypeError`.
+
+### 5.6 Final Validation Audit
+
+After the rewrite, verify every pointer is a valid `commit` object in the submodule:
+
+```bash
+git log --reverse --format="%H | %as | %s" -- <submodule-path> | \
+while IFS=' | ' read -r sha date msg; do
+    ptr=$(git ls-tree "$sha" <submodule-path> 2>/dev/null | awk '{print $3}')
+    vtype=$(git -C <submodule-subpath> cat-file -t "$ptr" 2>/dev/null)
+    if [ "$vtype" != "commit" ]; then
+        echo "INVALID: $sha | $date | $ptr | $msg"
+    fi
+done
+echo "Audit complete. Silence = 100% valid."
+```
+
+**Zero INVALID lines = safe to push.**
+
+### 5.7 Force-Push
+
+**Do NOT push automatically.** Offer to push and wait for explicit human authorization.
+
+```bash
+# Only run after user explicitly says yes
+git push --force-with-lease origin main
+```
+
+***
+
+## 6. Traceability & Related Conversations
 
 - **Rule Source**: Promotion of **[Git Submodule History Repair Rules](../../../ai-agent-rules/git-submodule-history-repair-rules.md)**.
-- **Session Log**: Industrialized from the 110-commit surgical repair walkthrough.
+- **Session Log (Single Pointer)**: Industrialized from the 110-commit surgical repair walkthrough.
+- **Session Log (Mass Reconciliation)**: Industrialized from session `aab2c817-85cf-41bf-9db6-e200f8b4275e` — 51-pointer mass repair after full linearization of `ai-agent-rules` history.
