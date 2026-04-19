@@ -119,7 +119,17 @@ a force push:
 git log --oneline <commit-hash>..origin/<branch>
 ```
 
-#### 0e — Present the Edit Plan
+#### 0e — Workspace Backup (Safety First)
+
+The agent **MUST** create a backup branch before performing any destructive interactive rebase.
+
+1. **Incremental Naming:** Use `backup/pre-edit-<n>`
+2. **Branch Creation:**
+   ```powershell
+   git branch backup/pre-edit-<n>
+   ```
+
+#### 0f — Present the Edit Plan
 
 The agent **MUST** present the following to the user before proceeding:
 
@@ -137,11 +147,12 @@ The agent **MUST** present the following to the user before proceeding:
 
 ### Proposed steps:
 1. Stash uncommitted changes (if any)
-2. Interactive rebase, mark `<short-hash>` as `edit`
-3. <specific edit actions>
-4. Amend the commit
-5. Continue rebase (replay <count> descendants)
-6. Restore stashed changes
+2. Create workspace backup branch (`backup/pre-edit-<n>`)
+3. Interactive rebase, mark `<short-hash>` as `edit`
+4. <specific edit actions>
+5. Amend the commit
+6. Continue rebase (replay <count> descendants)
+7. Restore stashed changes
 
 **⚠️ Warning:** This rewrites history. Force push required if
 branch was previously pushed to remote.
@@ -393,16 +404,52 @@ git log --oneline -10
 git status --short
 ```
 
-#### 7b — Report Divergence
+#### 7b — Pre-Push Remote Backup & Push Authorization
 
-If the branch was previously pushed, inform the user:
+If the branch was previously pushed, a force push is required. Before any destructive operation (force-push), the agent **MUST** create a backup of the remote state:
+
+```powershell
+git branch backup/pre-force-push-<n> origin/<branch>
+```
+
+Then inform the user of the required push action:
 
 ```
 ⚠️ Branch has diverged from origin/<branch>.
 Force push required: git push --force-with-lease origin <branch>
 ```
 
-**The agent MUST NOT force-push without explicit user request.**
+Or for a simple push:
+```
+Branch is ahead of origin/<branch>.
+Push required: git push origin <branch>
+```
+
+The agent **MUST** explicitly ask the user: *"Shall I push these changes to the remote repository?"*
+
+**The agent MUST NOT push (whether simple or force) without the user explicitly saying so.**
+
+---
+
+### Step 8 — Finalization & Backup Cleanup
+
+Once the rebase and any necessary force-pushes are complete, the agent **MUST** verify the new history with the user and explicitly request authorization to clean up backups.
+
+1. **Present the final refined history:**
+   ```powershell
+   git log --oneline -10
+   ```
+2. **Explicitly ask:** *"Is everything OK? Shall I clean up the backup branches?"*
+3. **ONLY** if the user explicitly confirms (e.g., "yes", "cleanup backup"), delete the backup branches:
+   ```powershell
+   git branch -D backup/pre-edit-<n>
+   git branch -D backup/pre-force-push-<n>
+   # If remote backup was pushed:
+   git push origin --delete backup/pre-force-push-<n>
+   ```
+
+> [!CRITICAL]
+> The agent is **PROHIBITED** from deleting backup branches automatically. It **MUST** remain a separate, explicit user authorization step.
 
 ---
 
@@ -424,10 +471,11 @@ Force push required: git push --force-with-lease origin <branch>
 
 The agent is **BLOCKED** from:
 
+- **Deleting backup branches automatically** — Requires explicit user authorization
+- **Skipping the backup steps** — Mandatory before any destructive local rebase or remote force-push
 - **Starting rebase without user confirmation** — The edit plan MUST
   be presented and approved first
-- **Force-pushing without explicit request** — Always inform, never
-  auto-push
+- **Pushing changes automatically** — The agent MUST NOT execute `git push` or `git push --force-with-lease` without explicit user authorization, even if the rebase was successful.
 - **Editing without stashing first** — If the working tree is dirty,
   stash MUST precede rebase
 - **Skipping conflicted descendants without confirmation** — Empty
