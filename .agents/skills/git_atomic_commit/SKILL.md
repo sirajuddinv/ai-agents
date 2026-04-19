@@ -556,14 +556,14 @@ they support.
 ### Step 6 — Submodule Synchronization
 
 The agent MUST ensure submodule synchronization follows the industrial standards defined in the project rules.
+### Step 6 — Submodule Synchronization Protocol
 
-1. **Protocol Compliance**: Follow the synchronization steps and logical grouping requirements in [**Phase 6** of the atomic commit rules](../../../ai-agent-rules/git-atomic-commit-construction-rules.md#6-phase-6-submodule-synchronization-protocol).
-2. **Metadata Extraction**:
-   - **Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md)** to retrieve the structured record for the submodule advance.
-3. **Commit Message Construction**:
-   - Construct the commit message according to the standards in [**Section 5** of the commit message rules](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository).
-   - Each submodule advance MUST be its own atomic commit — never batch multiple submodule pointer updates into one commit.
-4. **Submodule History Integrity**: Before updating a submodule pointer in the parent repository, the changes *within* the submodule MUST be committed according to these exact atomic construction rules. A "dirty" or uncommitted submodule state is prohibited during a parent-repo sync.
+When managing submodules, the main repository's history must remain descriptive and clear.
+
+- **Synchronized Commits**: Every functional update in a submodule requiring a pointer update in the main repo MUST be coupled with its relevant main-repo configuration changes.
+- **Orchestration**: Delegate metadata extraction to the **[Git Submodule Commit Details](../git_submodule_commit_details/SKILL.md)** skill to ensure zero-omission fidelity.
+- **Commit Message Generation**: All submodule sync commits MUST follow the strict formatting, `Changes (<submodule-name>):` chronological ordering, and `Metadata (<submodule-name>):` requirements defined in **[Submodule Sync Commits](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)**.
+- **Submodule History Integrity**: Before updating a submodule pointer in the parent repository, the changes *within* the submodule MUST be committed according to these exact atomic construction rules. A "dirty" or uncommitted submodule state is prohibited during a parent-repo sync.
 
 ---
 
