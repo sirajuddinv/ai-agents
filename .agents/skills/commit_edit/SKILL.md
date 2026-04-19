@@ -56,6 +56,7 @@ Apply this skill when:
 - A commit's content needs amendment without splitting into multiple
   commits
 - The user identifies a specific commit hash and wants targeted changes
+- The user asks to correct the author name or email of specific historical commits
 
 Do NOT apply when:
 - The user wants to split a commit into multiple atomic commits — use
@@ -256,6 +257,14 @@ For binary files that should not have been committed:
 git rm --cached <binary-file>
 ```
 
+#### 3e — Amend Commit Author
+
+To correct the author name or email without altering the commit message or file contents:
+
+```powershell
+git commit --amend --author="New Name <new.email@example.com>" --no-edit
+```
+
 ---
 
 ### Step 4 — Amend the Commit
@@ -405,6 +414,7 @@ Force push required: git push --force-with-lease origin <branch>
 | File addition to commit | Stage and amend |
 | Content modification | Edit, stage, and amend |
 | Binary removal | `git rm --cached` and amend |
+| Author correction | Edit and amend with `--author="..." --no-edit` |
 | Message-only edit | `git commit --amend -m` |
 | Descendant preservation | Automatic replay via `git rebase --continue` |
 
