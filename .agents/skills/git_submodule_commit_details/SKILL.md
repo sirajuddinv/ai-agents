@@ -145,4 +145,4 @@ The agent **IS BLOCKED** from:
 ## Traceability
 
 - **Refactored in:** Session `502cbc0b-a723-48ab-a7f6-698dff812c9a` to delegate raw extraction to the universal primitive `git_commit_metadata_extraction`.
-- **Rule source:** [`ai-rule-standardization-rules.md`](../../../ai-agent-rules/ai-rule-standardization-rules.md)
+- **Formatting Authority:** [`git-commit-message-rules.md#5-submodule-sync-commits-parent-repository`](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)
