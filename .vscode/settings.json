@@ -1,4 +1,4 @@
 {
     "harper.workspaceDictPath": ".harper-dictionary.txt",
-    "markdownlint.configFile": ".markdownlint.jsonc"
+    "markdownlint.configFile": ".markdownlint-cli2.jsonc"
 }
