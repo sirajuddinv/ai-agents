@@ -55,7 +55,7 @@ When provided with a foreclosure amount:
 
 ### 2.2 Opportunity Cost Analysis
 
-The agent MUST create a month-by-month comparison table showing:
+The agent MUST create a comparison table showing:
 
 - Installment amount
 - Loan interest paid
@@ -63,7 +63,32 @@ The agent MUST create a month-by-month comparison table showing:
 - Alternative investment interest earned
 - Net cash position for each scenario
 
-### 2.3 Decision Framework
+#### 2.2.1 Precise Daily Interest Calculation (Mandatory)
+
+For accurate opportunity cost analysis, the agent MUST:
+
+1. Calculate interest from **current date** to **actual installment dates**, not full calendar months
+2. Use daily interest rate: `(annual rate / 365)`
+3. Show **exact period dates** and **number of days** for each cash flow segment
+4. Show **available cash flow** for each period
+5. Calculate period-wise interest earnings
+
+Example table format:
+
+| Period | Dates | Days | Available Cash Flow | Interest Earned |
+|--------|-------|------|---------------------|-----------------|
+| Period 1 | [Start Date] - [Installment Date] | X days | ₹X,XXX.XX | ₹XX.XX |
+
+### 2.3 Cash Flow Analysis Protocol
+
+The agent MUST perform cash flow analysis when requested:
+
+1. Show available cash flow for each period
+2. Highlight when and how cash flow decreases
+3. Verify user cash flow assumptions for accuracy
+4. Document cash flow dates and amounts precisely
+
+### 2.4 Decision Framework
 
 The agent MUST evaluate and rank these options:
 
