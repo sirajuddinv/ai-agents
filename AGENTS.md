@@ -46,6 +46,7 @@
 | Git Divergence Audit | [`.agents/skills/git_divergence_audit/SKILL.md`](.agents/skills/git_divergence_audit/SKILL.md) | Industrial protocol for surgical, unit-by-unit comparison of diverged local and remote branches |
 | Git Submodule Commit Details | [`.agents/skills/git_submodule_commit_details/SKILL.md`](.agents/skills/git_submodule_commit_details/SKILL.md) | Extract complete submodule commit metadata (parent, message, file changes, author, committer, URL) for use in sync messages or audits |
 | Git Commit Metadata Extraction | [`.agents/skills/git_commit_metadata_extraction/SKILL.md`](.agents/skills/git_commit_metadata_extraction/SKILL.md) | A universal primitive for extracting complete commit metadata from any Git commit (parent SHA, message, file classification) |
+| Work Log Processing | [`.agents/skills/work_log_processing/SKILL.md`](.agents/skills/work_log_processing/SKILL.md) | Transform rough work log files (*_rough.txt) into formatted work log files with date standardization and caller notation |
 ## Conventions
 
 - Underscore naming for author-chosen files and directories
