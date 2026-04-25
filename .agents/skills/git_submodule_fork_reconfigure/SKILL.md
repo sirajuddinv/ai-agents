@@ -35,7 +35,14 @@ When a push to a submodule's `origin` fails due to 403 Forbidden.
    ```bash
    git remote get-url origin
    ```
-2. **Create Fork**:
+2. **Check for Existing Fork**:
+   ```bash
+   gh repo list <owner> --limit 100 | grep -i <fork_name>
+   ```
+   * `<owner>`: Your GitHub username.
+   * `<fork_name>`: The expected fork name (submodule directory name).
+   * **If fork exists, skip to Phase 2** — no need to create a new fork.
+3. **Create Fork**:
    ```bash
    gh repo fork <upstream_repo_path> --fork-name <desired_name>
    ```
