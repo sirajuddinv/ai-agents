@@ -18,7 +18,7 @@
 	url = https://github.com/Baneeishaque/awesome-claude-skills.git
 [submodule "dotnet_skills"]
 	path = dotnet_skills
-	url = https://github.com/dotnet/skills.git
+	url = https://github.com/Baneeishaque/dotnet_skills.git
 [submodule "dragon1086_claude-skills"]
 	path = dragon1086_claude-skills
 	url = https://github.com/Baneeishaque/claude-skills.git
