@@ -1,19 +1,20 @@
 ---
-name: Underscore Naming Convention
-description: Enforce underscore_based naming for all project files, directories, and identifiers — with industry-standard exemptions.
+name: Lower Case Underscore Naming Convention
+description: Enforce lowercase snake_case naming for all project files, directories, and identifiers — with industry-standard exemptions.
 category: Naming & Conventions
 ---
 
-# Underscore Naming Convention Skill
+# Lower Case Underscore Naming Convention Skill
 
-> **Skill ID:** `underscore_naming`
-> **Version:** 1.1.0
+> **Skill ID:** `lower_case_underscore_naming`
+> **Version:** 1.2.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
 ## Description
 
-Enforce a consistent `underscore_based` naming convention across all
+Enforce a consistent `lowercase_underscore_based` (snake_case) naming convention across all
 project files, directories, artifact identifiers, and internal references.
+All file and directory names MUST be in lowercase.
 This skill detects violations, classifies exemptions, traces the full
 blast radius of each rename, executes renames, updates all cross-references,
 and verifies zero stale references remain.
@@ -290,7 +291,7 @@ The naming convention applies to these categories:
 | Directories (author-chosen) | `snake_case` | `tul_logging/` |
 | Maven `<artifactId>` | `snake_case` | `tul_logging` |
 | Gradle `rootProject.name` | `snake_case` | `tul_logging` |
-| Skill IDs | `snake_case` | `underscore_naming` |
+| Skill IDs | `snake_case` | `lower_case_underscore_naming` |
 | Template files | `snake_case` + `.tpl` | `integration_snippet.java.tpl` |
 | Config keys (author-chosen) | `snake_case` or `dot.notation` | `tul.server.url` |
 
