@@ -7,7 +7,7 @@ category: Git & Repository Management
 # Git Submodule Commit Details Skill
 
 > **Skill ID:** `git_submodule_commit_details`
-> **Version:** 2.0.0
+> **Version:** 2.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
 ## Description
@@ -59,8 +59,17 @@ GIT_PAGER=cat git -C <parent-repo-path> ls-tree HEAD <submodule-name>
 160000 commit <submodule-sha>    <submodule-name>
 ```
 
-#### 1c — Determine the Chronological Range
-If syncing from a previous pointer, the caller MUST provide the previous SHA to ensure the `Changes (<submodule-name>):` section includes the chronological list of all commits in the range (older to newer).
+#### 1b — Determine the Chronological Range
+If syncing from a previous pointer, the caller MUST provide the previous SHA to determine the range of commits.
+
+#### 1c — Extract Commit Log for the Range
+Get the chronological list of commits between old and new SHAs:
+
+```bash
+git -C <submodule-path> log <old-sha>..<new-sha> --oneline
+```
+
+This enables the format: `Changes (<submodule-name>) [<old-sha>..<new-sha>]:`
 
 ---
 
@@ -93,7 +102,11 @@ Take the generic structured record produced by the extraction primitive in Step 
 
 **Required Format:**
 ```
-Changes (<submodule-name>):
+chore(submodules): sync <submodule-name> with <descriptive-action>
+
+Updates <submodule-name> from <old-sha-short> to <new-sha-short> (<head-commit-title>)
+
+Changes (<submodule-name>) [<old-sha>..<new-sha>]:
 - <chronological-commit-list-older-to-newer>
 
 Metadata (<submodule-name>):
@@ -105,8 +118,8 @@ Submodule commit msg: <title-line>
 <body-paragraphs-if-multiline>
 
 Submodule commit changes:
-  <filepath> | <additions> insertions(<classification>)
-  <filepath> | <additions> insertions, <deletions> deletions(<classification>)
+   | <additions> insertions(<classification>)
+   | <additions> insertions, <deletions> deletions(<classification>)
   ...
 Submodule commit author: <author-name> <author-email>
 Submodule commit author time: <author-date>
@@ -115,6 +128,10 @@ Submodule commit committer time: <committer-date>
 
 Register <submodule-name> submodule pointing to <registration-url>
 ```
+
+**First Line Guidance:**
+- Use format: `chore(submodules): sync <submodule-name> with <action>`
+- Include a descriptive action that summarizes the changes (e.g., "with swaps PNL updates", "with build artifact cleanup", "with price data updates")
 
 ---
 
@@ -144,5 +161,6 @@ The agent **IS BLOCKED** from:
 
 ## Traceability
 
+- **Updated to v2.1.0:** Session based on submodule sync commits in oleovista-acers - Added range notation and first line guidance.
 - **Refactored in:** Session `502cbc0b-a723-48ab-a7f6-698dff812c9a` to delegate raw extraction to the universal primitive `git_commit_metadata_extraction`.
 - **Formatting Authority:** [`git-commit-message-rules.md#5-submodule-sync-commits-parent-repository`](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)
