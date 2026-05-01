@@ -56,6 +56,9 @@ Apply this skill when:
 - `git status` shows staged, unstaged, or untracked modifications
 - Multiple unrelated changes exist in the working tree and need separation
 - A user asks to review what should be committed
+- **After ANY submodule commit is executed, the skill AUTOMATICALLY offers
+  the parent repository submodule SHA update (if applicable) and executes it
+  upon user "yes" — no separate user request needed**
 
 Do NOT apply when:
 - The user asks to refine or split **existing** commits — use
@@ -567,6 +570,48 @@ When managing submodules, the main repository's history must remain descriptive 
 
 ---
 
+### Step 7 — Automatic Parent Repository Submodule Sync Offer
+
+MANDATORY post-commit trigger for submodule commits.
+
+**When activated**: Immediately AFTER successfully committing ANY change to a
+submodule repository (i.e., the current working directory is inside a
+submodule that is itself tracked by a parent repository).
+
+**Detection**: Check if a containing parent repository exists and tracks the
+current directory as a submodule:
+
+```powershell
+# From inside the submodule
+$parent = git -C .. rev-parse --is-inside-work-tree 2>$null
+if ($parent -eq "true") {
+  # Parent exists — check if current path is a submodule
+  git -C .. status --porcelain | Select-String "^\s*M\s+$(Split-Path -Leaf (Get-Location))"
+}
+```
+
+**Procedure**:
+
+1. **Analyze parent state** — Run `git -C <parent-path> status` to confirm the
+   submodule entry shows `modified: <submodule-name> (new commits)`.
+2. **Extract metadata** — Use the `git_submodule_commit_details` skill or
+   `git -C <parent-path> diff <submodule-name>` to get old→new SHA delta.
+3. **Generate the arranged commit preview** — Present the full submodule sync
+   commit (per Phase 6 guidelines) as a **standalone preview**.
+4. **Prompt explicitly**: 
+   ```
+   The parent repository needs a submodule SHA update. Execute sync?
+   ```
+5. **On "yes"** — Stage and commit the parent sync immediately (do not wait or
+   re-preview).
+6. **On "no" or ambiguous** — Do NOT commit. Await explicit directive.
+
+**Critical**: This step is **non-optional** and fires automatically on every
+submodule commit. The agent MUST NOT skip or defer the offer. The user's
+affirmative ("yes") triggers immediate execution without additional ceremony.
+
+---
+
 ### Step 7 — Generated vs Custom File Splitting
 
 When a file contains both standard API-generated content (e.g., from
@@ -786,7 +831,7 @@ After commits are complete, follow the push protocol:
 - **Explicit Request Required:** Do NOT execute `git push` unless the
   user explicitly requests it.
 - **Offer, Don't Execute:** After commits, OFFER to push. Wait for
-  explicit "yes" or "git push" command.
+  explicit "yes" or `git push` command.
 - **Status Check:** Always run `git status` before push.
 - **Discover Default Branch:** Do NOT assume the default branch name.
   Discover it programmatically:
@@ -816,6 +861,7 @@ be synthesized from real-time analysis, never mocked in a plan.
 | Structural refactors | Dedicated `refactor` commit |
 | Config updates | Coupled with their functional change |
 | Submodule pointer updates | Descriptive title, coupled with main-repo config |
+| Submodule commit auto-sync | Automatic parent repo SHA update offer after every submodule commit; execute on user "yes" |
 | Generated vs custom content | Split into Foundation + Customization commits |
 | CI/CD managed files | Excluded from manual edits |
 
