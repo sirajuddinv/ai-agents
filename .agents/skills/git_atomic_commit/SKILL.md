@@ -56,9 +56,9 @@ Apply this skill when:
 - `git status` shows staged, unstaged, or untracked modifications
 - Multiple unrelated changes exist in the working tree and need separation
 - A user asks to review what should be committed
-- **After ANY submodule commit is executed, the skill AUTOMATICALLY offers
-  the parent repository submodule SHA update (if applicable) and executes it
-  upon user "yes" — no separate user request needed**
+- **After ANY submodule commit is executed, the skill AUTOMATICALLY checks for
+  and offers the parent repository submodule SHA update (if applicable) and
+  executes it upon user "yes" — no separate user request needed**
 
 Do NOT apply when:
 - The user asks to refine or split **existing** commits — use
@@ -67,6 +67,11 @@ Do NOT apply when:
   [`git_rebase`](../git_rebase/SKILL.md) instead
 - The request is a simple single-file, single-concern commit with no
   mixed changes (a lightweight commit suffices without the full protocol)
+
+**Push Policy (GLOBAL)**: The agent MUST NEVER execute `git push` automatically.
+After any commit(s), the agent MAY OFFER to push (e.g., "Push to remote?") but
+MUST WAIT for explicit user approval. Only push when the user explicitly says
+"yes", "push", or issues a direct `git push` command. No exceptions.
 
 ---
 
@@ -536,7 +541,7 @@ per-logical-group for clear "move" history.
 
 Never mix formatting (4a) with structural refactors (4b) or functional
 logic (Step 2). Use `git add -p` or Intermediate State Synthesis
-(Step 11) to ensure absolute partitioning.
+(Step 12) to ensure absolute partitioning.
 
 ---
 
@@ -556,63 +561,70 @@ they support.
 
 ---
 
-### Step 6 — Submodule Synchronization
-
-The agent MUST ensure submodule synchronization follows the industrial standards defined in the project rules.
 ### Step 6 — Submodule Synchronization Protocol
 
 When managing submodules, the main repository's history must remain descriptive and clear.
 
-- **Synchronized Commits**: Every functional update in a submodule requiring a pointer update in the main repo MUST be coupled with its relevant main-repo configuration changes.
+- **Submodule-First Discipline**: All submodule commits MUST be completed
+  BEFORE handling any parent-repository work. Submodule work is highest
+  priority; parent sync follows immediately after.
+- **Synchronized Commits**: Every functional update in a submodule requiring a
+  pointer update in the main repo MUST be coupled with its relevant main-repo
+  configuration changes (e.g., CI scripts or IDE settings).
 - **Orchestration**: Delegate metadata extraction to the **[Git Submodule Commit Details](../git_submodule_commit_details/SKILL.md)** skill to ensure zero-omission fidelity.
-- **Commit Message Generation**: All submodule sync commits MUST follow the strict formatting, `Changes (<submodule-name>):` chronological ordering, and `Metadata (<submodule-name>):` requirements defined in **[Submodule Sync Commits](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)**.
-- **Submodule History Integrity**: Before updating a submodule pointer in the parent repository, the changes *within* the submodule MUST be committed according to these exact atomic construction rules. A "dirty" or uncommitted submodule state is prohibited during a parent-repo sync.
+- **Commit Message Generation**: All submodule sync commits MUST follow the
+  strict formatting, chronological ordering, and metadata requirements defined in
+  **[Submodule Sync Commits](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)**.
+- **Submodule History Integrity**: Before updating a submodule pointer in the
+  parent repository, the changes *within* the submodule MUST be committed
+  according to these exact atomic construction rules. A "dirty" or
+  uncommitted submodule state is prohibited during a parent-repo sync.
 
----
+### Step 7 — Parent Sync Offer & Change Grouping
 
-### Step 7 — Automatic Parent Repository Submodule Sync Offer
+Immediately after finalizing all submodule commits, the agent MUST evaluate the
+parent repository.
 
-MANDATORY post-commit trigger for submodule commits.
+#### 7a — Parent State Analysis
 
-**When activated**: Immediately AFTER successfully committing ANY change to a
-submodule repository (i.e., the current working directory is inside a
-submodule that is itself tracked by a parent repository).
+1. Check if the containing parent repo exists and tracks current dir as submodule.
+2. Verify parent's recorded SHA differs from submodule HEAD → stale pointer confirmed.
 
-**Detection**: Check if a containing parent repository exists and tracks the
-current directory as a submodule:
+#### 7b — Related Parent Changes Detection
 
-```powershell
-# From inside the submodule
-$parent = git -C .. rev-parse --is-inside-work-tree 2>$null
-if ($parent -eq "true") {
-  # Parent exists — check if current path is a submodule
-  git -C .. status --porcelain | Select-String "^\s*M\s+$(Split-Path -Leaf (Get-Location))"
-}
+- **Inventory parent changes**: Run `git -C <parent-path> status` to list all
+  modified/untracked files in the parent.
+- **Determine coupling**: Are any parent changes **directly related** to the
+  submodule commit (e.g., implementing the rule just added, updating CI to use
+  the new submodule feature, docs that reference the new behavior)?
+  - **Yes** → Group with the submodule SHA sync in a **single unified commit**.
+  - **No** → Keep parent sync minimal (SHA-only), commit related changes
+    separately afterward.
+
+#### 7c — Arranged Commit Preview
+
+Present the parent sync commit using full arranged commit format (§4). Include
+both the submodule SHA delta and any grouped parent-side changes in the message body.
+
+#### 7d — Execution Prompt
+
+```
+The parent repository needs a submodule SHA update. Execute sync?
 ```
 
-**Procedure**:
+- On **"yes"** → Execute the presented commit immediately.
+- On **"no"** or ambiguous → Do NOT commit; await explicit directive.
+- **Never auto-push** — push offers come AFTER commit execution, never before.
 
-1. **Analyze parent state** — Run `git -C <parent-path> status` to confirm the
-   submodule entry shows `modified: <submodule-name> (new commits)`.
-2. **Extract metadata** — Use the `git_submodule_commit_details` skill or
-   `git -C <parent-path> diff <submodule-name>` to get old→new SHA delta.
-3. **Generate the arranged commit preview** — Present the full submodule sync
-   commit (per Phase 6 guidelines) as a **standalone preview**.
-4. **Prompt explicitly**: 
-   ```
-   The parent repository needs a submodule SHA update. Execute sync?
-   ```
-5. **On "yes"** — Stage and commit the parent sync immediately (do not wait or
-   re-preview).
-6. **On "no" or ambiguous** — Do NOT commit. Await explicit directive.
+#### 7e — Post-Sync Cleanup
 
-**Critical**: This step is **non-optional** and fires automatically on every
-submodule commit. The agent MUST NOT skip or defer the offer. The user's
-affirmative ("yes") triggers immediate execution without additional ceremony.
+If parent-side unrelated changes were detected but NOT grouped, they remain in
+the parent working tree as separate atomic units. Arrange and commit them
+independently following the standard protocol.
 
 ---
 
-### Step 7 — Generated vs Custom File Splitting
+### Step 8 — Generated vs Custom File Splitting
 
 When a file contains both standard API-generated content (e.g., from
 gitignore.io) and user-defined custom rules, split into separate commits.
@@ -629,7 +641,7 @@ gitignore.io) and user-defined custom rules, split into separate commits.
 
 ---
 
-### Step 8 — Commit Message Quality Standards
+### Step 9 — Commit Message Quality Standards
 
 Every commit message MUST meet these quality requirements:
 
@@ -645,7 +657,7 @@ Every commit message MUST meet these quality requirements:
 
 ---
 
-### Step 9 — Execution & Verification
+### Step 10 — Execution & Verification
 
 #### 9a — Step-by-Step Execution
 
@@ -722,7 +734,7 @@ Get-ChildItem ".git/rebase-merge"       # Empty = corrupted state
 
 ---
 
-### Step 10 — Logic-Documentation Compass
+### Step 11 — Logic-Documentation Compass
 
 Visualize the commit history as a compass where each direction is a
 logical area:
@@ -751,7 +763,7 @@ serve distinct purposes.
 
 ---
 
-### Step 11 — Source Logic & Generated Files
+### Step 12 — Source Logic & Generated Files
 
 #### 11a — Update the Source, Not the Output
 
@@ -789,7 +801,7 @@ git grep -r "old-name.md" . --exclude-dir=.git --exclude=README.md
 
 ---
 
-### Step 12 — Intermediate State Synthesis
+### Step 13 — Intermediate State Synthesis
 
 When a file contains interleaved changes or massive structural reorders
 (50+ lines moved) mixed with functional fixes, hunk-based staging may
@@ -809,7 +821,7 @@ into pristine, industrial-grade commit history.
 
 ---
 
-### Step 13 — User-Requested Coupling & Deviations
+### Step 14 — User-Requested Coupling & Deviations
 
 If the user explicitly requests coupling unrelated changes or deviating
 from atomic rules:
@@ -824,7 +836,7 @@ from atomic rules:
 
 ---
 
-### Step 14 — Push Protocol
+### Step 15 — Push Protocol
 
 After commits are complete, follow the push protocol:
 
@@ -842,7 +854,7 @@ git branch -r
 
 ---
 
-### Step 15 — Guardrail Against Predictive Planning
+### Step 16 — Guardrail Against Predictive Planning
 
 The agent must never "commit" in a plan to what will be changed in the
 future. Commit construction is a **Real-Time Analysis** task. The plan
