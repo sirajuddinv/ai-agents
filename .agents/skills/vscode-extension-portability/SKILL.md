@@ -1,5 +1,5 @@
 ---
-name: VS Code Extension Link Portability
+name: vscode-extension-portability
 description: Refactor non-portable extension-linked paths in settings.json to permanent, portable links using tilde.
 category: VSCode-Configuration
 ---
