@@ -1,5 +1,5 @@
 ---
-name: GitHub Secrets Bulk Set
+name: github-secrets-bulk-set
 description: Industrial protocol for setting GitHub repository (or environment) secrets in bulk from a local
   .env-style secrets file using the `gh` CLI.
 category: GitHub-Automation
