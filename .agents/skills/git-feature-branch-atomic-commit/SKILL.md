@@ -1,5 +1,5 @@
 ---
-name: Git Feature Branch Atomic Commit
+name: git-feature-branch-atomic-commit
 description: Create atomic commits on separate feature branches with
     isolated branch-per-commit workflow for pull request preparation.
 category: Git & Repository Management
@@ -7,7 +7,7 @@ category: Git & Repository Management
 
 # Git Feature Branch Atomic Commit Skill
 
-> **Skill ID:** `git_feature_branch_atomic_commit`
+> **Skill ID:** `git-feature-branch-atomic-commit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
@@ -17,7 +17,7 @@ Create atomic commits on separate feature branches using an isolated
 branch-per-commit workflow. Each change gets its own branch, commit,
 and optional PR preparation.
 
-This skill extends the [`git_atomic_commit`](../git_atomic_commit/SKILL.md)
+This skill extends the [`git-atomic-commit-construction`](../git-atomic-commit-construction/SKILL.md)
 skill by adding multi-branch creation, branch naming, and push protocols.
 
 ## Source Rules
