@@ -1,5 +1,5 @@
 ---
-name: VS Code Settings Promotion
+name: vscode-settings-promotion
 description: Automate migration of profile-specific settings to global scope with universal enforcement.
 category: VSCode-Configuration
 ---
