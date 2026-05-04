@@ -6,5 +6,5 @@ It should be explicitly invoked whenever a user references "forking a submodule"
 fork", or resolving "fork misalignment" issues where `.gitmodules` points to an upstream branch rather than internally
 established work.
 
-- **Primary Entry Point**: `.agents/skills/git_submodule_fork_sync/SKILL.md`
-- **Execution Engine**: `.agents/skills/git_submodule_fork_sync/scripts/sync.py`
+- **Primary Entry Point**: `.agents/skills/git-submodule-fork-sync/SKILL.md`
+- **Execution Engine**: `.agents/skills/git-submodule-fork-sync/scripts/sync.py`

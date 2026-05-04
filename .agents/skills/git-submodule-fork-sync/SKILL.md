@@ -1,5 +1,5 @@
 ---
-name: git_submodule_fork_sync
+name: git-submodule-fork-sync
 description: Automates the realignment of .gitmodules to track internal submodule forks while securing origin upstreams.
 category: Git & Repository Management
 ---
