@@ -1,5 +1,5 @@
 ---
-name: Loan Foreclosure Analysis
+name: loan-foreclosure-analysis
 description: Industrial protocol for analyzing loan repayment schedules, calculating foreclosure savings, and making optimal financial decisions.
 category: Financial-Analysis
 ---
