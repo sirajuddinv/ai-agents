@@ -1,12 +1,12 @@
 ---
-name: Deleted Files Audit
+name: deleted-files-audit
 description: Systematic audit of deleted files in a Git repository — categorizing deletions, scanning for stale references, checking IDE configs, and reporting a safety verdict.
 category: Code Hygiene & Maintenance
 ---
 
 # Deleted Files Audit Skill
 
-> **Skill ID:** `deleted_files_audit`
+> **Skill ID:** `deleted-files-audit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
