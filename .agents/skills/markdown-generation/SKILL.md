@@ -1,5 +1,5 @@
 ---
-name: Markdown Generation
+name: markdown-generation
 description: Industrial protocol for generating lint-compliant, high-fidelity markdown documentation.
 category: Documentation-Standards
 ---
