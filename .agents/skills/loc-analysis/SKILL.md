@@ -1,12 +1,12 @@
 ---
-name: LOC Analysis
+name: loc-analysis
 description: Calculate lines of code added, deleted, and modified — comparing two codebases or analyzing git history within a scoped feature.
 category: Metrics & Reporting
 ---
 
 # LOC Analysis Skill
 
-> **Skill ID:** `loc_analysis`
+> **Skill ID:** `loc-analysis`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
