@@ -1,5 +1,5 @@
 ---
-name: Unused Dependencies Audit & Removal
+name: unused-dependencies-audit
 description: Comprehensively audit package.json dependencies, detect actual usage
     in codebase via import analysis, identify unused packages, and safely remove
     them one-by-one with validation.
@@ -8,7 +8,7 @@ category: Package Management & Dependencies
 
 # Unused Dependencies Audit & Removal Skill
 
-> **Skill ID:** `unused_dependencies_audit`
+> **Skill ID:** `unused-dependencies-audit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
