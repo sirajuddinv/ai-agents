@@ -1,5 +1,5 @@
 ---
-name: Git Cross-Repository Cherry-Pick
+name: git-cross-repo-cherry-pick
 description: Industrial protocol for cherry-picking commits across unrelated Git repositories or submodules via temporary remote bridging.
 category: Git & Repository Management
 ---

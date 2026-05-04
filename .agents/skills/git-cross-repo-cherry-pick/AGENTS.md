@@ -1,7 +1,7 @@
 # Git Cross-Repository Cherry-Pick Bridge
 
 ## Overview
-This bridge provides passive context for the `git_cross_repo_cherry_pick` skill, enabling the agent to transfer commits between unrelated local repositories.
+This bridge provides passive context for the `git-cross-repo-cherry-pick` skill, enabling the agent to transfer commits between unrelated local repositories.
 
 ## Active Instructions
 For full operational protocols, refer to [SKILL.md](./SKILL.md).
