@@ -1,5 +1,5 @@
 ---
-name: Python Virtual Environment Repair
+name: python-venv-repair
 description: Industrial protocol for detecting, diagnosing, and repairing broken Python virtual environments including circular symlinks, missing interpreters, and orphaned package installations.
 category: Environment-Management
 ---
