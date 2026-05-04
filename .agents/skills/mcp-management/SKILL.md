@@ -1,5 +1,5 @@
 ---
-name: MCP Server Management
+name: mcp-management
 description: Industrial protocol for adding, configuring, and verifying MCP servers with cross-tool adaptation.
 category: Tool-Infrastructure
 ---
