@@ -32,14 +32,14 @@ The Agent MUST ensure that no operational detail is lost during the skill creati
 
 ### 2.1 Directory Structure
 
-- Create the target folder in `.agents/skills/<skill-name>/` (underscores preferred for names).
+- Create the target folder in `.agents/skills/<skill-name>/` (hyphens required for names).
 - Initialize `SKILL.md` (active SSOT) and `AGENTS.md` (companion bridge).
 
 ### 2.2 SKILL.md Composition
 
 The `SKILL.md` MUST include:
 
-1. **YAML Frontmatter**: name, description, category.
+1. **YAML Frontmatter**: name, description, category. Skill names MUST use lowercase letters, numbers, and hyphens.
 2. **Environment & Dependencies**: Mandated verification logic (`which`, version checks).
 3. **Operational Logic**: The EXACT steps provided by the user (**Zero Omission**).
 4. **SSOT Compliance**: The skill MUST NOT duplicate technical standards
