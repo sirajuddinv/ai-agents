@@ -1,7 +1,7 @@
 # Git Submodule Fork Reconfigure Bridge
 
 ## Overview
-This bridge provides passive context for the `git_submodule_fork_reconfigure` skill, enabling the agent to handle submodule push failures by forking and swapping remotes.
+This bridge provides passive context for the `git-submodule-fork-reconfigure` skill, enabling the agent to handle submodule push failures by forking and swapping remotes.
 
 ## Active Instructions
 For full operational protocols, refer to [SKILL.md](./SKILL.md).

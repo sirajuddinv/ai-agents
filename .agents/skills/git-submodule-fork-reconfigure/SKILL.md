@@ -1,5 +1,5 @@
 ---
-name: Git Submodule Fork Reconfigure
+name: git-submodule-fork-reconfigure
 description: Operational protocol for forking submodules on the fly and reconfiguring remotes to handle permission issues.
 category: Git & Repository Management
 ---
