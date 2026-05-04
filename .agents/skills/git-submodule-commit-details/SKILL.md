@@ -1,12 +1,12 @@
 ---
-name: Git Submodule Commit Details
+name: git-submodule-commit-details
 description: Extract complete commit metadata from a Git submodule by orchestrating the universal git_commit_metadata_extraction primitive, resolving submodule paths, and retrieving registration URLs for parent sync messages.
 category: Git & Repository Management
 ---
 
 # Git Submodule Commit Details Skill
 
-> **Skill ID:** `git_submodule_commit_details`
+> **Skill ID:** `git-submodule-commit-details`
 > **Version:** 2.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 

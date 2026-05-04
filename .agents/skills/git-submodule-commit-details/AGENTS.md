@@ -1,6 +1,6 @@
 # Git Submodule Commit Details — Agent Bridge
 
-> **Skill Location:** `.agents/skills/git_submodule_commit_details/SKILL.md`
+> **Skill Location:** `.agents/skills/git-submodule-commit-details/SKILL.md`
 
 ## When to Use This Skill
 
@@ -58,9 +58,9 @@ GIT_PAGER=cat git -C <parent-repo-path> config \
 
 ## Consumer Skills
 
-- [`git_submodule_commit_reword`](../git_submodule_commit_reword/SKILL.md)
+- [`git-submodule-commit-reword`](../git-submodule-commit-reword/SKILL.md)
   — passes the record into the amended commit message
-- [`git_atomic_commit`](../git_atomic_commit/SKILL.md)
+- [`git-atomic-commit`](../git-atomic-commit-construction/SKILL.md)
   — passes the record into submodule sync commit messages
 
 ---
