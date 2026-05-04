@@ -1,5 +1,5 @@
 ---
-name: Git Atomic Commit Construction
+name: git-atomic-commit-construction
 description: Analyze, group, and arrange working-tree changes into logical,
     independent atomic commits — with hunk-based staging, formatting
     isolation, and mandatory user authorization.
@@ -8,7 +8,7 @@ category: Git & Repository Management
 
 # Git Atomic Commit Construction Skill
 
-> **Skill ID:** `git_atomic_commit`
+> **Skill ID:** `git-atomic-commit-construction`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
