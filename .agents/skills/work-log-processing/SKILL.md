@@ -1,5 +1,5 @@
 ---
-name: Work Log Processing
+name: work-log-processing
 description: Industrial protocol for transforming rough work log files (*_rough.txt) into formatted work log files (*.txt) with standardized date format, day of week, and caller notation.
 category: Data-Processing
 ---
