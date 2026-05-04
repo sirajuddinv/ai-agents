@@ -1,12 +1,12 @@
 ---
-name: Text to Markdown Conversion
+name: text-to-markdown
 description: Convert structured plain-text data (delimiter-separated status trackers, lists, tables) into well-formatted Markdown with emoji status indicators, proper tables, and file renaming.
 category: Data Formatting & Presentation
 ---
 
 # Text to Markdown Conversion Skill
 
-> **Skill ID:** `text_to_markdown`
+> **Skill ID:** `text-to-markdown`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
