@@ -1,5 +1,5 @@
 ---
-name: Git Commit Metadata Extraction
+name: git-commit-metadata-extraction
 description: A universal primitive for extracting complete commit metadata from any Git commit — parent SHA(s), commit message, file changes with add/modify/delete classification, author, and committer.
 category: Git & Repository Management
 ---
