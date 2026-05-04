@@ -1,5 +1,5 @@
 ---
-name: Git Commit Comparison Audit
+name: git-commit-comparison-audit
 description: Active instruction set for side-by-side comparative analysis between two commits via skill orchestration.
 category: Git-Hygiene
 ---
