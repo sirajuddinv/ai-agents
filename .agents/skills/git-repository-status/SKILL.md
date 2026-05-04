@@ -1,5 +1,5 @@
 ---
-name: Git Repository Status
+name: git-repository-status
 description: Industrial protocol for auditing branch divergence, staged/unstaged changes, and repository history using PowerShell.
 category: Git & Repository Management
 ---
