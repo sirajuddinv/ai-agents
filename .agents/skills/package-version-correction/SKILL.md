@@ -1,5 +1,5 @@
 ---
-name: Package Version Correction
+name: package-version-correction
 description: Audit package.json version specifications, extract exact versions from
     package-lock.json or yarn.lock, and replace range specifications with pinned
     exact versions for reproducible builds.
@@ -8,7 +8,7 @@ category: Package Management & Dependencies
 
 # Package Version Correction Skill
 
-> **Skill ID:** `package_version_correction`
+> **Skill ID:** `package-version-correction`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
