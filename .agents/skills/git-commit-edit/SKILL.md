@@ -1,5 +1,5 @@
 ---
-name: Git Commit Edit
+name: git-commit-edit
 description: Edit existing commits in-place via interactive rebase —
     remove files, add files, amend content, or fix mixed concerns
     without full history reconstruction.
@@ -8,7 +8,7 @@ category: Git & Repository Management
 
 # Git Commit Edit Skill
 
-> **Skill ID:** `commit_edit`
+> **Skill ID:** `git-commit-edit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
