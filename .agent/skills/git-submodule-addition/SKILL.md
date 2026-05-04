@@ -1,5 +1,5 @@
 ---
-name: git_submodule_addition
+name: git-submodule-addition
 description: Industrial protocol for adding Git submodules with automated naming conventions and branch tracking
 initialization. Use when the user provides a repository URL and asks to "add as a submodule".
 category: Git & Repository Management
