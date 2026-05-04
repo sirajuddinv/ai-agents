@@ -1,12 +1,12 @@
 ---
-name: Lower Case Underscore Naming Convention
+name: lower-case-underscore-naming
 description: Enforce lowercase snake_case naming for all project files, directories, and identifiers — with industry-standard exemptions.
 category: Naming & Conventions
 ---
 
 # Lower Case Underscore Naming Convention Skill
 
-> **Skill ID:** `lower_case_underscore_naming`
+> **Skill ID:** `lower-case-underscore-naming`
 > **Version:** 1.2.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
