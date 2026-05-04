@@ -1,5 +1,5 @@
 ---
-name: Code Explanation
+name: code-explanation
 description: Standards for deep-dive, pedagogical code documentation including adjacent markdown files and various folder patterns.
 category: Documentation-Standards
 ---
