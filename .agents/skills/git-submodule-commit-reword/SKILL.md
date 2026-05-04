@@ -1,5 +1,5 @@
 ---
-name: Git Submodule Commit Reword
+name: git-submodule-commit-reword
 description: Reword Git submodule commits with complete submodule metadata including parent, changes, author, committer, and timestamps. Use when user asks to reword a submodule commit with full details.
 category: Git & Repository Management
 ---
