@@ -1,5 +1,5 @@
 ---
-name: Git Rebase Standardization
+name: git-rebase-standardization
 description: Hierarchical multi-branch rebasing with dependency mapping,
     Commit Action Mapping (CAM), dig-down fidelity, and
     operational guardrails.
@@ -8,7 +8,7 @@ category: Git & Repository Management
 
 # Git Rebase Standardization Skill
 
-> **Skill ID:** `git_rebase`
+> **Skill ID:** `git-rebase-standardization`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
