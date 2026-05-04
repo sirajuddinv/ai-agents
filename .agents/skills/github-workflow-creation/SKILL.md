@@ -1,5 +1,5 @@
 ---
-name: GitHub Workflow Creation
+name: github-workflow-creation
 description: Protocol for creating CI/CD workflows with atomic script separation,
     access control, and optimized deployment patterns.
 category: CI/CD & DevOps
@@ -7,7 +7,7 @@ category: CI/CD & DevOps
 
 # GitHub Workflow Creation Skill
 
-> **Skill ID:** `github_workflow_creation`
+> **Skill ID:** `github-workflow-creation`
 > **Version:** 1.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
