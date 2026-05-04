@@ -1,5 +1,5 @@
 ---
-name: NPM Overrides Audit & Correction
+name: npm-overrides-audit
 description: Audit package.json overrides field, test each override's necessity,
     remove unnecessary ones, and clean up the configuration for simpler dependency
     resolution.
@@ -8,7 +8,7 @@ category: Package Management & Dependencies
 
 # NPM Overrides Audit & Correction Skill
 
-> **Skill ID:** `npm_overrides_audit`
+> **Skill ID:** `npm-overrides-audit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
