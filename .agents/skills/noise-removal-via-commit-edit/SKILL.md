@@ -1,14 +1,14 @@
 ---
-name: IDE Noise Removal via Commit Edit
+name: noise-removal-via-commit-edit
 description: Detect and remove IDE artifact noise (m2e, JDT LS,
-    filteredResources) from existing commits using the commit_edit
+    filteredResources) from existing commits using the [git-commit-edit](../git-commit-edit/SKILL.md)
     skill, with mandatory user confirmation.
 category: Git & Repository Management
 ---
 
 # IDE Noise Removal via Commit Edit Skill
 
-> **Skill ID:** `noise_removal_via_commit_edit`
+> **Skill ID:** `noise-removal-via-commit-edit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
