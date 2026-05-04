@@ -1,5 +1,5 @@
 ---
-name: JSON Deep Sort
+name: json-deep-sort
 description: Alphabetically sorts primitive JSON arrays and recursively applies sort_keys=True for unified dictionary ordering safely natively.
 category: Data Processing
 ---
