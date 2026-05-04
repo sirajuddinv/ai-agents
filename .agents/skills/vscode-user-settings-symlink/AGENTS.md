@@ -1,4 +1,4 @@
-# AGENTS.md (VS Code User Settings Symlink)
+# AGENTS.md (vscode-user-settings-symlink)
 
 Refer to [SKILL.md](./SKILL.md) for the active operational protocol.
 

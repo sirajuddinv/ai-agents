@@ -1,5 +1,5 @@
 ---
-name: VS Code User Settings Symlink
+name: vscode-user-settings-symlink
 description: Protocol for relocating VS Code Insiders User folder to configurations-private and creating a direct symlink without intermediate subdirectories.
 category: VSCode-Configuration
 ---
