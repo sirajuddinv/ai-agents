@@ -1,12 +1,12 @@
 ---
-name: Maven POM Audit
+name: maven-pom-audit
 description: Section-by-section audit of Maven pom.xml files — catching invalid URLs, wrong identities, missing metadata, and enforcing placeholder conventions.
 category: Build & Dependency Management
 ---
 
 # Maven POM Audit Skill
 
-> **Skill ID:** `maven_pom_audit`
+> **Skill ID:** `maven-pom-audit`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
