@@ -1,5 +1,5 @@
 ---
-name: Skill Factory
+name: skill-factory
 description: Industrial protocol for automated creation of "Skill-First" AI Agent skills with high fidelity.
 category: Meta-Automation
 ---
