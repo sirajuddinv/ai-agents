@@ -1,5 +1,5 @@
 ---
-name: VSCode NGINX File Type Configuration
+name: vscode-nginx-filetype-config
 description: Configure VSCode at multiple tiers (application, profile, workspace, code-workspace) to recognize nginx directory files as NGINX language type with syntax highlighting.
 category: VSCode-Configuration
 ---
