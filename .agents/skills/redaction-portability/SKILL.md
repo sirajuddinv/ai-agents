@@ -1,5 +1,5 @@
 ---
-name: Redaction and Portability
+name: redaction-portability
 description: Protocol for addressing, redacting, and relativizing sensitive/absolute information in artifacts.
 category: Security-Standards
 ---
