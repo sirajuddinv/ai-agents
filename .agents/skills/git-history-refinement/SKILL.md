@@ -1,5 +1,5 @@
 ---
-name: Git History Refinement
+name: git-history-refinement
 description: Refine or reconstruct existing commit history using backup
     branches, atomic extraction, tree parity verification,
     and safe remote push reconciliation.
@@ -8,7 +8,7 @@ category: Git & Repository Management
 
 # Git History Refinement Skill
 
-> **Skill ID:** `git_history_refinement`
+> **Skill ID:** `git-history-refinement`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
