@@ -38,7 +38,7 @@ git diff --stat main..origin/main
 
 | File | Delta | Impact |
 | :--- | :--- | :--- |
-| `.agents/skills/git_divergence_audit/SKILL.md` | 0 | Parity |
+| `.agents/skills/git-divergence-audit/SKILL.md` | 0 | Parity |
 | `ai-agent-rules/git-submodule-rules.md` | +12/-0 | Remote Update |
 
 ***

@@ -22,4 +22,4 @@ When the user asks to compare branches, reconcile divergence, or perform a manua
 
 | Skill | Path | Description |
 | :--- | :--- | :--- |
-| Git Divergence Audit | [`.agents/skills/git_divergence_audit/SKILL.md`](./SKILL.md) | Industrial comparison of diverged branches with CAM table generation. |
+| Git Divergence Audit | [`.agents/skills/git-divergence-audit/SKILL.md`](./SKILL.md) | Industrial comparison of diverged branches with CAM table generation. |

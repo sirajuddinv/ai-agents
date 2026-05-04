@@ -1,5 +1,5 @@
 ---
-name: Git Divergence Audit
+name: git-divergence-audit
 description: Industrial protocol for surgical, unit-by-unit comparison of diverged local and remote branches.
 category: Git & Repository Management
 ---
