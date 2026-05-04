@@ -1,12 +1,12 @@
 ---
-name: Project Structure and Documentation
+name: project-structure
 description: Industrial-standard project folder structure, root hygiene, README conventions, and documentation placement rules.
 category: Project Organization
 ---
 
 # Project Structure & Documentation Skill
 
-> **Skill ID:** `project_structure`
+> **Skill ID:** `project-structure`
 > **Version:** 1.1.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
