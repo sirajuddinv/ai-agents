@@ -1,5 +1,5 @@
 ---
-name: Mise Tool Management
+name: mise-tool-management
 description: Industrial protocols for mise configuration trust, tool version selection,
     and Python package setup. Use whenever a mise.toml is untrusted, a required tool
     is missing, or a Python package needs to be installed into a mise-managed environment.

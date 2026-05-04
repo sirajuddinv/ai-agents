@@ -1,5 +1,5 @@
 ---
-name: System-Wide Tool Management
+name: system-wide-tool-management
 description: Industrial protocol for detecting, installing, and verifying system-wide
     CLI tools (e.g. jq, curl, git) across macOS, Linux, and Windows. Use whenever a
     system tool is required but may not be installed or available in PATH.

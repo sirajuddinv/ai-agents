@@ -1,5 +1,5 @@
 ---
-name: Python Script Generation
+name: python-script-generation
 description: Standards for generating "Ultra-Lean Industrial" Python scripts, ensuring type safety, modularity, and pedagogical documentation.
 category: Scripting
 ---
