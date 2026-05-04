@@ -1,5 +1,5 @@
 ---
-name: Rule-to-Skill Industrialization
+name: rule-to-skill-industrialization
 description: Meta-automation protocol for transforming redundant rule files into
   high-fidelity AI Agent Skills with 100% industrial fidelity.
 category: Meta-Automation

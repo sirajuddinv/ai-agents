@@ -1,7 +1,7 @@
 # Rule-to-Skill Mapping: Git History Refinement
 
 This artifact provides the definitive traceability matrix between the `git-history-refinement-rules.md` (Rules) and
-the `git_history_refinement` skill (Skill). This ensures that every mandate in the rule file is captured in the
+the `git-history-refinement` skill (Skill). This ensures that every mandate in the rule file is captured in the
 skill's operational procedure.
 
 ***
@@ -24,7 +24,7 @@ skill's operational procedure.
 | **Pre-Execution Analysis (Evidence-Based)** | Section 2.6 | **Step 3** | **TOTAL**: Skill mandates reading state before writing messages/actions. |
 | **Link Verification (Grep/Update)** | Section 2.7 | **Step 8** | **TOTAL**: Skill includes global grep check and reference updates. |
 | **Preserving Dependent Commits** | Section 2.8 | **Step 9** | **TOTAL**: Skill provides sequential cherry-pick protocol and conflict resolve. |
-| **Hierarchical Rebase Coordination** | Section 2.9 | **Intro** | **TOTAL**: Skill points to `git_rebase` skill in line 35. |
+| **Hierarchical Rebase Coordination** | Section 2.9 | **Intro** | **TOTAL**: Skill points to `git-rebase-standardization` skill in line 35. |
 | **Content-Level Verification** | Section 3.1 | **Step 10a** | **TOTAL**: Skill mandates `git show HEAD` after every re-creation. |
 | **Tree Parity Check (Mandatory empty diff)** | Section 3.2 | **Step 10b** | **TOTAL**: Skill mandates `git diff <current> <backup>` comparison. |
 | **Post-Refinement Remote Push Protocol** | Section 2.9 | **Step 11** | **TOTAL**: Skill provides detailed categorization and push safety logic. |
