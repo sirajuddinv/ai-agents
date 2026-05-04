@@ -1,5 +1,5 @@
 ---
-name: Git Commit Details Audit
+name: git-commit-details-audit
 description: Industrial protocol for retrieving and analyzing high-fidelity commit metadata, hunks, and pedagogical explanations across the repository and its submodules.
 category: Git-Hygiene
 ---
