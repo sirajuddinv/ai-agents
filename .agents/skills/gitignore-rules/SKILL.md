@@ -1,12 +1,12 @@
 ---
-name: Gitignore Rules
+name: gitignore-rules
 description: Audit .gitignore files for common pitfalls — especially directory-ignore patterns that silently break negation rules — and apply verified fixes.
 category: Git & Version Control
 ---
 
 # Gitignore Rules Skill
 
-> **Skill ID:** `gitignore_rules`
+> **Skill ID:** `gitignore-rules`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
