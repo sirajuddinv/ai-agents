@@ -1,5 +1,5 @@
 ---
-name: Git Submodule Pointer Repair
+name: git-submodule-pointer-repair
 description: Industrial protocol for surgically fixing invalid submodule pointers in parent repository history using the Synchronization Horizon algorithm.
 category: Git & Repository Management
 ---
