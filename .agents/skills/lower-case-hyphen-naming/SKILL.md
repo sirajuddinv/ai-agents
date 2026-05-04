@@ -1,12 +1,12 @@
 ---
-name: Lower Case Hyphen Naming Convention
+name: lower-case-hyphen-naming
 description: Enforce lowercase kebab-case (hyphen-based) naming for all project files, directories, and identifiers — with industry-standard exemptions.
 category: Naming & Conventions
 ---
 
 # Lower Case Hyphen Naming Convention Skill
 
-> **Skill ID:** `lower_case_hyphen_naming`
+> **Skill ID:** `lower-case-hyphen-naming`
 > **Version:** 1.0.0
 > **Standard:** [Agent Skills (agentskills.io)](https://agentskills.io)
 
