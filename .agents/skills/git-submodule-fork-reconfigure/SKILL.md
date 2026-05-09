@@ -24,6 +24,18 @@ Before execution, the agent **MUST** verify the industrial environment.
    gh auth status
    ```
    * *If `gh` is not logged in, the agent MUST instruct the user to run `gh auth login` manually.*
+3. **Pre-Push Status Audit** (MANDATORY before triggering the fork flow):
+   ```bash
+   git log -1 --oneline
+   git status --short
+   git status -sb | head -1
+   git remote -v
+   ```
+   * **Commit check**: Confirm the top commit is the one intended to be pushed.
+   * **Cleanliness check**: `git status --short` MUST be empty. Residual changes (e.g. ` M .DS_Store`) MUST be surfaced to the user — never silently staged or stashed.
+   * **Tracking check**: `git status -sb` MUST show `[ahead N]` against the tracking branch.
+   * **Remote check**: `git remote -v` reveals whether `origin` already points to a personal fork (push may succeed without reconfigure) or to the upstream (reconfigure required on 403).
+   * Only proceed to Phase 1 after a `git push` attempt has actually returned a 403 / permission error.
 
 ***
 
@@ -35,19 +47,37 @@ When a push to a submodule's `origin` fails due to 403 Forbidden.
    ```bash
    git remote get-url origin
    ```
-2. **Check for Existing Fork**:
+2. **Check for Existing Fork (by expected name AND by upstream parent)**:
    ```bash
-   gh repo list <owner> --limit 100 | grep -i <fork_name>
+   # Primary: check if a fork with the expected name (submodule directory name) exists.
+   gh repo view <owner>/<fork_name> --json name,parent,url 2>/dev/null
+
+   # Fallback: a fork of this upstream may already exist under a DIFFERENT name
+   # (e.g., GitHub's default which drops the owner prefix). Always check by parent.
+   gh repo list <owner> --fork --limit 200 --json name,parent \
+     --jq '.[] | select(.parent.owner.login=="<upstream_owner>" and .parent.name=="<upstream_repo>")'
    ```
    * `<owner>`: Your GitHub username.
-   * `<fork_name>`: The expected fork name (submodule directory name).
-   * **If fork exists, skip to Phase 2** — no need to create a new fork.
-3. **Create Fork**:
+   * `<fork_name>`: The expected fork name (**MUST equal the submodule directory name**, e.g. `besoeasy_open-skills`).
+   * `<upstream_owner>` / `<upstream_repo>`: Parsed from the upstream URL.
+   * **Decision matrix**:
+     * No fork at all → go to step 3 (Create Fork).
+     * Fork exists with correct name → skip to Phase 2.
+     * Fork exists under a **different name** (e.g. `open-skills` instead of `besoeasy_open-skills`) → go to step 2a (Rename Existing Fork).
+3. **2a. Rename Existing Fork (name-mismatch correction)**:
    ```bash
-   gh repo fork <upstream_repo_path> --fork-name <desired_name>
+   gh repo rename <fork_name> --repo <owner>/<current_fork_name> --yes
+   ```
+   * `<current_fork_name>`: The actual name on GitHub (often the bare upstream repo name).
+   * `<fork_name>`: The submodule-directory-aligned target name.
+   * **MANDATORY**: This step is non-optional whenever the fork name diverges from the submodule directory name.
+   * After rename, the fork URL becomes `https://github.com/<owner>/<fork_name>.git` — use this in Phase 2.
+4. **Create Fork** (only if no fork exists):
+   ```bash
+   gh repo fork <upstream_repo_path> --fork-name <fork_name>
    ```
    * `<upstream_repo_path>`: The owner/repo string (e.g., `GuDaStudio/skills`).
-   * `--fork-name`: The specific name for the fork. **MANDATORY**: This MUST match the submodule directory name unless the user explicitly requests otherwise.
+   * `--fork-name`: **MANDATORY**: MUST match the submodule directory name unless the user explicitly requests otherwise.
    * **Note**: Handle the interactive clone prompt by sending `n` if already within the submodule directory.
 
 ***
@@ -104,6 +134,13 @@ Ensure the parent repository recognizes the fork for future initializations.
 ## 5. Related Conversations & Traceability
 
 - Standard established during the **Industrial Git Submodule Maintenance** session (April 2026).
-- Follows [Skill Factory Protocol](../../skills/skill_factory/SKILL.md).
-- Complements [Git Submodule Fork Sync](../git_submodule_fork_sync/SKILL.md) (Automated Realignment).
+- Follows [Skill Factory Protocol](../skill-factory/SKILL.md).
+- Complements [Git Submodule Fork Sync](../git-submodule-fork-sync/SKILL.md) (Automated Realignment).
 - Compatibility: macOS/Linux/Windows (Git Bash/Zsh).
+
+## Composition by Higher-Level Skills
+
+| Composer | Role | Reuses From This Skill |
+| :--- | :--- | :--- |
+| [`git-submodule-orphan-gitlink-recovery`](../git-submodule-orphan-gitlink-recovery/SKILL.md) | Recovers orphan gitlinks (tree-recorded but absent from `.gitmodules`). | §2 Forking & Remote Preparation + §3 Remote Reconfiguration. |
+| [`git-submodule-uninitialized-handler`](../git-submodule-uninitialized-handler/SKILL.md) | Drives every uninitialized pointer to a fully-initialized state. | §2–§4 forking + remote swap + parent-`.gitmodules` realignment, invoked for Unreachable-but-recoverable pointers. |
