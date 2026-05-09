@@ -302,3 +302,12 @@ The agent is **BLOCKED** from:
 | Pattern fails on some systems | Trailing whitespace in `.gitignore` line | Trim trailing whitespace |
 | `*.log` ignores too much | Overly broad glob in root `.gitignore` | Move pattern to a subdirectory `.gitignore` or use path-qualified pattern |
 | Double-star confusion | `**/dir` vs `dir/` vs `dir/**` have different semantics | `**/dir` matches at any depth; `dir/**` matches contents at any depth inside `dir` |
+
+---
+
+## Related Skills
+
+| Skill | Role |
+|---|---|
+| [`git-post-gitignore-untrack`](../git-post-gitignore-untrack/SKILL.md) | **Post-processor.** When this skill (or any commit) adds/expands a `.gitignore` and previously tracked files now match the new rules, run `git-post-gitignore-untrack` to `git rm --cached` them and fold the cleanup into the originating commit. |
+| [`git-cross-repo-cherry-pick`](../git-cross-repo-cherry-pick/SKILL.md) | When the audited `.gitignore` is propagated to other repos via cherry-pick, that skill chains into `git-post-gitignore-untrack` per target repo. |
