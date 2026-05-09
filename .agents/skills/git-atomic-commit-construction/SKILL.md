@@ -36,9 +36,9 @@ This skill distills and operationalizes the following rule files:
 | [`git-operation-rules.md`](../../../ai-agent-rules/git-operation-rules.md) | Phase -1, 0, 1 (environment, repo context, change detection) and Sections 2–4 (commit/push/stash protocols) |
 
 For history refinement (splitting existing commits), see the
-[`git_history_refinement`](../git_history_refinement/SKILL.md) skill.
+[`git_history_refinement`](../git-history-refinement/SKILL.md) skill.
 For complex multi-branch rebasing, see the
-[`git_rebase`](../git_rebase/SKILL.md) skill.
+[`git_rebase`](../git-rebase-standardization/SKILL.md) skill.
 
 ## Prerequisites
 
@@ -62,9 +62,9 @@ Apply this skill when:
 
 Do NOT apply when:
 - The user asks to refine or split **existing** commits — use
-  [`git_history_refinement`](../git_history_refinement/SKILL.md) instead
+  [`git_history_refinement`](../git-history-refinement/SKILL.md) instead
 - The user asks to rebase branches — use
-  [`git_rebase`](../git_rebase/SKILL.md) instead
+  [`git_rebase`](../git-rebase-standardization/SKILL.md) instead
 - The request is a simple single-file, single-concern commit with no
   mixed changes (a lightweight commit suffices without the full protocol)
 
@@ -295,6 +295,41 @@ commits.
 The agent **MUST NOT** proceed with any commit execution until the user
 explicitly says **"start"**. Other triggers like "commit" or "go" are
 insufficient.
+
+#### 2f — Interleaving Mandate (Submodule + Related Parent Work)
+
+When the working tree contains both submodule pointer advances AND parent-side
+changes that are functionally related (e.g., a cherry-picked `.gitignore`
+commit in a submodule + the parent's `.gitmodules` realignment for that same
+submodule), the Arranged Commits sequence MUST **interleave** them in
+dependency order, NOT batch all submodule syncs first and all parent edits
+last. For each submodule with a stale pointer, identify any parent-side files
+directly tied to that submodule (e.g., `.gitmodules` URL change, root
+`AGENTS.md` row referencing the submodule, CI workflow paths) and place them
+in the **same** commit per §7.2 of the rules. Truly unrelated parent edits
+may be slotted between submodule syncs only when they share a logical theme;
+otherwise place them in a final dedicated batch. The forbidden anti-pattern
+is "all 36 submodule syncs first, then all 30 parent edits last" — it
+destroys the per-feature traceability that interleaving exists to provide.
+See [Atomic Commit Construction Rules §3.1](../../../ai-agent-rules/git-atomic-commit-construction-rules.md#31-interleaving-mandate-submodule--related-parent-work).
+
+#### 2g — Batch-by-Batch Authorization (Long Sequences)
+
+When the Arranged Commits sequence exceeds **5 commits**, split the preview
+into batches of at most 5 commits and request a separate `"start"` per batch:
+
+1. Present each batch in the full §2d verbose format before executing any
+   commit in that batch.
+2. After each batch executes, emit a one-line summary `Batch N committed:
+   SHA1, SHA2, …` and present the next batch's preview.
+3. The user MAY abort, reorder, or modify subsequent batches between
+   authorizations — do NOT pre-stage files for batches that have not yet
+   been authorized.
+4. The first batch MUST include a top-level **Master Plan Table**
+   (`# | type(scope): title | files | batch`) so the user has a single-pane
+   view before authorizing batch 1.
+
+See [Atomic Commit Construction Rules §3.2](../../../ai-agent-rules/git-atomic-commit-construction-rules.md#32-batch-by-batch-authorization-long-sequences).
 
 ---
 
@@ -571,7 +606,7 @@ When managing submodules, the main repository's history must remain descriptive 
 - **Synchronized Commits**: Every functional update in a submodule requiring a
   pointer update in the main repo MUST be coupled with its relevant main-repo
   configuration changes (e.g., CI scripts or IDE settings).
-- **Orchestration**: Delegate metadata extraction to the **[Git Submodule Commit Details](../git_submodule_commit_details/SKILL.md)** skill to ensure zero-omission fidelity.
+- **Orchestration**: Delegate metadata extraction to the **[Git Submodule Commit Details](../git-submodule-commit-details/SKILL.md)** skill to ensure zero-omission fidelity.
 - **Commit Message Generation**: All submodule sync commits MUST follow the
   strict formatting, chronological ordering, and metadata requirements defined in
   **[Submodule Sync Commits](../../../ai-agent-rules/git-commit-message-rules.md#5-submodule-sync-commits-parent-repository)**.
@@ -686,7 +721,7 @@ ensure the commit message accurately reflects the data being stored.
 
 If existing commits need to be split or refined (e.g., to fix non-atomic
 changes), delegate to the
-[`git_history_refinement`](../git_history_refinement/SKILL.md) skill.
+[`git_history_refinement`](../git-history-refinement/SKILL.md) skill.
 
 #### 9f — Stash Workflow for Rebase
 
@@ -911,11 +946,11 @@ The agent is **BLOCKED** from:
 
 ## Related Skills
 
-- **[Git Submodule Commit Details](../git_submodule_commit_details/SKILL.md)**
+- **[Git Submodule Commit Details](../git-submodule-commit-details/SKILL.md)**
   — MANDATORY for extracting metadata during parent-repo sync commits (Step 6).
-- **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)**
+- **[Git Commit Metadata Extraction](../git-commit-metadata-extraction/SKILL.md)**
   — The foundational primitive for all high-fidelity extraction.
-- **[Git History Refinement](../git_history_refinement/SKILL.md)**
+- **[Git History Refinement](../git-history-refinement/SKILL.md)**
   — For splitting or refining non-atomic existing commits.
 
 ## Common Pitfalls
