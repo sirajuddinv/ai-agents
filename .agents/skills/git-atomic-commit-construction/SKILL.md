@@ -740,6 +740,11 @@ PAGER=cat git add <resolved-files>
 PAGER=cat git stash drop
 ```
 
+> **Stash preservation rule:** `git stash drop`/`pop`/`clear` are destructive and require explicit per-stash user
+> authorization — even inside a "cleanup" batch. See
+> [`git-operation-rules.md` §5 — Stash Preservation](../../../ai-agent-rules/git-operation-rules.md) for the
+> Inventory → Inspect → Authorize → Act protocol and recovery window.
+
 #### 9g — Corrupted Rebase State Recovery
 
 If `git rebase --continue` or `git rebase --abort` fails with

@@ -404,6 +404,11 @@ git add <resolved-files>
 git stash drop
 ```
 
+> **Stash preservation rule:** `git stash drop`/`pop`/`clear` are destructive and require explicit per-stash user
+> authorization — even inside a "cleanup" batch. See
+> [`git-operation-rules.md` §5 — Stash Preservation](../../../ai-agent-rules/git-operation-rules.md) for the
+> Inventory → Inspect → Authorize → Act protocol and recovery window.
+
 ---
 
 ### Step 7 — Cleanup
