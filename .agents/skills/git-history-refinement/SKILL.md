@@ -23,10 +23,10 @@ reconciliation.
 
 This skill is invoked AFTER commits already exist and need improvement.
 For constructing new commits from working-tree changes, use the
-[`git_atomic_commit`](../git_atomic_commit/SKILL.md) skill instead.
+[`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md) skill instead.
 
 For hierarchical multi-branch rebasing, see the
-[`git_rebase`](../git_rebase/SKILL.md) skill.
+[`git_rebase`](../git-rebase-standardization/SKILL.md) skill.
 
 ## Prerequisites
 
@@ -52,9 +52,9 @@ Apply this skill when:
 Do NOT apply when:
 
 - Changes are uncommitted (working-tree state) — use
-  [`git_atomic_commit`](../git_atomic_commit/SKILL.md) instead
+  [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md) instead
 - The task is a multi-branch rebase — use
-  [`git_rebase`](../git_rebase/SKILL.md) instead
+  [`git_rebase`](../git-rebase-standardization/SKILL.md) instead
 - The user just wants to amend the most recent commit message
 
 ---
@@ -457,3 +457,29 @@ The agent is **BLOCKED** from:
 | Remote diverged during long refinement | Fetch and categorize remote commits before force-push |
 | Generated file manually edited in refinement | Check for auto-generation markers first |
 | Commit message says "update metadata" without specifics | Read actual diffs before writing messages |
+
+## Post-Processing
+
+This skill commonly produces a parallel/refined branch (e.g.,
+`<branch>-refined` or `<branch>-2`) so the original canonical branch
+remains untouched on `origin` until the user verifies the result.
+To replace the canonical branch with the refined branch — including
+cherry-pick equivalence audit for any canonical-only commits that
+landed during refinement, tree-parity verification, and authorized
+force-push — the agent MUST delegate to the
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) skill.
+Manual `git reset --hard <refined> && git push --force` on the
+canonical branch WITHOUT that skill's §2 audit and §4 parity gate is
+FORBIDDEN.
+
+**Submodule case (chained post-processing):** If the refined branch
+lives in a **submodule**, after
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) succeeds the
+parent repository's commits referencing the old submodule SHAs are
+invalidated. The parent's history MUST be repaired via
+[`git-submodule-pointer-repair` §5](../git-submodule-pointer-repair/SKILL.md#5-mass-pointer-reconciliation-full-history-rewrite-recovery).
+Because history-refinement frequently includes message-only rewords,
+the **reword-tolerant match key** in §5.2.0 (subject EXCLUDED) is the
+safe default. For commits that were also split or squashed, see the
+Squash/split row in §5.2.0 — those rows require manual N:1 / 1:N
+decisions that this skill cannot automate.
