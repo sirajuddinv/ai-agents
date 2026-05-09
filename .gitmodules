@@ -121,13 +121,13 @@
 	branch = fix/register-submodules
 [submodule "mattpocock_skills"]
 	path = mattpocock_skills
-	url = https://github.com/mattpocock/skills.git
+	url = https://github.com/Baneeishaque/mattpocock_skills.git
 [submodule "mhattingpete_claude-skills-marketplace"]
 	path = mhattingpete_claude-skills-marketplace
 	url = https://github.com/mhattingpete/claude-skills-marketplace.git
 [submodule "microsoft_github-copilot-for-azure"]
 	path = microsoft_github-copilot-for-azure
-	url = https://github.com/microsoft/GitHub-Copilot-for-Azure.git
+	url = https://github.com/Baneeishaque/microsoft_github-copilot-for-azure.git
 [submodule "microsoft_skills"]
 	path = microsoft_skills
 	url = https://github.com/microsoft/skills.git
@@ -175,7 +175,7 @@
 	url = https://github.com/sanjay3290/ai-skills.git
 [submodule "sanyuan0704_sanyuan-skills"]
 	path = sanyuan0704_sanyuan-skills
-	url = https://github.com/sanyuan0704/sanyuan-skills.git
+	url = https://github.com/Baneeishaque/sanyuan0704_sanyuan-skills.git
 [submodule "sawyerhood_dev-browser"]
 	path = sawyerhood_dev-browser
 	url = https://github.com/SawyerHood/dev-browser.git
