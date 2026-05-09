@@ -96,13 +96,36 @@ git submodule add <URL> <OWNER_REPO_PATH>
 ### 3.3 Initialization & Synchronization
 
 ```bash
-# Initialize the submodule and fetch data
-PAGER=cat git submodule update --init --recursive
+# Initialize ONLY the just-added submodule and fetch its data, including any nested
+# submodules it carries. The trailing path scopes the operation so it stays atomic
+# with the one-by-one mandate from §3.2.
+PAGER=cat git submodule update --init --recursive <OWNER_REPO_PATH>
 ```
 
 - **Pedagogical Breakdown**:
     - `--init`: Initializes the submodule in `.git/config` if not already present.
-    - `--recursive`: Ensures nested submodules (if any) are also handled.
+    - `--recursive`: **Mandatory.** Submodules frequently embed their own submodules (the
+      `powershell-scripts` submodule of `ai-agent-rules` is a real example). Omitting
+      `--recursive` leaves nested pointers uninitialized and silently breaks any script
+      that depends on them.
+    - `<OWNER_REPO_PATH>`: Scopes init to the path just added in §3.2, preserving
+      atomic failure detection.
+
+#### 3.3.1 Fresh-Clone Bootstrap
+
+When the **parent** repository is being cloned for the first time (not when a single
+submodule is being added to an existing checkout), use the recursive clone form so every
+level of the submodule tree materializes in one command:
+
+```bash
+git clone --recurse-submodules <PARENT_REPO_URL>
+# or, on an already-cloned parent that is missing submodule contents:
+PAGER=cat git submodule update --init --recursive
+```
+
+The agent MUST use the recursive form unconditionally — the cost of an unnecessary
+recursion is negligible, while the cost of a missing nested submodule is a silent
+runtime failure later.
 
 ### 3.4 Branch Tracking Enforcement (Critical)
 
