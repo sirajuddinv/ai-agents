@@ -51,7 +51,7 @@
 	url = https://github.com/anthropics/skills.git
 [submodule "besoeasy_open-skills"]
 	path = besoeasy_open-skills
-	url = https://github.com/besoeasy/open-skills.git
+	url = https://github.com/baneeishaque/besoeasy_open-skills.git
 [submodule "browser-use_browser-use"]
 	path = browser-use_browser-use
 	url = https://github.com/browser-use/browser-use.git
