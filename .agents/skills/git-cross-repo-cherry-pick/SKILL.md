@@ -92,12 +92,24 @@ Restore the repository to a clean, production-ready state.
    ```
    * **MANDATORY**: Never leave bridging remotes in the configuration.
 
-2. **Verify Result**:
+2. **Verify Result** (MANDATORY pre-push audit):
    ```bash
-   git log -n 1 --oneline
-   git status
+   git log -1 --oneline
+   git status --short
+   git status -sb | head -1
    ```
-   * Ensure the commit is present and the working tree is clean.
+   * **Commit check**: Top commit subject MUST match the cherry-picked commit's subject.
+   * **Cleanliness check**: `git status --short` MUST be empty. Any residual modifications (e.g. ` M .DS_Store` from tracked OS noise) MUST be reported to the user before any push, never auto-staged into the cherry-pick.
+   * **Ahead/behind check**: `git status -sb` MUST show `[ahead N]` (or already-pushed) against the tracking branch. If divergence (`[ahead X, behind Y]`) is reported, STOP and surface to user.
+
+3. **Multi-Target Audit Table** (when cherry-picking into N repos):
+   * Before any push, emit a single consolidated table with columns: `Repo | Top Commit | Tracking State | Working Tree`.
+   * Push only after the table is presented and the user has acknowledged any anomalies.
+
+4. **Gitignore-Cherry-Pick Post-Processing** (MANDATORY when the cherry-picked commit adds or expands a `.gitignore`):
+   * For every target repo, immediately invoke [`git-post-gitignore-untrack`](../git-post-gitignore-untrack/SKILL.md) §3 (detection) before pushing.
+   * If residue is found, resolve via §4 (amend) by default, falling back to §5 (follow-up commit) only if the cherry-pick commit was already pushed.
+   * The Multi-Target Audit Table from step 3 MUST be extended with an `Untrack Action` column when this branch is taken.
 
 ***
 
@@ -105,5 +117,7 @@ Restore the repository to a clean, production-ready state.
 
 - Standard established during the **Industrial Git Submodule Maintenance** session (April 2026).
 - Follows [Skill Factory Protocol](../../skills/skill_factory/SKILL.md).
+- Composes with [`git-post-gitignore-untrack`](../git-post-gitignore-untrack/SKILL.md) when the cherry-picked commit touches `.gitignore` (§4.4 above).
+- Composes with [`git-submodule-fork-reconfigure`](../git-submodule-fork-reconfigure/SKILL.md) when post-cherry-pick pushes to upstream-only remotes return 403.
 - Compliance: 100% Rule 1.1 (tilde-portable).
 - Compatibility: macOS/Linux (zsh/bash).
