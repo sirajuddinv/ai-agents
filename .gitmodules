@@ -15,13 +15,13 @@
 	url = https://github.com/Baneeishaque/skills.git
 [submodule "composiohq_awesome-claude-skills"]
 	path = composiohq_awesome-claude-skills
-	url = https://github.com/Baneeishaque/awesome-claude-skills.git
+	url = https://github.com/Baneeishaque/composiohq_awesome-claude-skills.git
 [submodule "dotnet_skills"]
 	path = dotnet_skills
 	url = https://github.com/Baneeishaque/dotnet_skills.git
 [submodule "dragon1086_claude-skills"]
 	path = dragon1086_claude-skills
-	url = https://github.com/Baneeishaque/claude-skills.git
+	url = https://github.com/Baneeishaque/dragon1086_claude-skills.git
 [submodule "google_labs_code_stitch-skills"]
 	path = google_labs_code_stitch-skills
 	url = https://github.com/Baneeishaque/stitch-skills.git
@@ -42,7 +42,7 @@
 	url = https://github.com/Baneeishaque/specrate.git
 [submodule "shajith003_awesome-claude-skills"]
 	path = shajith003_awesome-claude-skills
-	url = https://github.com/Baneeishaque/awesome-claude-skills-1.git
+	url = https://github.com/Baneeishaque/shajith003_awesome-claude-skills.git
 [submodule "yzfly_mind-cloning-engineering"]
 	path = yzfly_mind-cloning-engineering
 	url = https://github.com/Baneeishaque/Mind-Cloning-Engineering.git
@@ -117,7 +117,7 @@
 	url = https://github.com/lackeyjb/playwright-skill.git
 [submodule "ljt-520_openclaw-backup"]
 	path = ljt-520_openclaw-backup
-	url = https://github.com/Baneeishaque/openClaw-backup.git
+	url = https://github.com/Baneeishaque/ljt-520_openclaw-backup.git
 	branch = fix/register-submodules
 [submodule "mattpocock_skills"]
 	path = mattpocock_skills
