@@ -28,8 +28,8 @@ This skill distills and operationalizes:
 | :--- | :--- |
 | [`git-atomic-commit-construction-rules.md`](../../../ai-agent-rules/git-atomic-commit-construction-rules.md) | All 15 phases (primary source) |
 | [`git-operation-rules.md`](../../../ai-agent-rules/git-operation-rules.md) | Environment, repo context, push protocols |
-| [`skill_factory`](../skill_factory/SKILL.md) | Skill creation patterns |
-| [`markdown_generation`](../markdown_generation/SKILL.md) | Artifact lint verification via `markdownlint-cli2` CLI |
+| [`skill_factory`](../skill-factory/SKILL.md) | Skill creation patterns |
+| [`markdown_generation`](../markdown-generation/SKILL.md) | Artifact lint verification via `markdownlint-cli2` CLI |
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ Do NOT apply when:
 
 ### Step 1 — Deep Change Analysis
 
-Follow [Step 1 from git_atomic_commit](../git_atomic_commit/SKILL.md#step-1-deep-change-analysis):
+Follow [Step 1 from git_atomic_commit](../git-atomic-commit-construction/SKILL.md#step-1-deep-change-analysis):
 
 - Detect ALL staged, unstaged, and untracked changes
 - Analyze dependencies and cross-file references
@@ -69,7 +69,7 @@ Follow [Step 1 from git_atomic_commit](../git_atomic_commit/SKILL.md#step-1-deep
 
 ### Step 2 — Logical Grouping (Arrangement)
 
-Follow [Step 2 from git_atomic_commit](../git_atomic_commit/SKILL.md#step-2-logical-grouping-arrangement):
+Follow [Step 2 from git_atomic_commit](../git-atomic-commit-construction/SKILL.md#step-2-logical-grouping-arrangement):
 
 - Arrange changes into independent, atomic commits
 - Each commit MUST be able to stand alone on its own branch
@@ -120,7 +120,7 @@ Please say "start" to create branches and commit each change atomically.
 
 ### Step 4 — Interactive Hunk-Based Staging (If Needed)
 
-Follow [Step 3 from git_atomic_commit](../git_atomic_commit/SKILL.md#step-3-interactive-hunk-based-staging):
+Follow [Step 3 from git_atomic_commit](../git-atomic-commit-construction/SKILL.md#step-3-interactive-hunk-based-staging):
 
 - Use `git add -p <file>` for mixed concerns
 - Evaluate each hunk individually
@@ -247,4 +247,28 @@ The agent is BLOCKED from:
 
 - **Source Conversation**: This skill was created based on the atomic commit workflow
   demonstrated in the oleovista-acers and acers-backend repositories
-- **Related Skills**: [`git_atomic_commit`](../git_atomic_commit/SKILL.md), [`git_history_refinement`](../git_history_refinement/SKILL.md)
+- **Related Skills**:
+    - [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md)
+    - [`git_history_refinement`](../git-history-refinement/SKILL.md)
+    - [`git-branch-promotion`](../git-branch-promotion/SKILL.md)
+
+## Post-Processing
+
+When feature branches produced by this skill are intended to replace
+a canonical branch on `origin` (e.g., after the PRs merge upstream
+and the local canonical needs to be fast-forwarded, or when a
+per-commit branch chain is collapsed back onto `master`), the
+promotion of the chosen tip onto the canonical branch — cherry-pick
+equivalence audit for any canonical-only commits, tree-parity
+verification, and authorized force-push — MUST be delegated to the
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) skill.
+Do NOT manually `git reset --hard` + force-push canonical onto a
+feature-branch tip without that skill's §2 audit and §4 parity gate.
+
+**Submodule case (chained post-processing):** If the feature branches
+live in a **submodule**, after
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) succeeds the
+parent repository's commits referencing the old submodule SHAs are
+invalidated. The parent's history MUST be repaired via
+[`git-submodule-pointer-repair` §5](../git-submodule-pointer-repair/SKILL.md#5-mass-pointer-reconciliation-full-history-rewrite-recovery)
+using the match key appropriate to the rewrite type per §5.2.0.
