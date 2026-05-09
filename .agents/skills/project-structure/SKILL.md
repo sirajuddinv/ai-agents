@@ -280,7 +280,7 @@ duplicate content from `README.md` or `SKILL.md`.
 
 | Skill | Path | When to use |
 |---|---|---|
-| Skill Name | [`.agents/skills/skill_name/SKILL.md`](.agents/skills/skill_name/SKILL.md) | One-line trigger description |
+| Skill Name | [`.agents/skills/skill-name/SKILL.md`](.agents/skills/skill-name/SKILL.md) | One-line trigger description |
 
 ## Conventions
 

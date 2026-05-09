@@ -36,8 +36,8 @@ scanning, identifying unused packages, and safely removing them with build valid
 
 ## Related Skills
 
-- [Package Version Correction](../package_version_correction/SKILL.md) — Pin dependencies to exact versions
-- [NPM Overrides Audit](../npm_overrides_audit/SKILL.md) — Remove unnecessary override constraints
-- [Git Atomic Commit](../git_atomic_commit/SKILL.md) — Ensure each removal is atomic
-- [Markdown Generation](../markdown_generation/SKILL.md) — Document audit results
-- [Skill Factory](../skill_factory/SKILL.md) — Reference for this skill's creation
+- [Package Version Correction](../package-version-correction/SKILL.md) — Pin dependencies to exact versions
+- [NPM Overrides Audit](../npm-overrides-audit/SKILL.md) — Remove unnecessary override constraints
+- [Git Atomic Commit](../git-atomic-commit-construction/SKILL.md) — Ensure each removal is atomic
+- [Markdown Generation](../markdown-generation/SKILL.md) — Document audit results
+- [Skill Factory](../skill-factory/SKILL.md) — Reference for this skill's creation

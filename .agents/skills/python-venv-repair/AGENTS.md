@@ -12,5 +12,5 @@ diagnosing, and repairing broken Python virtual environments.
   for user confirmation before modifying any venv.
 - **Relative Symlinks Only**: MUST use `ln -s python3` (relative) — never absolute
   paths that will break on Homebrew upgrades.
-- **Redaction & Portability**: Apply the [Redaction & Portability Skill](../redaction_portability/SKILL.md)
+- **Redaction & Portability**: Apply the [Redaction & Portability Skill](../redaction-portability/SKILL.md)
   to all generated artifacts.

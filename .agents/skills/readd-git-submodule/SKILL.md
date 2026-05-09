@@ -48,7 +48,7 @@ The agent MUST explicitly invoke and follow the protocol defined in the **Git Su
 ### 3.2 Standardized Re-addition (Delegation)
 
 The agent MUST explicitly invoke and follow the protocol defined in the **Git Submodule Addition Skill**
-(`../../.agent/skills/git_submodule_addition/SKILL.md`).
+(`../../.agents/skills/git-submodule-addition/SKILL.md`).
 
 - **Reference Target**: `<NEW_PATH>` (derived per the addition skill's rules) and `<URL>`.
 - **Action**: Add, initialize, and enforce branch tracking at the newly standardized path.

@@ -420,7 +420,7 @@ To additionally configure at application or profile level:
 
 ```bash
 # Application tier (affects all your VSCode projects)
-cd /path/to/ai-suite/.agents/skills/vscode_nginx_filetype_config
+cd /path/to/ai-suite/.agents/skills/vscode-nginx-filetype-config
 python3 scripts/vscode-nginx-config.py --tier application
 
 # Or profile tier (for specific workflow)

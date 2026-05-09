@@ -60,7 +60,7 @@ Before beginning the transformation, the agent MUST perform a surgical audit of 
 ### 2.5 Portability & Depth Audit
 
 Before the final commit, the agent MUST perform a **Portability & Redaction Audit** as defined in the
-**[Skill Factory Section 3](../skill_factory/SKILL.md#3-post-drafting-checklist)**. This ensures all documentation
+**[Skill Factory Section 3](../skill-factory/SKILL.md#3-post-drafting-checklist)**. This ensures all documentation
 is functionally independent from ephemeral session storage and correctly path-referenced.
 
 ***

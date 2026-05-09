@@ -106,7 +106,7 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | <comm
 
 | Feature | Change Note | Rationale |
 | :--- | :--- | :--- |
-| **Path Redaction** | Replaced `/Users/X/` with `/Users/[REDACTED]/`. | Compliance with [redaction\_portability](../redaction_portability/SKILL.md). |
+| **Path Redaction** | Replaced `/Users/X/` with `/Users/[REDACTED]/`. | Compliance with [redaction\_portability](../redaction-portability/SKILL.md). |
 | **Section Restoration** | Re-inserted "Dependencies" and "Integration Workflow". | Restored to ensure full operational guidance is not lost during summarization. |
 | **Alphabetical Mandate** | Explicitly required alphabetical ordering in JSON. | Consistency and maintainability in large configuration files. |
 | **Functional Pipe Test** | Added bash sample for JSON-RPC pipe verification. | Functional proof-of-work for `stdio` transport. |

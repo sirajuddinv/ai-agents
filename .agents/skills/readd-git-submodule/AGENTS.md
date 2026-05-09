@@ -18,6 +18,6 @@ phase before any re-addition to prevent configuration drift and stale metadata c
 
 ## Related Links
 
-- [Submodule Addition Skill](../../../.agent/skills/git_submodule_addition/SKILL.md)
+- [Submodule Addition Skill](../../../.agents/skills/git-submodule-addition/SKILL.md)
 - [Git Submodule Rules](../../../ai-agent-rules/git-submodule-rules.md)
 - [StackOverflow: Removal Instructions](https://stackoverflow.com/a/1260982/3333438)

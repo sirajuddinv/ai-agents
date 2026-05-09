@@ -28,7 +28,7 @@ The agent MUST prioritize the use of the Python-backed audit engine to guarantee
 
 ```bash
 # Execute the audit engine from the skill's scripts directory
-python3 .agents/skills/git_commit_details_audit/scripts/audit.py <COMMIT_SHA>
+python3 .agents/skills/git-commit-details-audit/scripts/audit.py <COMMIT_SHA>
 ```
 
 #### Detailed Command Explanation:
@@ -44,7 +44,7 @@ python3 .agents/skills/git_commit_details_audit/scripts/audit.py <COMMIT_SHA>
 
 ### 2.2 Manual Fallback (Hunk Isolation)
 
-If the audit engine is unavailable, the agent MUST orchestrate the **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** primitive. 
+If the audit engine is unavailable, the agent MUST orchestrate the **[Git Commit Metadata Extraction](../git-commit-metadata-extraction/SKILL.md)** primitive. 
 
 1. Execute the `git_commit_metadata_extraction` primitive on the `<COMMIT_SHA>` to obtain the zero-omission metadata and exact file classifications.
 2. After retrieving the core metadata, extract the full diff hunks for analysis:
@@ -76,7 +76,7 @@ Every audit report presented to the user MUST follow the **"Why vs. What"** stan
 
 - **Session Log**: Results from this skill should be linked to the relevant industrial walkthrough in `docs/walkthroughs/`.
 - **Rules Mapping**: All audit findings MUST comply with the **[Git Operation Rules](../../../ai-agent-rules/git-operation-rules.md)**.
-- **Related Skills**: Uses **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** as its fallback primitive.
+- **Related Skills**: Uses **[Git Commit Metadata Extraction](../git-commit-metadata-extraction/SKILL.md)** as its fallback primitive.
 
 ***
 

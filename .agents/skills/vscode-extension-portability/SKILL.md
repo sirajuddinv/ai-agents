@@ -61,7 +61,7 @@ The skill includes a dedicated Python script for precise, regex-based refactorin
 ### 4.1 Usage: `refactor_links.py`
 
 ```bash
-python3 .agent/skills/vscode_extension_portability/refactor_links.py --file /path/to/settings.json
+python3 .agents/skills/vscode-extension-portability/refactor_links.py --file /path/to/settings.json
 ```
 
 - `--file`: Path to the target `settings.json`.

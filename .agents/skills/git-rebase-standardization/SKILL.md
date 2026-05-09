@@ -22,9 +22,9 @@ execution protocols, and operational guardrails.
 
 This skill is invoked for complex rebase operations involving multiple
 branches or chain rebasing. For constructing new commits, use
-[`git_atomic_commit`](../git_atomic_commit/SKILL.md). For splitting
+[`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md). For splitting
 existing commits, use
-[`git_history_refinement`](../git_history_refinement/SKILL.md).
+[`git_history_refinement`](../git-history-refinement/SKILL.md).
 
 ## Source Rules
 
@@ -51,9 +51,9 @@ Apply this skill when:
 
 Do NOT apply when:
 - The task is constructing new commits from uncommitted changes — use
-  [`git_atomic_commit`](../git_atomic_commit/SKILL.md)
+  [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md)
 - The task is splitting a single existing commit — use
-  [`git_history_refinement`](../git_history_refinement/SKILL.md)
+  [`git_history_refinement`](../git-history-refinement/SKILL.md)
 - A simple `git rebase` onto one target with no chain complexity
 
 ---
@@ -143,7 +143,7 @@ Execute the rebase according to the approved plan.
 #### 5a — Backup Before Rebase
 
 Create a backup branch before any destructive operation (per the
-[`git_history_refinement`](../git_history_refinement/SKILL.md) backup
+[`git_history_refinement`](../git-history-refinement/SKILL.md) backup
 protocol):
 
 ```powershell

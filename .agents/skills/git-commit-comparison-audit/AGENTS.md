@@ -21,5 +21,5 @@ This skill provides the architectural context for performing side-by-side compar
 ***
 
 ### Reference Mapping
-- **Primary Tool**: `.agents/skills/git_commit_comparison_audit/scripts/compare.py`
+- **Primary Tool**: `.agents/skills/git-commit-comparison-audit/scripts/compare.py`
 - **Dependencies**: `git_commit_details_audit` (Orchestrated Skill)

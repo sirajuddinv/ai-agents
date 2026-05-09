@@ -33,6 +33,6 @@ exact, pinned versions from lock files.
 
 ## Related Skills
 
-- [Git Atomic Commit](../git_atomic_commit/SKILL.md) — Commit corrected dependencies
-- [Markdown Generation](../markdown_generation/SKILL.md) — Document version audit results
-- [Skill Factory](../skill_factory/SKILL.md) — Reference for this skill's creation
+- [Git Atomic Commit](../git-atomic-commit-construction/SKILL.md) — Commit corrected dependencies
+- [Markdown Generation](../markdown-generation/SKILL.md) — Document version audit results
+- [Skill Factory](../skill-factory/SKILL.md) — Reference for this skill's creation

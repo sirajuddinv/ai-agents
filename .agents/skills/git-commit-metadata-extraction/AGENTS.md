@@ -1,6 +1,6 @@
 # Git Commit Metadata Extraction — Agent Bridge
 
-> **Skill Location:** `.agents/skills/git_commit_metadata_extraction/SKILL.md`
+> **Skill Location:** `.agents/skills/git-commit-metadata-extraction/SKILL.md`
 
 ## When to Use This Skill
 
@@ -44,9 +44,9 @@ GIT_PAGER=cat git -C <repo-path> ls-tree -r <parent-sha> | grep <filename>
 
 ## Consumer Skills
 
-- [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md)
+- [`git_submodule_commit_details`](../git-submodule-commit-details/SKILL.md)
   — uses this primitive to extract raw submodule commit data before formatting.
-- [`git_commit_details_audit`](../git_commit_details_audit/SKILL.md)
+- [`git_commit_details_audit`](../git-commit-details-audit/SKILL.md)
   — uses this primitive to gather the raw facts before generating pedagogical analysis.
 
 ---

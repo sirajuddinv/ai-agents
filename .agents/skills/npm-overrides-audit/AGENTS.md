@@ -36,7 +36,7 @@ dependency resolution and reduce hidden constraints.
 
 ## Related Skills
 
-- [Package Version Correction](../package_version_correction/SKILL.md) — Pin all dependencies to exact versions
-- [Git Atomic Commit](../git_atomic_commit/SKILL.md) — Ensure each override change is atomic
-- [Markdown Generation](../markdown_generation/SKILL.md) — Document override audit results
-- [Skill Factory](../skill_factory/SKILL.md) — Reference for this skill's creation
+- [Package Version Correction](../package-version-correction/SKILL.md) — Pin all dependencies to exact versions
+- [Git Atomic Commit](../git-atomic-commit-construction/SKILL.md) — Ensure each override change is atomic
+- [Markdown Generation](../markdown-generation/SKILL.md) — Document override audit results
+- [Skill Factory](../skill-factory/SKILL.md) — Reference for this skill's creation

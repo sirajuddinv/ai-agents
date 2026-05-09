@@ -15,7 +15,7 @@ category: Git & Repository Management
 ## Description
 
 Detect and remove IDE artifact noise from **existing commits** using
-the [`commit_edit`](../commit_edit/SKILL.md) skill as the execution
+the [`commit_edit`](../git-commit-edit/SKILL.md) skill as the execution
 mechanism. This skill is a specialized layer that adds noise detection,
 classification, tracked-vs-untracked safety analysis, and mandatory
 user confirmation on top of the general commit edit workflow.
@@ -30,8 +30,8 @@ commit history. This skill surgically removes them.
 
 | Dependency | Role |
 |---|---|
-| [`commit_edit`](../commit_edit/SKILL.md) | Execution mechanism — interactive rebase, amend, replay |
-| [`git_atomic_commit`](../git_atomic_commit/SKILL.md) Step 3g | IDE artifact detection patterns, user confirmation workflow |
+| [`commit_edit`](../git-commit-edit/SKILL.md) | Execution mechanism — interactive rebase, amend, replay |
+| [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md) Step 3g | IDE artifact detection patterns, user confirmation workflow |
 | [`git-operation-rules.md`](../../../ai-agent-rules/git-operation-rules.md) | Stash/push/commit protocols |
 
 ## Prerequisites
@@ -41,7 +41,7 @@ commit history. This skill surgically removes them.
 | VCS | Git 2.x+ |
 | Shell | PowerShell 5.1+ or Bash 4+ |
 | Access | Write access to the project repository |
-| Skills | [`commit_edit`](../commit_edit/SKILL.md) must be available |
+| Skills | [`commit_edit`](../git-commit-edit/SKILL.md) must be available |
 
 ## When to Apply
 
@@ -58,9 +58,9 @@ Apply this skill when:
 
 Do NOT apply when:
 - The noise is in the **working tree** (uncommitted) — use
-  [`git_atomic_commit`](../git_atomic_commit/SKILL.md) Step 3g instead
+  [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md) Step 3g instead
 - The commit needs to be fully split into multiple atomic commits — use
-  [`git_history_refinement`](../git_history_refinement/SKILL.md) instead
+  [`git_history_refinement`](../git-history-refinement/SKILL.md) instead
 - The user wants to remove noise from multiple commits across a range —
   apply this skill iteratively, one commit at a time, starting from
   the oldest
@@ -185,16 +185,16 @@ Proceed with noise removal? (yes / no / inspect further)
 
 ### Step 2 — Execute Commit Edit
 
-Delegate to the [`commit_edit`](../commit_edit/SKILL.md) skill for
+Delegate to the [`commit_edit`](../git-commit-edit/SKILL.md) skill for
 the actual rebase operation. The steps are:
 
 #### 2a — Stash (if needed)
 
-Per [`commit_edit`](../commit_edit/SKILL.md) Step 1.
+Per [`commit_edit`](../git-commit-edit/SKILL.md) Step 1.
 
 #### 2b — Interactive Rebase
 
-Per [`commit_edit`](../commit_edit/SKILL.md) Step 2.
+Per [`commit_edit`](../git-commit-edit/SKILL.md) Step 2.
 
 #### 2c — Remove Noise Files
 
@@ -229,7 +229,7 @@ git show --stat HEAD -- ':!*.project' ':!*.classpath'
 
 #### 2e — Amend, Continue, Restore
 
-Per [`commit_edit`](../commit_edit/SKILL.md) Steps 4–7.
+Per [`commit_edit`](../git-commit-edit/SKILL.md) Steps 4–7.
 
 ---
 
@@ -257,7 +257,7 @@ git log --oneline <new-hash>..HEAD
 ```
 
 The count must match the pre-edit descendant count from
-[`commit_edit`](../commit_edit/SKILL.md) Step 0c.
+[`commit_edit`](../git-commit-edit/SKILL.md) Step 0c.
 
 #### 3c — Report Results
 

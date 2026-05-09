@@ -23,8 +23,8 @@ A self-contained universal extraction primitive that retrieves full commit metad
 
 This skill is a **reusable foundational primitive**. It is called by:
 
-- [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md) — to extract the raw data for submodule pointer commits
-- [`git_commit_details_audit`](../git_commit_details_audit/SKILL.md) — to gather the raw facts before applying a pedagogical analysis
+- [`git_submodule_commit_details`](../git-submodule-commit-details/SKILL.md) — to extract the raw data for submodule pointer commits
+- [`git_commit_details_audit`](../git-commit-details-audit/SKILL.md) — to gather the raw facts before applying a pedagogical analysis
 
 ***
 

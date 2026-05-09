@@ -1,6 +1,6 @@
 # Git Submodule Commit Reword — Agent Bridge
 
-> **Skill Location:** `.agent/skills/git-submodule-commit-reword/SKILL.md`
+> **Skill Location:** `.agents/skills/git-submodule-commit-reword/SKILL.md`
 
 ## When to Use This Skill
 

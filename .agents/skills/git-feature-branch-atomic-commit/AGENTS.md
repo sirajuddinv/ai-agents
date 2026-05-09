@@ -16,8 +16,8 @@ Use this skill when:
 
 | Skill | Purpose |
 | :--- | :--- |
-| [`git_atomic_commit`](../git_atomic_commit/SKILL.md) | Single-branch atomic commit construction |
-| [`git_history_refinement`](../git_history_refinement/SKILL.md) | Split/fix existing commit history |
+| [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md) | Single-branch atomic commit construction |
+| [`git_history_refinement`](../git-history-refinement/SKILL.md) | Split/fix existing commit history |
 
 ## Mandates
 

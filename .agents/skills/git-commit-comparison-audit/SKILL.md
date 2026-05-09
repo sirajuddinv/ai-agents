@@ -16,7 +16,7 @@ The agent MUST autonomously verify the availability of required tools:
 
 - **Git**: Verified via `which git`.
 - **Python 3**: Verified via `which python3`.
-- **Orchestrated Skill**: Verify existence of `.agents/skills/git_commit_details_audit/scripts/audit.py`.
+- **Orchestrated Skill**: Verify existence of `.agents/skills/git-commit-details-audit/scripts/audit.py`.
 
 ***
 
@@ -28,7 +28,7 @@ The agent MUST use the `compare.py` orchestrator to guarantee standardized tabul
 
 ```bash
 # Execute the comparison orchestrator
-python3 .agents/skills/git_commit_comparison_audit/scripts/compare.py <SHA1> <SHA2>
+python3 .agents/skills/git-commit-comparison-audit/scripts/compare.py <SHA1> <SHA2>
 ```
 
 #### Detailed Command Explanation:

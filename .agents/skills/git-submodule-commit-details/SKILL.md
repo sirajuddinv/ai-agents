@@ -14,13 +14,13 @@ category: Git & Repository Management
 
 A specialized skill that prepares commit metadata from a Git submodule for use in parent repository commit messages or audit reports. 
 
-Instead of performing raw extraction itself, this skill orchestrates the **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** primitive. It provides the necessary submodule context (path resolution, registration URL) and formats the output into the industrial standard required for submodule syncs.
+Instead of performing raw extraction itself, this skill orchestrates the **[Git Commit Metadata Extraction](../git-commit-metadata-extraction/SKILL.md)** primitive. It provides the necessary submodule context (path resolution, registration URL) and formats the output into the industrial standard required for submodule syncs.
 
 This skill is called by:
 
-- [`git_submodule_commit_reword`](../git_submodule_commit_reword/SKILL.md)
+- [`git_submodule_commit_reword`](../git-submodule-commit-reword/SKILL.md)
   — to compose amended commit messages
-- [`git_atomic_commit`](../git_atomic_commit/SKILL.md)
+- [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md)
   — to compose descriptive submodule sync commit messages
 
 ## Prerequisites
@@ -86,7 +86,7 @@ GIT_PAGER=cat git -C <parent-repo-path> config \
 
 ### Step 3 — Extract Raw Metadata
 
-Execute the **[Git Commit Metadata Extraction](../git_commit_metadata_extraction/SKILL.md)** primitive on the `<submodule-sha>` within the submodule directory. 
+Execute the **[Git Commit Metadata Extraction](../git-commit-metadata-extraction/SKILL.md)** primitive on the `<submodule-sha>` within the submodule directory. 
 
 *Do not attempt to manually extract data; rely entirely on the primitive to ensure zero-omission extraction and correct file classifications.*
 
@@ -152,10 +152,10 @@ The agent **IS BLOCKED** from:
 
 ## Related Skills
 
-- [`git_commit_metadata_extraction`](../git_commit_metadata_extraction/SKILL.md)
+- [`git_commit_metadata_extraction`](../git-commit-metadata-extraction/SKILL.md)
   — The underlying foundational primitive.
-- [`git_submodule_commit_reword`](../git_submodule_commit_reword/SKILL.md)
-- [`git_atomic_commit`](../git_atomic_commit/SKILL.md)
+- [`git_submodule_commit_reword`](../git-submodule-commit-reword/SKILL.md)
+- [`git_atomic_commit`](../git-atomic-commit-construction/SKILL.md)
 
 ---
 

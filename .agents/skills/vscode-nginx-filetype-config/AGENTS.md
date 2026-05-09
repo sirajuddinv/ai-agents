@@ -140,5 +140,5 @@ Including environment checks, verification protocols, multi-tier merging strateg
 - **VSCode Settings Tiers**: https://code.visualstudio.com/docs/getstarted/settings
 - **VSCode Workspaces**: https://code.visualstudio.com/docs/editor/workspaces
 - **NGINX Language Support**: Built-in VSCode support; enhanced with [NGINX IntelliSense](https://marketplace.visualstudio.com/items?itemName=hangxingliu.vscode-nginx-conf)
-- **Standardization Rules**: Follow [ai-rule-standardization-rules.md](../../../../ai-agent-rules/ai-rule-standardization-rules.md) for skill architecture
+- **Standardization Rules**: Follow [ai-rule-standardization-rules.md](../../../ai-agent-rules/ai-rule-standardization-rules.md) for skill architecture
 

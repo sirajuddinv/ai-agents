@@ -47,4 +47,4 @@ git diff --stat main..origin/main
 
 - Audited by: Antigravity
 - Timestamp: 2026-04-04T12:00:00Z
-- Session: [Reconciliation-2026-04-04](../../../docs/conversations/reconciliation-2026-04-04.md)
+- Session: Reconciliation-2026-04-04 (sample report; live session log not retained)

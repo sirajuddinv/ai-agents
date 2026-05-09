@@ -177,7 +177,7 @@ Which would you prefer? (1 / 2)
 ### 3.3 User Decision Gate
 
 - **Option 1** → proceed to Layer 4 (Recreation).
-- **Option 2** → install Python via [Mise Tool Management Skill](../../../.agent/skills/mise-tool-management/SKILL.md) or
+- **Option 2** → install Python via [Mise Tool Management Skill](../../../.agents/skills/mise-tool-management/SKILL.md) or
   `brew install python@3.14`, then proceed to §4.2 (Symlink Fix).
 
 ***

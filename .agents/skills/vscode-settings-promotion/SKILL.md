@@ -43,7 +43,7 @@ The promotion process is automated via the industrial-grade Python script locate
 Execute the script using the following command structure:
 
 ```bash
-python3 .agents/skills/vscode_settings_promotion/scripts/promote.py \
+python3 .agents/skills/vscode-settings-promotion/scripts/promote.py \
   --profile "/path/to/profile/settings.json" \
   --global-settings "/path/to/global/settings.json" \
   --keys "setting.key.one" "setting.key.two"

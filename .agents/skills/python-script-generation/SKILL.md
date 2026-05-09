@@ -81,7 +81,7 @@ Create a parameter-driven core class (e.g., `SyncManager`) that encapsulates the
 Create lightweight scripts that instantiate and run the modular engine with specific configurations:
 
 - **Example `sync_rules.py`**: Configure with `rules_dir="."` and `skills_dir=None`.
-- **Example `sync_skills.py`**: Configure with `rules_dir=None` and `skills_dir=".agent/skills"`.
+- **Example `sync_skills.py`**: Configure with `rules_dir=None` and `skills_dir=".agents/skills"`.
 
 ***
 

@@ -17,5 +17,5 @@ Refer to [SKILL.md](./SKILL.md) for the active operational protocol for transfor
 
 ## Related Skills
 
-- [Text to Markdown](./text_to_markdown/SKILL.md) - For plain text to markdown conversion
-- [Redaction & Portability](./redaction_portability/SKILL.md) - For sensitive information handling
+- [Text to Markdown](../text-to-markdown/SKILL.md) - For plain text to markdown conversion
+- [Redaction & Portability](../redaction-portability/SKILL.md) - For sensitive information handling

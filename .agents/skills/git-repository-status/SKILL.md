@@ -127,6 +127,6 @@ When reporting the status, the agent **MUST** use the following high-fidelity fo
 ## 6. Related Conversations & Traceability
 
 - Standard established during the **Industrial AI Agent Repository History** session (March/April 2026).
-- Follows [Skill Factory Protocol](../../skills/skill_factory/SKILL.md).
+- Follows [Skill Factory Protocol](../skill-factory/SKILL.md).
 - Compliance: 100% Rule 1.1 (tilde-portable).
 - Compatibility: PowerShell 5.1/Core.

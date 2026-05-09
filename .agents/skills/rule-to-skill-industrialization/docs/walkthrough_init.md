@@ -39,7 +39,7 @@ Registered the new skill in the root registry for agent discovery.
 
 ### 2. Fidelity Check
 
-- **Compliance**: Adheres to the [Skill Factory](../../skill_factory/SKILL.md) and
+- **Compliance**: Adheres to the [Skill Factory](../../skill-factory/SKILL.md) and
   [AI Rule Standardization](../../../../ai-agent-rules/ai-rule-standardization-rules.md) protocols.
 - **Traceability**: Includes a traceability audit back to this session's implementation history.
 

@@ -87,7 +87,7 @@ Output format: `160000 commit <submodule-sha>    <submodule-name>`
 
 #### 3b–3e — Extract Full Commit Metadata
 
-**Delegate to [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md).**
+**Delegate to [`git_submodule_commit_details`](../git-submodule-commit-details/SKILL.md).**
 
 Pass the `<submodule-path>` and `<submodule-sha>` from Step 3a as inputs.
 The skill returns the complete structured record:
@@ -224,7 +224,7 @@ The agent **IS BLOCKED** from:
 
 ## Related Skills
 
-- [`git_submodule_commit_details`](../git_submodule_commit_details/SKILL.md) — Extraction primitive delegated by Steps 3b–3e
-- [`git_submodule_addition`](../../../.agent/skills/git_submodule_addition/SKILL.md) — For adding new submodules
-- [`git_history_refinement`](../git_history_refinement/SKILL.md) — For complex history reconstruction
-- [`git_submodule_pointer_repair`](../git_submodule_pointer_repair/SKILL.md) — For fixing detached HEAD in submodules
+- [`git_submodule_commit_details`](../git-submodule-commit-details/SKILL.md) — Extraction primitive delegated by Steps 3b–3e
+- [`git-submodule-addition`](../../../.agents/skills/git-submodule-addition/SKILL.md) — For adding new submodules
+- [`git_history_refinement`](../git-history-refinement/SKILL.md) — For complex history reconstruction
+- [`git_submodule_pointer_repair`](../git-submodule-pointer-repair/SKILL.md) — For fixing detached HEAD in submodules
