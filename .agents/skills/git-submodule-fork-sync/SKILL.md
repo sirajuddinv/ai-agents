@@ -40,8 +40,22 @@ The logic to traverse the submodules, analyze the internal `.git/config` against
 
 ```bash
 # Analyze discrepancies
-python3 .agents/skills/git_submodule_fork_sync/scripts/sync.py analyze
+python3 .agents/skills/git-submodule-fork-sync/scripts/sync.py analyze
 ```
+
+### 2.1.1 Fork Name Conformance Check (MANDATORY)
+
+For every detected fork, the agent MUST assert that the fork's GitHub repository name equals the **submodule directory name** (owner-prefixed convention, e.g. `besoeasy_open-skills`). Forks created via the GitHub Web UI or `gh repo fork` without `--fork-name` default to the bare upstream name and MUST be corrected.
+
+```bash
+# For each fork detected by analyze:
+gh repo view <owner>/<expected_name> --json name 2>/dev/null \
+  || gh repo rename <expected_name> --repo <owner>/<current_name> --yes
+```
+
+* `<expected_name>`: The submodule directory name (e.g. `besoeasy_open-skills`).
+* `<current_name>`: The actual GitHub fork name (often just `<upstream_repo>`).
+* Delegate the full rename + remote re-pointing protocol to [`git-submodule-fork-reconfigure`](../git-submodule-fork-reconfigure/SKILL.md) §2.2a.
 
 ### 2.2 Atomic History Integration
 
@@ -60,7 +74,7 @@ history stack to guarantee atomicity.
 
 ```bash
 # Execute total reconstruction from a clean base SHA
-python3 .agents/skills/git_submodule_fork_sync/scripts/sync.py rebuild --base <BASE_SHA>
+python3 .agents/skills/git-submodule-fork-sync/scripts/sync.py rebuild --base <BASE_SHA>
 ```
 
 - **Pedagogical Breakdown**:
