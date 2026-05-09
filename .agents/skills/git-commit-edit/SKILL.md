@@ -20,12 +20,12 @@ single commit — removing unwanted files, adding missing files, amending
 content, or fixing mixed concerns — while preserving all descendant
 commits and the working tree state.
 
-Unlike [`git_history_refinement`](../git_history_refinement/SKILL.md)
+Unlike [`git-history-refinement`](../git-history-refinement/SKILL.md)
 (which reconstructs history from a clean baseline), this skill performs
 **minimal, targeted edits** to a specific commit. It is the "scalpel"
 approach vs the "rebuild" approach.
 
-Unlike [`git_atomic_commit`](../git_atomic_commit/SKILL.md) (which
+Unlike [`git-atomic-commit-construction`](../git-atomic-commit-construction/SKILL.md) (which
 constructs new commits from working-tree changes), this skill modifies
 **already-committed** history.
 
@@ -60,11 +60,11 @@ Apply this skill when:
 
 Do NOT apply when:
 - The user wants to split a commit into multiple atomic commits — use
-  [`git_history_refinement`](../git_history_refinement/SKILL.md) instead
+  [`git-history-refinement`](../git-history-refinement/SKILL.md) instead
 - Changes are uncommitted (working-tree state) — use
-  [`git_atomic_commit`](../git_atomic_commit/SKILL.md) instead
+  [`git-atomic-commit-construction`](../git-atomic-commit-construction/SKILL.md) instead
 - The user wants to rebase branches — use
-  [`git_rebase`](../git_rebase/SKILL.md) instead
+  [`git-rebase-standardization`](../git-rebase-standardization/SKILL.md) instead
 - The commit is the most recent and only needs a message change — use
   `git commit --amend -m "..."` directly (no rebase needed)
 
@@ -357,17 +357,25 @@ If a descendant commit conflicts with the edit:
 #### 5b — Handle Corrupted Rebase State
 
 If `git rebase --continue` fails with
-`warning: could not read '.git/rebase-merge/head-name'`:
+`warning: could not read 'rebase-merge/head-name'`:
+
+> [!CRITICAL]
+> **NEVER hardcode `.git/rebase-merge`.** In a submodule worktree
+> (or any linked worktree) `.git` is a *file* pointing into
+> `<superproject>/.git/modules/<name>`, so the literal path does not
+> exist. Always resolve via `git rev-parse --git-path rebase-merge`,
+> which returns the correct absolute path in every worktree topology.
 
 ```powershell
-Test-Path ".git/rebase-merge"
-Get-ChildItem ".git/rebase-merge"
+$rebaseDir = git rev-parse --git-path rebase-merge
+Test-Path $rebaseDir
+Get-ChildItem $rebaseDir
 ```
 
 If the directory is empty/corrupted:
 
 ```powershell
-Remove-Item ".git/rebase-merge" -Recurse -Force
+Remove-Item $rebaseDir -Recurse -Force
 git status
 ```
 
@@ -541,3 +549,41 @@ The agent is **BLOCKED** from:
 | Amended commit has unexpected file count | Compare `git show --stat HEAD` against the pre-edit plan; re-amend if needed |
 | `Deletion of directory failed` during rebase | Answer `n` to retry prompt — Git will proceed; the directory is cleaned up later |
 | Force push overwrites teammate's work | Always use `--force-with-lease` instead of `--force` to prevent overwriting unknown remote commits |
+
+---
+
+## Composition by Higher-Level Skills
+
+Skills that build on this base by feeding it domain-specific
+discovery, classification, or batch logic:
+
+| Composer | Purpose |
+|---|---|
+| [`noise-removal-via-commit-edit`](../noise-removal-via-commit-edit/SKILL.md) | Detects IDE artifact noise in a commit and drives this skill to remove the offending files. |
+| [`git-commit-message-reword`](../git-commit-message-reword/SKILL.md) | Reads the project's commit-message rules, classifies the target commit's diff, authors a Conventional Commits message, and drives this skill's `reword` mode for a single commit. |
+| [`git-commit-message-bulk-reword`](../git-commit-message-bulk-reword/SKILL.md) | Range composer over `git-commit-message-reword`; amortizes the per-commit primitive across a contiguous commit range via a shared map and one rebase invocation. |
+
+## Post-Processing
+
+When this skill is invoked on a parallel/refined branch (e.g.,
+`<branch>-2`) that is intended to replace the canonical branch on
+`origin`, the rewrite produced by this skill is only **half** of the
+workflow. The promotion of the refined branch onto the canonical
+branch — including cherry-pick equivalence audit for any
+canonical-only commits, tree-parity verification, and authorized
+force-push — MUST be delegated to the
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) skill.
+Do NOT manually `git reset --hard` + force-push the refined branch
+onto canonical without running that skill's audit + verification
+gates.
+
+**Submodule case (chained post-processing):** If the rewritten branch
+lives in a **submodule**, every parent-repository commit whose tree
+referenced the old (now-orphaned) submodule SHAs is invalidated. After
+[`git-branch-promotion`](../git-branch-promotion/SKILL.md) succeeds in
+the submodule, the parent repository's history MUST be repaired via
+[`git-submodule-pointer-repair` §5 (Mass Pointer Reconciliation)](../git-submodule-pointer-repair/SKILL.md#5-mass-pointer-reconciliation-full-history-rewrite-recovery)
+using the **reword-tolerant match key** documented in §5.2.0. The
+parent repository's old pointer SHAs must remain resolvable in at
+least one location for the duration of that repair (a pre-rewrite
+local clone, a retained backup branch, or an origin fetch by SHA).
