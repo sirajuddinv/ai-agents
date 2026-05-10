@@ -67,7 +67,9 @@ The `SKILL.md` MUST include:
    defined in the central rule repository. Instead, it MUST link to the
    authoritative rule files using relative links (e.g., to the atomic
    commit rules or commit message rules).
-5. **Traceability Section**: Links to permanent conversation logs using the **Redaction & Portability** protocol.
+5. **Traceability Section**: Links to permanent conversation logs. All such logs MUST be sanitised through the
+   **[Redaction & Portability Skill](../redaction-portability/SKILL.md)** before being committed — see §3 of this
+   document for the mandatory audit checklist.
 
 ### 2.2.1 Script Authoring Mandates
 
@@ -109,12 +111,37 @@ When the skill ships executable scripts under `scripts/`, every script MUST obey
 
 Every skill generated via the Factory MUST automatically undergo the final verification:
 
-- **Portability, Redaction & PII Audit**: Every file MUST be neutral and portable.
-    1. **Link Relativization**: All `file:///` absolute paths MUST be replaced with relative paths to the permanent
-       `docs/` directory of the skill.
-    2. **Redaction & Normalization**: PII, account names, and biological path prefixes MUST be replaced with standard
-       placeholders as defined in **[Section 4.2.9 of the Generation Rules](../../../ai-agent-rules/markdown-generation-rules.md#429-redaction--pii-neutralization)**.
-    3. **Directory Depth Audit**: Verify the correct directory depth (e.g., `../../../` from a 3-level deep skill).
+- **Portability, Redaction & PII Audit (MANDATORY — SSOT delegation)**: Every file produced by the Factory MUST be
+  put through the full **[Redaction & Portability Skill](../redaction-portability/SKILL.md)** protocol before the
+  skill is considered complete. The Factory MUST NOT inline its own redaction rules — the redaction skill is the SSOT.
+  Specifically, the Factory MUST execute, in order:
+    1. **Tier Classification** (Redaction §1): Walk every string in every generated artifact (`SKILL.md`,
+       `AGENTS.md`, every `docs/conversations/*.md`, every `docs/cases/*.md`, every script header) and classify
+       each candidate string as Tier A (identity/credentials), Tier B (machine/org topology), or Tier C
+       (public/universal).
+    2. **Canonical Placeholder Substitution** (Redaction §2): Replace every Tier-A and Tier-B match with the
+       canonical placeholder vocabulary (`<workspace-root>`, `<user-home>`, `<toolbase>`, `<author>`, `<user>`,
+       `<corp-proxy-host>`, `<corp-domain>`, `<internal-vcs>`, `<ticket-system>`, `<customer>`,
+       `<product-codename>`, etc.). Ad-hoc placeholder invention is FORBIDDEN — extend Redaction §2 first.
+    3. **Path Handling** (Redaction §3): All absolute Windows / POSIX paths are converted to workspace-relative,
+       user-home-relative (`~`), or placeholder form. Angle-bracket placeholders in `[text](target)` link targets
+       are converted to inline-code symbolic references per Redaction §3.3 to avoid broken navigation.
+    4. **Identity Handling** (Redaction §4): Author trailers, reviewer names, OS usernames, and email addresses are
+       redacted. Commit SHAs are preserved.
+    5. **Network & Org Handling** (Redaction §5): Internal proxy hosts, internal domains, internal repository URLs,
+       ticket IDs, customer names, and product codenames are redacted; the `nonProxyHosts` and analogous wildcards
+       use `<corp-domain>` / `<corp-cloud-domain>` placeholders.
+    6. **File Naming Hygiene** (Redaction §6): Conversation and case-study filenames MUST encode topics, never
+       organization or identity strings.
+    7. **Verification Scan** (Redaction §8 Step 4): Re-run the regex inventory scans for absolute paths, emails,
+       IPv4, and internal hostnames. The terminal output MUST be empty (or contain only Tier-C universally-true
+       matches) before the audit passes.
+    8. **Encoding Sanity Check** (Redaction §8 Step 5): Scan for mojibake markers (`Ã`, `â€`, `Â`, `ï¿½`) that
+       redaction edits frequently introduce, and fix them before considering the audit complete.
+    9. **Directory Depth Audit**: Verify the correct directory depth (e.g., `../../../` from a 3-level deep skill).
+- **Prohibited Behavior**: The Factory MUST NOT publish a skill that has not passed the Redaction & Portability audit.
+  Half-redacted strings (e.g., `<corp-proxy-host>.<real-corp>.com`) and over-redacted public identifiers
+  (e.g., redacting `Apache Commons`, `Eclipse`, `Maven Central`) are both audit failures per Redaction §10.
 - **Contextual Hosting**: Documentation (logs, artifacts) MUST reside in the component's `docs/` folder.
 - **Fidelity Check**: Verify that no technical details from the source conversation were summarized or lost.
 - **Markdown Audit**: Run the **Markdown Generation** protocol to ensure 100% lint compliance.
