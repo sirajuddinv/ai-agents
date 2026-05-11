@@ -462,6 +462,12 @@ Select-String -Path '<artifact>' -Pattern 'Ã|â€|Â|ï¿½'
 
 If matches appear, fix encoding before considering redaction complete.
 
+The root cause is almost always a non-UTF-8-aware read-modify-write in
+Windows PowerShell 5.1; the prevention protocol and the deterministic
+mojibake-repair recipe live in
+[`ai-agent-rules/shell-execution-rules.md` §2.4](../../../ai-agent-rules/shell-execution-rules.md#24-utf-8-safe-bulk-text-edits-in-powershell-forbidden-patterns)
+and MUST be applied before re-running the redaction pass.
+
 ### Step 6 — Re-render check
 
 Open the rendered markdown in a previewer. Look for:
