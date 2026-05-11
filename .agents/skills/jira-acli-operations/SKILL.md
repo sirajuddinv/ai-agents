@@ -734,7 +734,10 @@ acli jira dashboard search --limit 10 --json --paginate
 2. **Run** `git status` / `git log` to understand current branch state.
 3. **Create** a Jira work item under the epic for each page.
 4. **Implement** the code changes.
-5. **Create** a Pull Request via `gh pr create`.
+5. **Create** a Pull Request via `gh pr create`. If `gh` is unavailable, use
+   `POST /repos/{owner}/{repo}/pulls` per [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3.
+   If `gh` is installed but `gh auth status` fails, defer to
+   [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §3.4 before retrying.
 6. **Comment** the PR URL on the Jira ticket:
    ```bash
    acli jira workitem comment create \

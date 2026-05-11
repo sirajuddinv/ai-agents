@@ -34,6 +34,19 @@ Before execution, the agent **MUST** verify the industrial environment.
 
     *If `gh` is not logged in, the agent MUST instruct the user to run `gh auth login` manually.*
 
+    **Fallback delegations** (each is independently optional but the agent MUST engage them when the named tool
+    or capability is unavailable):
+
+    - **No `gh` installed**: replace every `gh repo view` / `gh repo fork` / `gh auth token` call with the REST
+      equivalent per [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3 — specifically
+      `GET /repos/{o}/{r}` for view, `POST /repos/{o}/{r}/forks` for fork, and a user-supplied PAT in
+      `$env:GITHUB_TOKEN` instead of `gh auth token`.
+    - **`gh auth status` fails / wrong identity cached**: defer to
+      [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §2 before attempting any write
+      operation against GitHub.
+    - **No `run_in_terminal`**: route every shell command via
+      [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) §3.
+
 3. **Verify `curl` + `python3`** (used for `Authorization: Bearer` token search and JSON parsing):
 
     ```bash

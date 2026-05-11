@@ -28,6 +28,14 @@ Before execution, the agent MUST verify:
     - Check: `which python3`
 - **PAGER Environment**: The agent MUST ensure `PAGER=cat` is universally utilized for Git invocations to prevent
   hanging interactive shells.
+- **GitHub CLI (`gh`) — optional**: §2.1.1 fork-conformance check uses `gh repo view` / `gh repo rename`. If `gh`
+  is unavailable, the agent MUST defer to [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3
+  (endpoint cookbook — `GET /repos/{owner}/{repo}` and `PATCH /repos/{owner}/{repo}`).
+- **Auth failures**: If a subsequent `git push` to the realigned `origin` returns HTTP 401 / 403, defer to
+  [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §2 (classification) before forking or
+  reconfiguring anything else.
+- **No direct-shell tool**: When `run_in_terminal` is unavailable, route every shell invocation through
+  [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) §3.
 
 ***
 

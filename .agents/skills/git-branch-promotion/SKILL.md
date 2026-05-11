@@ -143,6 +143,17 @@ The agent MUST verify:
     git fetch origin --prune
     ```
 
+5. **Auth-failure pre-flight** (because Phase 4 of this skill is a force-push):
+
+    If `git fetch` or any later `git push --force-with-lease` returns `HTTP 401` / `HTTP 403` /
+    `Permission to ... denied to <other-user>`, the agent MUST STOP and defer to
+    [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §2 (classification) before attempting
+    Phase 4. A force-push that fails halfway through credential negotiation can leave the user uncertain about
+    branch state on the remote — auth MUST be resolved up front.
+
+6. **No direct-shell tool**: When `run_in_terminal` is unavailable, route every command in this skill through
+   [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) §3.
+
 ***
 
 ## 2. Cherry-Pick Equivalence Audit *(Phase 1)*

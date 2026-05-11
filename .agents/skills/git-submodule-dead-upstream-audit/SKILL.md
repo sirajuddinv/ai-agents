@@ -25,11 +25,18 @@ Before execution, the agent MUST verify each tool. Missing tools MUST be install
 
 - **git**: Submodule introspection.
     - Check: `which git && git --version`
-- **curl**: Upstream reachability and authenticated GitHub API queries.
+- **curl**: Upstream reachability and authenticated GitHub API queries. The `curl` invocations in §2 follow the
+  same canonical pattern documented in [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §2.4
+  (mandatory `User-Agent` header, `-fsSL` flags, PAT via `$GITHUB_TOKEN` env var) — that skill is the SSOT for
+  GitHub REST invocations and SHOULD be consulted when adapting any call here.
     - Check: `which curl && curl --version`
+- **PowerShell alternative**: On Windows without `curl`, every call below can be rewritten with
+  `Invoke-RestMethod` per [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §2.1.
 - **python3**: JSON parsing for GitHub API responses.
     - Check: `which python3 && python3 --version`
 - **PAGER Environment**: Export `PAGER=cat` for all Git commands to prevent terminal hangs.
+- **No direct-shell tool**: When `run_in_terminal` is unavailable, route every shell invocation through
+  [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) §3.
 
 ### 1.1 GitHub Token (Required for Code Search)
 

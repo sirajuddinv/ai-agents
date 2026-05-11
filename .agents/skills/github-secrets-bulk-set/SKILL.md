@@ -42,6 +42,19 @@ Expected output includes `Logged in to github.com as <username>`. If not authent
 gh auth login
 ```
 
+If authentication fails with `HTTP 401 Bad credentials` or `HTTP 403`, defer to
+[Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §3.4 (`gh auth login` flow) or §3.5
+(PAT validation via `GET /user`) before retrying any secret operation.
+
+### 1.3 No-`gh` Fallback (REST API)
+
+When `gh` is unavailable and installation via
+[System-Wide Tool Management](../system-wide-tool-management/SKILL.md) is not desired, every operation in this
+skill MUST be performed through the REST API per
+[GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3 (endpoint cookbook). The two-step
+`public-key` + sealed-value workflow for `PUT /repos/{owner}/{repo}/actions/secrets/{name}` is the REST
+equivalent of `gh secret set`.
+
 ***
 
 ## 2. Secrets File Format
@@ -154,9 +167,9 @@ Expected: all imported key names appear (values are never displayed by the API f
 | Error                                      | Cause                                      | Resolution                                            |
 | ------------------------------------------ | ------------------------------------------ | ----------------------------------------------------- |
 | `HTTP 422: Secret names must not start...` | Key starts with `GITHUB_`                  | Rename key in the secrets file and workflow YAML.     |
-| `HTTP 403: Resource not accessible`        | Token lacks `secrets:write` permission     | Re-authenticate: `gh auth refresh -s write:secrets`.  |
-| `gh: command not found`                    | `gh` not installed or not in `PATH`        | Install via `brew install gh` or appropriate manager. |
-| `Could not resolve to a Repository`        | Wrong `--repo` value or typo               | Verify with `gh repo view <OWNER>/<REPO>`.            |
+| `HTTP 403: Resource not accessible`        | Token lacks `secrets:write` permission     | Re-authenticate: `gh auth refresh -s write:secrets`. For deeper diagnosis (wrong identity cache, expired PAT, etc.) defer to [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §2. |
+| `gh: command not found`                    | `gh` not installed or not in `PATH`        | Install via [System-Wide Tool Management](../system-wide-tool-management/SKILL.md), OR perform the operation via [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3. |
+| `Could not resolve to a Repository`        | Wrong `--repo` value or typo               | Verify with `gh repo view <OWNER>/<REPO>` (or REST `GET /repos/{owner}/{repo}` per [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3). |
 
 ***
 

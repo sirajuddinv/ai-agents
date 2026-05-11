@@ -24,6 +24,15 @@ Before execution, the agent **MUST** verify the industrial environment.
    gh auth status
    ```
    * *If `gh` is not logged in, the agent MUST instruct the user to run `gh auth login` manually.*
+   * **No-`gh` fallback**: If `gh` is not installed and the user does not wish to install it, the agent MUST
+     execute every `gh` step in this skill through the GitHub REST API equivalent — defer to
+     [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3 (endpoint cookbook) and §3.1
+     (fork-discovery example). The decision matrix in Phase 1 below is unchanged.
+   * **No-terminal fallback**: If the agent's `run_in_terminal` tool is unavailable, every shell invocation in
+     Phase 1 / 2 / 3 below MUST be routed through `create_and_run_task` per
+     [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) §3 (file-mediated
+     output capture). Be especially careful with §4.2 PowerShell quoting for the Phase 3 `git commit -m '...'`
+     message.
 3. **Pre-Push Status Audit** (MANDATORY before triggering the fork flow):
    ```bash
    git log -1 --oneline
@@ -36,6 +45,17 @@ Before execution, the agent **MUST** verify the industrial environment.
    * **Tracking check**: `git status -sb` MUST show `[ahead N]` against the tracking branch.
    * **Remote check**: `git remote -v` reveals whether `origin` already points to a personal fork (push may succeed without reconfigure) or to the upstream (reconfigure required on 403).
    * Only proceed to Phase 1 after a `git push` attempt has actually returned a 403 / permission error.
+4. **403 Classification Gate** (MANDATORY before forking):
+   * Not every 403 means the user needs a fork. A 403 on a personal-repo URL frequently means Git Credential
+     Manager is supplying credentials for the **wrong GitHub identity** (typical on work laptops where the
+     corp account is cached). The agent MUST first defer to
+     [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) §2 to classify the error:
+     * If the captured error reads `Permission to <owner>/<repo>.git denied to <other-user>` AND the
+       `<owner>` already equals the user's intended account → wrong-identity cache; fix auth, DO NOT fork.
+     * If the captured error reads `Write access to repository not granted` AND the `<owner>` is an upstream
+       maintained by someone else → genuine fork-needed case; proceed to Phase 1 below.
+   * Forking when the actual problem is a cached-credential mismatch is a no-op that pollutes the user's
+     GitHub account with a spurious fork — it MUST be avoided.
 
 ***
 
@@ -57,6 +77,20 @@ When a push to a submodule's `origin` fails due to 403 Forbidden.
    gh repo list <owner> --fork --limit 200 --json name,parent \
      --jq '.[] | select(.parent.owner.login=="<upstream_owner>" and .parent.name=="<upstream_repo>")'
    ```
+
+   **No-`gh` REST-API equivalent** (defer to
+   [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) §3.1):
+
+   ```powershell
+   # Lists every public fork of the upstream; the agent filters by owner.login.
+   Invoke-RestMethod `
+     -Uri 'https://api.github.com/repos/<upstream_owner>/<upstream_repo>/forks?per_page=100' `
+     -Headers @{ 'User-Agent' = 'copilot-agent' } `
+     | ConvertTo-Json -Depth 4 | Out-File .gh_forks.txt -Encoding utf8
+   ```
+
+   Each fork object's `full_name` is `<owner>/<repo_name>` — append `.git` to derive `<fork_url>`. When the
+   user's account is not known in advance, rank candidates by `pushed_at` recency or ask the user to confirm.
    * `<owner>`: Your GitHub username.
    * `<fork_name>`: The expected fork name (**MUST equal the submodule directory name**, e.g. `besoeasy_open-skills`).
    * `<upstream_owner>` / `<upstream_repo>`: Parsed from the upstream URL.
@@ -134,9 +168,16 @@ Ensure the parent repository recognizes the fork for future initializations.
 ## 5. Related Conversations & Traceability
 
 - Standard established during the **Industrial Git Submodule Maintenance** session (April 2026).
+- Hardened May 2026: added 403-classification gate (auth-cache vs needs-fork), `gh`-absent REST-API fallback,
+  and no-TTY task-runner fallback after the `ai-agent-rules` submodule push session.
 - Follows [Skill Factory Protocol](../skill-factory/SKILL.md).
 - Complements [Git Submodule Fork Sync](../git-submodule-fork-sync/SKILL.md) (Automated Realignment).
-- Compatibility: macOS/Linux/Windows (Git Bash/Zsh).
+- Defers to [Git / GitHub Auth Fallback](../git-github-auth-fallback/SKILL.md) for 403 classification and
+  credential-manager remediation.
+- Defers to [GitHub REST API Fallback](../github-rest-api-fallback/SKILL.md) when `gh` is unavailable.
+- Defers to [Terminal Fallback via VS Code Tasks](../terminal-fallback-via-vscode-tasks/SKILL.md) when the
+  agent's direct-shell tool is unavailable.
+- Compatibility: macOS/Linux/Windows (Git Bash/Zsh/PowerShell).
 
 ## Composition by Higher-Level Skills
 
