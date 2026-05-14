@@ -163,6 +163,9 @@ repository**, because tracked-noise residue is repo-local.
   interactive rebase. This skill handles **OS noise on `HEAD`** triggered by a freshly added
   `.gitignore`.
 - Commit message format: [Git Commit Message Rules](../../../ai-agent-rules/git-commit-message-rules.md).
+- When the `.gitignore` uses a deny-all + whitelist pattern, see
+  [`gitignore-whitelist-pattern`](../gitignore-whitelist-pattern/SKILL.md) for the generation
+  protocol.
 - Standard established during the **Industrial Cross-Repo Cherry-Pick & Gitignore Reconciliation**
   session (May 2026).
 - Compatibility: macOS / Linux / Windows (Git 2.x+).
