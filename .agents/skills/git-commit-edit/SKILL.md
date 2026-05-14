@@ -280,6 +280,15 @@ To correct the author name or email without altering the commit message or file 
 git commit --amend --author="New Name <new.email@example.com>" --no-edit
 ```
 
+> [!NOTE]
+> `--author=` rewrites only the **author** trailer; the committer is
+> taken from the runtime environment. To rewrite **both** author and
+> committer in lock-step (with optional date preservation, or to copy
+> the identity from a source commit, or to coordinate the rewrite
+> across a parent repo and one of its submodules) use the
+> [`git-commit-identity-rewrite`](../git-commit-identity-rewrite/SKILL.md)
+> composer instead.
+
 #### 3f — Drop a Commit
 
 To remove a commit entirely from the history during an interactive rebase:
@@ -567,6 +576,7 @@ discovery, classification, or batch logic:
 | [`noise-removal-via-commit-edit`](../noise-removal-via-commit-edit/SKILL.md) | Detects IDE artifact noise in a commit and drives this skill to remove the offending files. |
 | [`git-commit-message-reword`](../git-commit-message-reword/SKILL.md) | Reads the project's commit-message rules, classifies the target commit's diff, authors a Conventional Commits message, and drives this skill's `reword` mode for a single commit. |
 | [`git-commit-message-bulk-reword`](../git-commit-message-bulk-reword/SKILL.md) | Range composer over `git-commit-message-reword`; amortizes the per-commit primitive across a contiguous commit range via a shared map and one rebase invocation. |
+| [`git-commit-identity-rewrite`](../git-commit-identity-rewrite/SKILL.md) | Rewrites author + committer identity (and optionally dates) of one or more commits by copying from a source commit; handles the parent-repo + submodule pointer cascade. |
 
 ## Post-Processing
 
