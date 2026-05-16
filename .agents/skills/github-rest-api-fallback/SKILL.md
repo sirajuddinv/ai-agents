@@ -268,6 +268,7 @@ authenticate with a higher limit.
 | [`git-github-auth-fallback`](../git-github-auth-fallback/SKILL.md) | Validate that a PAT is still active by hitting `GET /user`. | §3 endpoint cookbook (`gh auth status` ↔ `GET /user`). |
 | [`github-secrets-bulk-set`](../github-secrets-bulk-set/SKILL.md) | Set Actions secrets without `gh`. | §3 endpoint cookbook for the public-key + sealed-value workflow. |
 | [`jira-acli-operations`](../jira-acli-operations/SKILL.md) | Create PRs when `gh` is unavailable. | §3 endpoint cookbook — `POST /repos/{o}/{r}/pulls`. |
+| [`git-personal-sandbox-remote`](../git-personal-sandbox-remote/SKILL.md) | Create / delete an independent personal repository on GitHub (or GHE) when `gh` is unavailable. | §1.4 GHE base-URL substitution; §3 endpoint cookbook for `POST /user/repos` and `DELETE /repos/{o}/{r}`. |
 
 ***
 

@@ -67,6 +67,11 @@ Do NOT apply when:
   [`git_rebase`](../git-rebase-standardization/SKILL.md) instead
 - The request is a simple single-file, single-concern commit with no
   mixed changes (a lightweight commit suffices without the full protocol)
+- The files being committed are **personal-only** and should NOT reach the
+  team's `origin` — route the commit to a personal sandbox branch via
+  [`git-personal-sandbox-remote`](../git-personal-sandbox-remote/SKILL.md)
+  (this skill still applies to the commit itself, but the destination
+  remote/branch changes)
 
 **Push Policy (GLOBAL)**: The agent MUST NEVER execute `git push` automatically.
 After any commit(s), the agent MAY OFFER to push (e.g., "Push to remote?") but

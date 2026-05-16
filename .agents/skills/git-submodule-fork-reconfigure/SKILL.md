@@ -8,6 +8,10 @@ category: Git & Repository Management
 
 This skill provides a surgical protocol for handling "Permission Denied" (403) errors when pushing to submodules. It automates the process of forking the upstream repository via the GitHub CLI and reconfiguring the submodule's local remotes to track the new fork while preserving the original as an `upstream` source.
 
+> [!NOTE]
+> **When NOT to fork.** If the goal is to back up *personal-only* files (build configs, IDE artifacts, sandbox experiments) that should NOT be visible in the team upstream's fork network and will never be PR'd back, use
+> [`git-personal-sandbox-remote`](../git-personal-sandbox-remote/SKILL.md) instead — it provisions an **independent** personal repo rather than a fork.
+
 ***
 
 ## 1. Environment & Dependencies

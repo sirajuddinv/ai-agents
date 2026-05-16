@@ -310,6 +310,7 @@ git -C <repo> status -sb
 | [`git-branch-promotion`](../git-branch-promotion/SKILL.md) | Force-push step blocked by auth. | §3 paths to restore push capability before §4 force-push. |
 | [`github-secrets-bulk-set`](../github-secrets-bulk-set/SKILL.md) | `gh secret set` fails with 401 / 403. | §3.4 / §3.5 PAT validation. |
 | [`jira-acli-operations`](../jira-acli-operations/SKILL.md) | `gh pr create` fails on the PR step. | §3.4 `gh auth login` flow. |
+| [`git-personal-sandbox-remote`](../git-personal-sandbox-remote/SKILL.md) | Push a brand-new personal branch to a freshly-created `personal` remote without leaking the PAT into branch tracking config. | §3.2.1 push-without-`-u` two-step pattern; §3.2.2 leaked-PAT recovery. |
 
 ***
 
