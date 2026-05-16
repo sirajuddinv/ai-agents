@@ -188,11 +188,14 @@ below:
   separate code path and ignores this env var on some builds /
   versions.
 - **`-c filter.lfs.smudge=`** — Sets the smudge command to the
-  empty string for *this clone only* (the `-c` is a one-shot
-  override; it is **not** written into `.git/config`). When the
-  smudge command is empty, Git skips the smudge step entirely and
-  writes the pointer to the working tree as-is. This belt-and-
-  suspenders the `GIT_LFS_SKIP_SMUDGE` env var.
+  empty string. When the smudge command is empty, Git skips the
+  smudge step entirely and writes the pointer to the working tree
+  as-is. This belt-and-suspenders the `GIT_LFS_SKIP_SMUDGE` env var.
+  **Note:** `git clone -c` is **persisted** into the new repo's
+  `.git/config` (it is NOT one-shot); the same applies to the two
+  `-c` flags below. This is the desired state during clone but
+  imposes a mandatory restoration step before any later
+  `git lfs pull` — see §4d and §7.
 - **`-c filter.lfs.process=`** — The critical override. Setting
   the `process` filter to empty disables the long-running filter
   protocol entirely for this clone. Without this, Git LFS streams
@@ -405,6 +408,44 @@ syntax. Prefer the comma-separated `--include` list (which is the
 LFS-native multi-pattern syntax) over brace expansion to stay
 portable.
 
+#### 4d — Restore LFS Filters Before Pulling (Mandatory)
+
+The Step 1 clone writes empty `filter.lfs.smudge` / `process` /
+`required` into `<dest>/.git/config`. With these in place,
+`git lfs pull` will fetch the blob into `.git/lfs/objects/` but the
+checkout step will **not** materialize the working-tree file — the
+pointer stays put and the file appears not to have downloaded. The
+agent MUST restore the filters before any selective pull:
+
+```bash
+cd <dest>
+git config --local --unset filter.lfs.smudge
+git config --local --unset filter.lfs.process
+git config --local --unset filter.lfs.required
+git lfs install --local
+```
+
+See §7 for the full rationale.
+
+#### 4e — PowerShell: Run LFS Pull/Fetch Without Pipes
+
+On Windows PowerShell, piping `git lfs pull` / `git lfs fetch` into
+`Select-Object`, `Tee-Object`, or any other cmdlet buffers the entire
+stream until the process exits and **swallows the live progress
+line** (which `git-lfs` updates in place via `\r`). The download is
+proceeding normally — the user just cannot see it.
+
+Correct invocation:
+
+```powershell
+cd <dest>
+git lfs pull --include="<pattern>"            # foreground, live progress
+```
+
+For agent-driven execution, run as a backgrounded shell command and
+tail with `await_terminal` so the in-place progress line surfaces in
+the output stream.
+
 ***
 
 ### Step 5 — Final Audit
@@ -476,6 +517,18 @@ The agent is **BLOCKED** from:
   effect (locally, globally, or system-wide), the command no-ops
   silently. Always verify with `git submodule status --recursive` —
   a leading `-` on every line means uninitialized.
+- **Running `git lfs pull` / `git lfs fetch` through a PowerShell
+  pipe** like `| Select-Object -Last N` or `| Tee-Object`. These
+  buffer the entire stream until process exit and swallow the
+  `\r`-overwritten progress line, making a perfectly healthy multi-
+  gigabyte download look like a hang. Always run LFS pull/fetch in
+  the foreground without pipes, or background with live progress
+  via `await_terminal`.
+- **Assuming `git clone -c filter.lfs.* =` is one-shot.** It is
+  persisted into the cloned repo's `.git/config`. The agent MUST run
+  the §7a restoration before any `git lfs pull` / `fetch` /
+  `checkout`, or files will be fetched to cache but the pointer will
+  remain in the working tree.
 
 ***
 
@@ -492,37 +545,72 @@ The agent is **BLOCKED** from:
 | `git lfs ls-files -- ats` → `fatal: bad revision 'ats'` | `ls-files` doesn't accept pathspecs; post-filter with `grep ^.*\bats/` |
 | Pointer files look like binary in `cat` output | They start with `version https://git-lfs.github.com/spec/v1` and are ~130 B; check with `head -3` not `file` |
 | `git clone` "hangs" with no progress | `--progress` not passed; or LFS download is in progress (size grows). Inspect the destination tree size to disambiguate |
-| Clone succeeded but later `git pull` re-pulls everything | The four `-c` overrides are clone-only (not written to `.git/config`). For persistent skip, either re-supply them on every fetch, or `git config --local filter.lfs.smudge ""` etc. after clone |
+| Clone succeeded but later `git pull` re-pulls everything | The Step 1 `-c` overrides ARE persisted into `.git/config` (despite older docs claiming otherwise). See §7 for the explicit restoration sequence |
+| `git lfs pull` reports success but working-tree file stays a 130-byte pointer | Empty `filter.lfs.smudge` in `.git/config` (left by Step 1). Run the §7a restoration (`--unset` the three filters + `git lfs install --local`) before pulling |
+| PowerShell `git lfs fetch ... \| Select-Object -Last N` shows zero output then exits | PowerShell pipes buffer the entire stream and swallow `\r`-overwritten progress lines. Run `git lfs fetch / pull` **without any pipe** in the foreground, or background it via `run_in_terminal` with `isBackground=true` and tail via `await_terminal` — then progress streams live |
 
 ***
 
 ## 7. Persistent vs One-Shot Skip
 
-The Step 1 command uses one-shot `-c` overrides that **do not** persist
-into `.git/config`. Subsequent `git pull` / `git fetch` operations
-will use the user's default filters and **may** re-fetch LFS objects
-during merge / checkout.
+**Critical correction:** `git clone -c <key>=<value>` is **NOT**
+one-shot. Every `-c` pair passed to `git clone` is **persisted** into
+the new repo's `.git/config` exactly as if you had run
+`git config --local <key> <value>` after the clone. The Step 1
+command therefore writes the four overrides into the local config of
+the cloned repo:
 
-If the user wants persistent skip on the cloned repo:
+```ini
+[filter "lfs"]
+        smudge =
+        process =
+        required = false
+```
+
+This is the **desired** state during clone (skips LFS blob download)
+but it has a consequential side effect: every subsequent `git lfs
+pull` / `git lfs fetch` / `git checkout` in this repo **also** runs
+with empty LFS filters. The fetch step still populates
+`.git/lfs/objects/` (it does not use the smudge filter), but the
+checkout step that should replace the pointer file with the real blob
+invokes `filter.lfs.smudge` — and finding it empty, leaves the
+pointer file in place. **The blob is downloaded into the cache but
+never written to the working tree.** From the user's perspective it
+looks like "the file did not download".
+
+### 7a — Restoring LFS Filters After Selective Pull
+
+Before any `git lfs pull` / `git lfs fetch` / `git lfs checkout` on a
+repo cloned via Step 1, the agent MUST restore the LFS filters in the
+local config so the smudge step can materialize blobs:
 
 ```bash
 cd <dest>
-git config --local filter.lfs.smudge ''
-git config --local filter.lfs.process ''
-git config --local filter.lfs.required false
-```
-
-Repeat inside every submodule. To restore default LFS behavior later:
-
-```bash
 git config --local --unset filter.lfs.smudge
 git config --local --unset filter.lfs.process
 git config --local --unset filter.lfs.required
-git lfs install --local
+git lfs install --local       # re-registers the standard filter set
 ```
 
-The agent MUST ask the user which mode (one-shot vs persistent) they
-want before writing into `.git/config`.
+The `--unset` commands remove the empty overrides so the global /
+system defaults take effect; `git lfs install --local` then writes the
+standard `git-lfs clean / smudge / filter-process` entries back into
+the repo's `.git/config`. After this, `git lfs pull` works normally.
+
+Repeat the same sequence inside every initialized submodule before
+pulling LFS objects there.
+
+### 7b — Keeping the Skip Permanent
+
+If the user wants to keep the skip permanent on this clone (so future
+`git pull` / `git checkout` operations never re-fetch LFS), do
+**nothing** — the Step 1 clone already wrote the empty filters into
+`.git/config`. The agent MUST then warn the user that any
+`git lfs pull` will need the §7a restoration first to actually
+materialize files.
+
+The agent MUST ask the user which mode (post-clone restoration vs
+permanent skip) they want **before** running any selective pull.
 
 ***
 
