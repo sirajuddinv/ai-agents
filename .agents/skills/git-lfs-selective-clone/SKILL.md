@@ -317,6 +317,31 @@ git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false `
 After this step, re-run Step 2's verifications **inside each
 submodule directory** (`git lfs ls-files` should show `-` markers).
 
+#### 3a — Pre-Check: `submodule.active` Must Not Be `no`
+
+A `submodule.active` value of `no` (or any pathspec that excludes the
+registered submodule) causes `git submodule update --init --recursive`
+to **silently no-op** — zero output, exit code 0, no clone, no error.
+This setting can be inherited from `~/.gitconfig` or a system-wide
+config and is also written by some VS Code / IDE workflows.
+
+The agent MUST inspect the effective value **before** running Step 3:
+
+```bash
+git config --get submodule.active   # empty or matching pathspec → OK
+```
+
+If the value is `no`, or absent and the user's global config sets it
+to `no`, override it locally before re-running Step 3:
+
+```bash
+git config --local submodule.active "."
+```
+
+The `.` pathspec means "all submodules are active" and is the safest
+local override. It is written to `.git/config` and persists for
+subsequent `submodule update` calls in this clone only.
+
 ***
 
 ### Step 4 — Selective LFS Pull (Include / Exclude Globs)
@@ -446,6 +471,11 @@ The agent is **BLOCKED** from:
 - **Using `git lfs ls-files -- <subdir>`** as a pathspec filter — it
   is interpreted as a revision and fails. Use `grep` / `Select-String`
   on the full listing instead.
+- **Trusting a silent `git submodule update --init` exit-0** as
+  evidence the submodule was cloned. If `submodule.active=no` is in
+  effect (locally, globally, or system-wide), the command no-ops
+  silently. Always verify with `git submodule status --recursive` —
+  a leading `-` on every line means uninitialized.
 
 ***
 
@@ -457,6 +487,7 @@ The agent is **BLOCKED** from:
 | `-c filter.lfs.smudge=` alone still downloads blobs | Add `-c filter.lfs.process=` — the long-running filter is a separate code path |
 | `error: external filter 'git-lfs filter-process' failed` at checkout | Add `-c filter.lfs.required=false` so empty filters are non-fatal |
 | Submodule init pulls gigabytes despite parent skipping LFS | Re-supply the four overrides on `git submodule update --init --recursive` — submodules don't inherit parent's per-command `-c` config |
+| `git submodule update --init --recursive` silently no-ops (exit 0, zero output, no clone) | Inherited `submodule.active = no` in global/system config. Run `git config --local submodule.active "."` then retry. Verify with `git submodule status --recursive` |
 | Brace glob `{a,b}.zip` doesn't expand on Windows `git lfs` | Use comma-separated `--include="a.zip,b.zip"` (LFS-native syntax) |
 | `git lfs ls-files -- ats` → `fatal: bad revision 'ats'` | `ls-files` doesn't accept pathspecs; post-filter with `grep ^.*\bats/` |
 | Pointer files look like binary in `cat` output | They start with `version https://git-lfs.github.com/spec/v1` and are ~130 B; check with `head -3` not `file` |
