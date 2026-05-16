@@ -56,11 +56,34 @@ which curl && curl --version | head -1
 | Public repo metadata, forks list, branches, public PRs, public files | No | Unauthenticated rate limit: 60 req/hr per IP. |
 | Private repo data, write operations, user-scoped lists, higher rate | Yes | Personal Access Token (classic or fine-grained) with appropriate scope. |
 | Secrets, releases, workflow dispatches | Yes | Scope: `repo`, plus `workflow` or specific resource scope. |
+| **Any operation on a GitHub Enterprise Server (GHE)** | **Yes** | GHE rejects unauthenticated requests with `401 Unauthorized` even for endpoints public on `api.github.com`. See §1.4. |
 
 If a token is required, the agent MUST instruct the user to generate one at
-`https://github.com/settings/tokens` and surface it via an environment variable — NEVER hard-code it in scripts,
-URLs, commit messages, or session logs (Tier-A per
+`https://github.com/settings/tokens` (or `https://<ghe-host>/settings/tokens` for GHE) and surface it via an
+environment variable — NEVER hard-code it in scripts, URLs, commit messages, or session logs (Tier-A per
 [Redaction & Portability](../redaction-portability/SKILL.md) §1).
+
+### 1.4 GitHub Enterprise Server (GHE) base URL
+
+When the target host is **not** `github.com` (e.g., a corporate GitHub Enterprise instance at
+`github.<corp-cloud-domain>` or `github.<corp-domain>`), the API base is **NOT** `https://api.github.com` —
+it is `https://<ghe-host>/api/v3` (REST v3) or `https://<ghe-host>/api/graphql` (GraphQL).
+
+| Hosted GitHub.com | GitHub Enterprise Server |
+| :--- | :--- |
+| `https://api.github.com/repos/<o>/<r>` | `https://<ghe-host>/api/v3/repos/<o>/<r>` |
+| `https://api.github.com/user/repos` | `https://<ghe-host>/api/v3/user/repos` |
+| `https://api.github.com/repos/<o>/<r>/forks` | `https://<ghe-host>/api/v3/repos/<o>/<r>/forks` |
+
+**Detection heuristic:** Inspect `git remote -v` in the target repo. If the remote host is anything other
+than `github.com`, treat it as GHE and prepend `/api/v3` to every endpoint path.
+
+**Tokens are NOT portable across instances.** A PAT issued at `github.com/settings/tokens` is rejected by
+`<ghe-host>/api/v3` with `401 Bad credentials`. Generate the token at the matching host's
+`/settings/tokens` page.
+
+All subsequent examples in §2–§4 use `api.github.com` for readability; substitute `<ghe-host>/api/v3`
+verbatim when targeting an Enterprise instance.
 
 ***
 

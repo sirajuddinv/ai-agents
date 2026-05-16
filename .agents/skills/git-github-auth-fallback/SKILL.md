@@ -132,6 +132,8 @@ After re-auth, re-probe with `git push` and verify the captured output shows suc
 When the agent must complete the push inside a non-TTY environment (e.g., CI, VS Code task), embed a PAT
 directly. The token MUST come from an environment variable and MUST NEVER be committed.
 
+**Preferred form — temporary `remote set-url` with immediate revert:**
+
 ```powershell
 $env:GITHUB_PAT = '<user-paste-pat-here>'
 git -C <repo> remote set-url <remote> "https://$env:GITHUB_PAT@github.com/<owner>/<repo>.git"
@@ -145,6 +147,64 @@ git -C <repo> remote set-url <remote> "https://github.com/<owner>/<repo>.git"
 > same task / same shell session as the push to minimize exposure. NEVER capture the URL form with the PAT
 > embedded into a log file, commit message, or session note — this is a Tier-A redaction violation per
 > [Redaction & Portability](../redaction-portability/SKILL.md) §1.
+
+#### 3.2.1 FORBIDDEN — `git push -u <embedded-PAT-URL>` form
+
+DO NOT use this shape when establishing upstream tracking for a brand-new branch:
+
+```powershell
+# ❌ ANTI-PATTERN — leaks PAT into TWO places:
+git -C <repo> push -u "https://user:$env:GITHUB_PAT@github.com/<owner>/<repo>.git" <branch>:<branch>
+```
+
+**Why it's worse than §3.2:** The `-u` flag writes the full URL (with embedded PAT) into `.git/config` as the
+branch's upstream tracking metadata — specifically:
+
+```ini
+[branch "<branch>"]
+    remote = https://user:ghp_xxx...@github.com/<owner>/<repo>.git
+    merge = refs/heads/<branch>
+```
+
+This is **separate** from `[remote]` URL config and is **not** cleaned up by `git remote set-url`. The PAT
+persists in `.git/config` indefinitely until the user notices.
+
+**Correct two-step pattern when the named remote does not yet exist or you want to push to an ad-hoc URL:**
+
+```powershell
+# 1. Push WITHOUT -u (no upstream tracking written)
+$AdHocUrl = "https://user:$env:GITHUB_PAT@github.com/<owner>/<repo>.git"
+git -C <repo> push $AdHocUrl <branch>:<branch>
+
+# 2. Add the named remote with the CLEAN URL (no PAT) and set tracking via fetch
+git -C <repo> remote add <remote-name> "https://github.com/<owner>/<repo>.git"
+git -C <repo> fetch <remote-name>
+git -C <repo> branch --set-upstream-to=<remote-name>/<branch> <branch>
+
+# 3. Verify tracking points to the named remote, NOT a URL
+git -C <repo> branch -vv     # Output should show [<remote-name>/<branch>], no http://
+git -C <repo> config --get branch.<branch>.remote   # Should print the remote name, not a URL
+```
+
+#### 3.2.2 Recovery — cleaning up a leaked PAT in branch tracking config
+
+If the `-u <embedded-PAT-URL>` form was already executed, surface and scrub:
+
+```powershell
+# Detect: any branch config that has a full URL (instead of a remote name) as its remote target
+git -C <repo> config --list --local | Select-String 'branch\..*\.remote=https?://'
+
+# Scrub by re-pointing the branch to a named remote
+git -C <repo> fetch <remote-name>
+git -C <repo> branch --set-upstream-to=<remote-name>/<branch> <branch>
+
+# Verify the URL form is gone
+git -C <repo> config --list --local | Select-String 'branch\..*\.remote='
+```
+
+The leaked PAT MUST also be **revoked at the issuing host** (`https://<host>/settings/tokens`) the moment it
+is cleaned from disk — `.git/config` is plaintext and may have been backed up, indexed, or sync'd to cloud
+storage in the meantime.
 
 The PAT must have scope:
 
