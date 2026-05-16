@@ -376,3 +376,13 @@ install Git via their system package manager:
 - **macOS:** `brew install git`
 - **Linux (Debian):** `sudo apt install git`
 - **Linux (RHEL):** `sudo yum install git`
+
+---
+
+## Related Skills
+
+- [near-duplicate-file-comparison](../near-duplicate-file-comparison/SKILL.md)
+  — apply **before** deleting one of two near-duplicate files (e.g.
+  `Foo.java` + `Foo_old.java`) to prove which file is canonical and
+  capture the rationale. Then use this skill to confirm no stale
+  references remain after the deletion.

@@ -69,3 +69,14 @@ The agent MUST provide a summary report:
 2. Number of matching files.
 3. List of discrepancies (if any).
 4. Tooling used for verification.
+
+## 5. Related Skills
+
+- [near-duplicate-file-comparison](../near-duplicate-file-comparison/SKILL.md)
+  — when the comparison narrows to **two near-duplicate files** in the
+  same directory (e.g. `Foo.java` vs `Foo_old.java`), switch to that
+  skill's eight-dimension forensic rubric to decide which file is
+  canonical and whether the duplicate can be deleted.
+- [git-commit-comparison-audit](../git-commit-comparison-audit/SKILL.md)
+  — when the comparison is between two commits rather than two
+  directories.
