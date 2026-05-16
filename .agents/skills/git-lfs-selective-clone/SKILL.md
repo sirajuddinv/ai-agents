@@ -369,37 +369,77 @@ is forbidden because a repo can track arbitrary patterns via
 > `fatal: bad revision`. To restrict by directory, post-filter with
 > `grep` / `Select-String` instead.
 
-#### 4b — Pull Selected Files
+#### 4b — Pull Selected Files (Split Fetch + Checkout)
 
 The `--include` and `--exclude` flags accept comma-separated brace-
 glob lists, evaluated against the paths emitted by `git lfs ls-files`.
 
-```bash
-# Pull every zip under ats/ and sample_ats/ in the top-level repo
-git lfs pull --include="ats/*.zip,sample_ats/*.zip"
+> [!IMPORTANT]
+> **Do NOT use `git lfs pull` as a single command for agent-driven
+> execution.** Empirically, `git lfs pull` can terminate after the
+> fetch phase but before the checkout phase — the blob lands in
+> `.git/lfs/objects/` but the working-tree pointer is never
+> smudged into the real file. The agent MUST split the operation
+> into explicit `git lfs fetch` + `git lfs checkout`:
 
-# Inside a submodule: pull every .7z except one specific file
-cd <submodule-path>
-git lfs pull --include="*.7z" --exclude="NanoPVER_6Cores2_230617_READWRITE.7z"
+```bash
+# 1) Fetch the blob(s) into .git/lfs/objects/ (network step)
+git lfs fetch --include="ats/*.zip,sample_ats/*.zip" origin <branch>
+
+# 2) Smudge the cached blob(s) into the working tree (local step)
+git lfs checkout ats/*.zip sample_ats/*.zip
 ```
+
+PowerShell with `-C` (no `cd` required):
+
+```powershell
+git -C <dest> lfs fetch --include="<pattern>" origin <branch>
+git -C <dest> lfs checkout <path1> <path2>
+```
+
+**Why split:**
+
+- `git lfs fetch` is the network-bound step; failures (timeouts,
+  auth, server errors) are clearly attributable.
+- `git lfs checkout` is local-only and idempotent — it scans the
+  working tree for pointer files whose OID is present in the cache
+  and smudges them. If the first run terminated before checkout,
+  re-running `git lfs checkout` materializes the cached blobs
+  without re-downloading.
+- After a `git lfs fetch`, `Get-ChildItem .git/lfs/objects` confirms
+  the blob is present (size matches the pointer's `size` field).
+  This is the authoritative "download succeeded" check, independent
+  of whether the working tree was smudged.
 
 **Pedagogical breakdown:**
 
-- `git lfs pull` — fetches LFS objects referenced by the current
-  checkout and replaces pointer text with real blob content. It is
-  the **post-clone** equivalent of the smudge step that Steps 1–3
-  deliberately bypassed.
+- `git lfs fetch --include="<glob1>,<glob2>" origin <branch>`
+  downloads only LFS objects referenced by `<branch>` whose paths
+  match the include globs. **The trailing `origin <branch>`
+  arguments are recommended** — without them, `git lfs fetch` may
+  scan all refs and behave inconsistently across LFS versions.
+- `git lfs checkout <paths...>` smudges the listed pointer files
+  using the cached blob. Accepts shell globs (expanded by the shell
+  before reaching `git lfs`); on PowerShell, multi-glob expansion
+  may differ — prefer listing exact paths or invoking once per
+  file.
 - `--include="<glob1>,<glob2>"` — comma-separated, **no spaces**.
   Spaces around commas break the parser silently and you will pull
   everything. Globs are matched against repo-relative paths from
   `git lfs ls-files`.
 - `--exclude="<glob>"` — applied AFTER `--include`. The
   evaluation order is: (include == empty OR matches include) AND
-  NOT matches exclude. To pull *everything except one file*, use
+  NOT matches exclude. To fetch *everything except one file*, use
   `--include="*"` with `--exclude="<file>"`.
-- `git lfs pull` operates on the **current submodule scope only** —
-  it does NOT recurse. Run it once per repository / submodule that
-  contains files of interest.
+- Both `fetch` and `checkout` operate on the **current submodule
+  scope only** — they do NOT recurse. Run each pair once per
+  repository / submodule that contains files of interest.
+
+**Single-command fallback:** `git lfs pull --include="<glob>"` is
+acceptable for interactive (human-typed) one-off pulls where the
+user can rerun `git lfs checkout` manually if needed. The split
+form above is REQUIRED for agent execution and any scripted /
+batched workflow.
 
 #### 4c — Brace-Glob Compatibility
 
@@ -480,7 +520,7 @@ ate disk the user did not authorize.
 |---|---|
 | Clone-time blob skip | `GIT_LFS_SKIP_SMUDGE=1` **AND** `-c filter.lfs.smudge=` **AND** `-c filter.lfs.process=` **AND** `-c filter.lfs.required=false` |
 | Submodule init | Same four overrides on `git submodule update --init --recursive` |
-| Selective pull | `git lfs pull --include="<csv-globs>" --exclude="<csv-globs>"` |
+| Selective pull | Split: `git lfs fetch --include="<csv-globs>" origin <branch>` then `git lfs checkout <paths>` (single `git lfs pull` may exit after fetch without smudging) |
 | Verification | `git lfs ls-files` marker column + per-file pointer header check |
 | Shell portability | Detect PowerShell vs CMD vs POSIX and emit matching env-var syntax |
 | Submodule recursion | `--recursive` mandatory (Recursive Submodule Mandate) |
@@ -529,6 +569,12 @@ The agent is **BLOCKED** from:
   the §7a restoration before any `git lfs pull` / `fetch` /
   `checkout`, or files will be fetched to cache but the pointer will
   remain in the working tree.
+- **Using `git lfs pull` as a single command in agent-driven
+  execution.** Empirically, `git lfs pull` can return success after
+  the fetch phase without smudging the working-tree pointer, leaving
+  the user with a cached blob and a 130-byte pointer file. Always
+  split into explicit `git lfs fetch` (network) + `git lfs checkout`
+  (local smudge); see §4b.
 
 ***
 
@@ -548,6 +594,7 @@ The agent is **BLOCKED** from:
 | Clone succeeded but later `git pull` re-pulls everything | The Step 1 `-c` overrides ARE persisted into `.git/config` (despite older docs claiming otherwise). See §7 for the explicit restoration sequence |
 | `git lfs pull` reports success but working-tree file stays a 130-byte pointer | Empty `filter.lfs.smudge` in `.git/config` (left by Step 1). Run the §7a restoration (`--unset` the three filters + `git lfs install --local`) before pulling |
 | PowerShell `git lfs fetch ... \| Select-Object -Last N` shows zero output then exits | PowerShell pipes buffer the entire stream and swallow `\r`-overwritten progress lines. Run `git lfs fetch / pull` **without any pipe** in the foreground, or background it via `run_in_terminal` with `isBackground=true` and tail via `await_terminal` — then progress streams live |
+| `git lfs pull` returns success but file stays a 130-byte pointer (cache contains the blob) | `git lfs pull` exited after fetch without running checkout. Run `git lfs checkout <path>` to smudge the cached blob into the working tree. For future pulls, use the split fetch+checkout pattern from §4b |
 
 ***
 
