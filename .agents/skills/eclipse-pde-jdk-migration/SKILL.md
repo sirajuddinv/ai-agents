@@ -230,6 +230,7 @@ launch's `VM_ARGUMENTS`.
 | `does not "opens java.nio"` | `--add-opens=java.base/java.nio=ALL-UNNAMED` |
 | `does not "opens java.text"` (DateFormat) | `--add-opens=java.base/java.text=ALL-UNNAMED` |
 | `does not "opens java.util.regex"` | `--add-opens=java.base/java.util.regex=ALL-UNNAMED` |
+| BeanShell `AbstractStringBuilder.append()` — `does not "opens java.lang"` via BshInterpreter reflection on `StringBuilder` | `--add-opens=java.base/java.lang=ALL-UNNAMED` (JVM-side) **or preferably** replace `new StringBuilder().append(...)` with `+` in the `.bsh` source (eliminates reflection) |
 | Xtend / Xtext on-the-fly compile via `com.sun.tools.javac` | `--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED` (also `.code`, `.tree`, `.util`, `.processing`, `.model`, `.parser`, `.comp`, `.main`, `.file`) |
 | `does not "opens sun.security.x509"` | `--add-opens=java.base/sun.security.x509=ALL-UNNAMED` |
 | `IllegalAccessError` on `jdk.internal.misc` | `--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED` |

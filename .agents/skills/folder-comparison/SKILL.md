@@ -80,3 +80,9 @@ The agent MUST provide a summary report:
 - [git-commit-comparison-audit](../git-commit-comparison-audit/SKILL.md)
   — when the comparison is between two commits rather than two
   directories.
+- [archive-size-preflight-and-extract](../archive-size-preflight-and-extract/SKILL.md)
+  — **upstream producer** — when one or both directories under comparison
+  originated from an archive extraction, use that skill first to pre-flight
+  disk-space cost, extract with verification, and confirm the byte count
+  matches the archive's reported uncompressed size before running this
+  folder comparison.
