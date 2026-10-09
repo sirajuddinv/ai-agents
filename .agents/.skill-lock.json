@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "skills": {
+    "pdf": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/pdf/SKILL.md",
+      "skillFolderHash": "37226d4220d844377e6b2a386c51a011df4cd130855ff0b80bcc22f9c28abd57",
+      "pluginName": "document-skills",
+      "installedAt": "2026-09-29T09:08:01.651Z",
+      "updatedAt": "2026-09-29T09:08:01.651Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "cline",
+    "codex",
+    "cursor",
+    "droid",
+    "gemini-cli",
+    "github-copilot",
+    "kilo",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed"
+  ]
+}
